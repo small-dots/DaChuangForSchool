@@ -11,13 +11,26 @@
       <a-row :gutter="8">
         <a-col :md="12" :sm="24" :xs="24">
           <a-form-item label="账号:" name="account">
-            <a-input v-model:value="form.account" placeholder="请输入账号" allow-clear autocomplete="off" />
+            <a-input
+              v-model:value="form.account"
+              placeholder="请输入账号"
+              allow-clear
+              autocomplete="off"
+            />
           </a-form-item>
           <a-form-item v-if="!isUpdate" label="登录密码:" name="password">
-            <a-input-password v-model:value="form.password" placeholder="请输入登录密码" autocomplete="new-password" />
+            <a-input-password
+              v-model:value="form.password"
+              placeholder="请输入登录密码"
+              autocomplete="new-password"
+            />
           </a-form-item>
           <a-form-item v-if="!isUpdate" label="确认密码:" name="repeatPassword">
-            <a-input-password v-model:value="form.repeatPassword" placeholder="请输入确认密码" autocomplete="off" />
+            <a-input-password
+              v-model:value="form.repeatPassword"
+              placeholder="请输入确认密码"
+              autocomplete="off"
+            />
           </a-form-item>
           <a-form-item label="机构:" name="orgId">
             <a-tree-select
@@ -68,10 +81,20 @@
             </a-select>
           </a-form-item>
           <a-form-item label="出生日期:" name="birthday">
-            <a-date-picker v-model:value="form.birthday" value-format="YYYY-MM-DD" placeholder="请选择出生日期" class="ele-fluid" />
+            <a-date-picker
+              v-model:value="form.birthday"
+              value-format="YYYY-MM-DD"
+              placeholder="请选择出生日期"
+              class="ele-fluid"
+            />
           </a-form-item>
           <a-form-item label="邮箱:" name="email" v-if="!isUpdate">
-            <a-input v-model:value="form.email" placeholder="请输入邮箱" allow-clear autocomplete="off" />
+            <a-input
+              v-model:value="form.email"
+              placeholder="请输入邮箱"
+              allow-clear
+              autocomplete="off"
+            />
           </a-form-item>
         </a-col>
       </a-row>
@@ -83,52 +106,52 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, reactive, toRefs } from 'vue';
-import { UserApi } from '/@/api/system/user/UserApi';
-export default defineComponent({
-  props: {
-    form: {
-      type: Object,
-      default: {}
+  import { defineComponent, onMounted, reactive, toRefs } from 'vue';
+  import { UserApi } from '/@/api/system/user/UserApi';
+  export default defineComponent({
+    props: {
+      form: {
+        type: Object,
+        default: {},
+      },
+      rules: Object,
+      // 组织机构列表
+      orgList: Array,
+      // 新增还是编辑
+      isUpdate: Boolean,
     },
-    rules: Object,
-    // 组织机构列表
-    orgList: Array,
-    // 新增还是编辑
-    isUpdate: Boolean
-  },
-  setup() {
-    const state = reactive({
-      // 职位列表
-      positionList: []
-    });
-    onMounted(() => {
-      getPositionList();
-    });
+    setup() {
+      const state = reactive({
+        // 职位列表
+        positionList: [],
+      });
+      onMounted(() => {
+        getPositionList();
+      });
 
-    const getPositionList = async () => {
-      state.positionList = await UserApi.getPositionDropList();
-    };
+      const getPositionList = async () => {
+        state.positionList = await UserApi.getPositionDropList();
+      };
 
-    return {
-      ...toRefs(state),
-      getPositionList
-    };
-  }
-});
+      return {
+        ...toRefs(state),
+        getPositionList,
+      };
+    },
+  });
 </script>
 
 <style lang="less" scoped>
-.card-title {
-  border-left: 5px solid;
-  border-color: #2a7dc9;
-  padding-left: 10px;
-}
+  .card-title {
+    border-left: 5px solid;
+    border-color: #2a7dc9;
+    padding-left: 10px;
+  }
 
-.card-title-background {
-  background-color: #f5f5f5;
-  height: 2em;
-  line-height: 2em;
-  margin-bottom: 2em;
-}
+  .card-title-background {
+    background-color: #f5f5f5;
+    height: 2em;
+    line-height: 2em;
+    margin-bottom: 2em;
+  }
 </style>

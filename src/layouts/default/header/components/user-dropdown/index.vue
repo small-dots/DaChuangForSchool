@@ -24,16 +24,8 @@
           icon="ant-design:appstore-add-outlined"
         />
         <MenuDivider />
-        <MenuItem
-          key="profile"
-          :text="t('个人中心')"
-          icon="ant-design:user-outlined"
-        />
-        <MenuItem
-          key="password"
-          :text="t('修改密码')"
-          icon="ant-design:key-outlined"
-        />
+        <MenuItem key="profile" :text="t('个人中心')" icon="ant-design:user-outlined" />
+        <MenuItem key="password" :text="t('修改密码')" icon="ant-design:key-outlined" />
         <MenuItem
           v-if="getUseLockPage"
           key="lock"
@@ -49,9 +41,9 @@
     </template>
   </Dropdown>
   <LockAction @register="register" />
-  
+
   <!-- 修改密码弹窗 -->
-  <PasswordModal v-model:visible="passwordVisible"/>
+  <PasswordModal v-model:visible="passwordVisible" />
 </template>
 <script lang="ts">
   // components
@@ -102,12 +94,12 @@
       // 判断是前台还是后台
       const antdvFrontType = computed(() => {
         return systemStore.antdvFrontType;
-      })
+      });
 
       // 显示的前后台类型
       const menuType = computed(() => {
-        return Number(localStorage.getItem('menuType'))
-      })
+        return Number(localStorage.getItem('menuType'));
+      });
 
       // 是否显示修改密码弹窗
       const passwordVisible = ref<boolean>(false);

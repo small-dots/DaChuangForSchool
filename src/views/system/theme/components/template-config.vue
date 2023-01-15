@@ -109,14 +109,14 @@
 
   defineExpose({
     openConfig,
-  })
+  });
 </script>
 
 <style lang="less" scoped>
-:deep(.myTransfer) {
-  .ant-transfer-list {
-    width: 240px;
-    height: 400px;
+  :deep(.myTransfer) {
+    .ant-transfer-list {
+      width: 240px;
+      height: 400px;
+    }
   }
-}
 </style>

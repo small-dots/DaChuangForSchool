@@ -5,7 +5,6 @@
  * @date 2021/6/11 14:22
  */
 export class GunsWebsocket {
-
   /**
    * 构造函数
    *
@@ -52,9 +51,9 @@ export class GunsWebsocket {
     this.webSocketInstance = new WebSocket(this.webSocketUrl);
 
     // 方法的返回是一个Promise对象，为了拿到这次会话的唯一id
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // 监听服务端接收到消息
-      this.webSocketInstance.onmessage = event => {
+      this.webSocketInstance.onmessage = (event) => {
         // 服务端返回的json
         let serverResponse = JSON.parse(event.data);
         // 第一次接收到消息，获取服务器返回的会话唯一标识

@@ -22,7 +22,11 @@
         <a-col :lg="3" :md="6" :sm="12" :xs="12" v-for="(item, index) in recentMenus" :key="index">
           <a-card hoverable :body-style="{ padding: 0 }">
             <router-link :to="item.antdvRouter" class="app-link-block">
-              <component class="app-link-icon" :is="$antIcons[item.antdvIcon]" v-show="item.antdvIcon"/>
+              <component
+                class="app-link-icon"
+                :is="$antIcons[item.antdvIcon]"
+                v-show="item.antdvIcon"
+              />
               <div class="app-link-title">{{ item.menuName }}</div>
             </router-link>
           </a-card>
@@ -74,7 +78,12 @@
           <a-row :gutter="16">
             <a-col :lg="8" :md="12" :sm="12" :xs="12">
               <a-card hoverable :body-style="{ padding: 0 }">
-                <a-card hoverable :body-style="{ padding: 0 }" class="statistic card-bg1" style="margin-bottom: 0;">
+                <a-card
+                  hoverable
+                  :body-style="{ padding: 0 }"
+                  class="statistic card-bg1"
+                  style="margin-bottom: 0"
+                >
                   <div>
                     <ApartmentOutlined class="app-link-icon" />&nbsp;&nbsp;&nbsp;<span
                       >部门总数：{{ orgInfo.currentDeptNum }}</span
@@ -85,7 +94,12 @@
             </a-col>
             <a-col :lg="8" :md="12" :sm="12" :xs="12">
               <a-card hoverable :body-style="{ padding: 0 }">
-                <a-card hoverable :body-style="{ padding: 0 }" class="statistic card-bg2" style="margin-bottom: 0;">
+                <a-card
+                  hoverable
+                  :body-style="{ padding: 0 }"
+                  class="statistic card-bg2"
+                  style="margin-bottom: 0"
+                >
                   <div>
                     <TeamOutlined class="app-link-icon" />&nbsp;&nbsp;&nbsp;<span
                       >人员总数：{{ orgInfo.currentCompanyPersonNum }}</span
@@ -198,9 +212,26 @@
 
   onMounted(() => {
     // 获取常用功能
-    HomeApi.getCommonFunctions().then((response) => {
-      recentMenus.value = response;
-    });
+    recentMenus.value = [
+      {
+        antdvIcon: 'UserOutlined',
+        antdvRouter: '/personal/info',
+        menuName: '题目中心',
+      },
+      {
+        antdvIcon: 'UserOutlined',
+        antdvRouter: '/personal/info',
+        menuName: '我的题目',
+      },
+      {
+        antdvIcon: 'UserOutlined',
+        antdvRouter: '/personal/info',
+        menuName: '元器件申请',
+      },
+    ];
+    // HomeApi.getCommonFunctions().then((response) => {
+    //   recentMenus.value = response;
+    // });
 
     // 获取企业概况数据
     HomeApi.orgInfoStat().then((response) => {
@@ -236,6 +267,7 @@
     text-align: right;
     flex-shrink: 0;
   }
+
   .workplace-count-group h2 {
     font-weight: 400;
   }

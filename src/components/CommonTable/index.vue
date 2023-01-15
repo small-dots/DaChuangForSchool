@@ -42,7 +42,7 @@
   </a-row>
 </template>
 
-<script lang=ts>
+<script lang="ts">
   import { defineComponent, onMounted, reactive, toRefs } from 'vue';
   import { defHttp } from '/@/utils/http/axios';
   export default defineComponent({

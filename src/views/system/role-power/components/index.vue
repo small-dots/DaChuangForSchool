@@ -16,37 +16,40 @@
     <!-- 角色权限 -->
     <role-power v-if="state.activeKey == 1" :resourceBizType="resourceBizType"></role-power>
     <!-- 管理员权限 -->
-    <sys-admin-power v-if="state.activeKey == 2" :resourceBizType="resourceBizType"></sys-admin-power>
+    <sys-admin-power
+      v-if="state.activeKey == 2"
+      :resourceBizType="resourceBizType"
+    ></sys-admin-power>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
-import RolePower from './role-power.vue';
-import SysAdminPower from './sysadmin-power.vue';
+  import { reactive } from 'vue';
+  import RolePower from './role-power.vue';
+  import SysAdminPower from './sysadmin-power.vue';
 
-const props = defineProps<{
+  const props = defineProps<{
     // 资源类型
-    resourceBizType: Number
-}>();
+    resourceBizType: Number;
+  }>();
 
-const state = reactive({
+  const state = reactive({
     activeKey: 1,
-})
+  });
 </script>
 
 <style scoped lang="less">
-.right {
-  height: calc(90vh - 108px);
-  overflow-y: auto;
-}
-.right-top {
-  margin-top: -10px;
-}
-:deep(.power-header .ant-card-body) {
-  padding: 0 24px;
-}
-:deep(.power-header .ant-tabs-top > .ant-tabs-nav) {
-  margin: 0;
-}
+  .right {
+    height: calc(90vh - 108px);
+    overflow-y: auto;
+  }
+  .right-top {
+    margin-top: -10px;
+  }
+  :deep(.power-header .ant-card-body) {
+    padding: 0 24px;
+  }
+  :deep(.power-header .ant-tabs-top > .ant-tabs-nav) {
+    margin: 0;
+  }
 </style>

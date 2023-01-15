@@ -43,7 +43,7 @@
       let uploading = false;
 
       // const { uploadUrl } = useGlobSetting();
-      
+
       const { t } = useI18n();
       const { prefixCls } = useDesign('tinymce-img-upload');
 
@@ -78,11 +78,11 @@
       const uploadUrl = computed(() => {
         let url: string = import.meta.env.VITE_GLOB_API_URL + FileUploadUrl + '?secretFlag=N';
         return url;
-      })
-      
+      });
+
       const headers = reactive({
         Authorization: userStore.getToken,
-      })
+      });
       return {
         headers,
         prefixCls,

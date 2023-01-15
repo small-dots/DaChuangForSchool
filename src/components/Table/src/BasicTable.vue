@@ -286,11 +286,14 @@
       }
 
       // 默认展开所有
-      watch(() => tableData.value, val => {
-        if (props.defaultExpandAllRows && props.isTreeTable) {
-          expandAll();
-        }
-      })
+      watch(
+        () => tableData.value,
+        (val) => {
+          if (props.defaultExpandAllRows && props.isTreeTable) {
+            expandAll();
+          }
+        },
+      );
 
       const tableAction: TableActionType = {
         reload,

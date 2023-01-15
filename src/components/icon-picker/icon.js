@@ -68,8 +68,8 @@ export default [
           'RadiusUpleftOutlined',
           'RadiusUprightOutlined',
           'FullscreenOutlined',
-          'FullscreenExitOutlined'
-        ]
+          'FullscreenExitOutlined',
+        ],
       },
       {
         title: '提示建议性',
@@ -97,8 +97,8 @@ export default [
           'ClockCircleOutlined',
           'WarningOutlined',
           'IssuesCloseOutlined',
-          'StopOutlined'
-        ]
+          'StopOutlined',
+        ],
       },
       {
         title: '编辑类图标',
@@ -135,8 +135,8 @@ export default [
           'UnorderedListOutlined',
           'RadiusSettingOutlined',
           'ColumnWidthOutlined',
-          'ColumnHeightOutlined'
-        ]
+          'ColumnHeightOutlined',
+        ],
       },
       {
         title: '数据类图标',
@@ -153,8 +153,8 @@ export default [
           'StockOutlined',
           'BoxPlotOutlined',
           'FundOutlined',
-          'SlidersOutlined'
-        ]
+          'SlidersOutlined',
+        ],
       },
       {
         title: '品牌和标识',
@@ -207,8 +207,8 @@ export default [
           'AlibabaOutlined',
           'YahooOutlined',
           'RedditOutlined',
-          'SketchOutlined'
-        ]
+          'SketchOutlined',
+        ],
       },
       {
         title: '网站通用图标',
@@ -450,10 +450,10 @@ export default [
           'WalletOutlined',
           'WhatsAppOutlined',
           'WifiOutlined',
-          'WomanOutlined'
-        ]
-      }
-    ]
+          'WomanOutlined',
+        ],
+      },
+    ],
   },
   {
     title: '实底风格',
@@ -479,8 +479,8 @@ export default [
           'UpSquareFilled',
           'DownSquareFilled',
           'LeftSquareFilled',
-          'RightSquareFilled'
-        ]
+          'RightSquareFilled',
+        ],
       },
       {
         title: '提示建议性',
@@ -499,8 +499,8 @@ export default [
           'CheckSquareFilled',
           'ClockCircleFilled',
           'WarningFilled',
-          'StopFilled'
-        ]
+          'StopFilled',
+        ],
       },
       {
         title: '编辑类图标',
@@ -510,17 +510,12 @@ export default [
           'DeleteFilled',
           'SnippetsFilled',
           'DiffFilled',
-          'HighlightFilled'
-        ]
+          'HighlightFilled',
+        ],
       },
       {
         title: '数据类图标',
-        icons: [
-          'PieChartFilled',
-          'BoxPlotFilled',
-          'FundFilled',
-          'SlidersFilled'
-        ]
+        icons: ['PieChartFilled', 'BoxPlotFilled', 'FundFilled', 'SlidersFilled'],
       },
       {
         title: '品牌和标识',
@@ -549,8 +544,8 @@ export default [
           'DribbbleSquareFilled',
           'InstagramFilled',
           'YuqueFilled',
-          'YahooFilled'
-        ]
+          'YahooFilled',
+        ],
       },
       {
         title: '网站通用图标',
@@ -703,10 +698,10 @@ export default [
           'VideoCameraFilled',
           'WalletFilled',
           'ZhihuCircleFilled',
-          'ZhihuSquareFilled'
-        ]
-      }
-    ]
+          'ZhihuSquareFilled',
+        ],
+      },
+    ],
   },
   {
     title: '双色风格',
@@ -722,8 +717,8 @@ export default [
           'UpSquareTwoTone',
           'DownSquareTwoTone',
           'LeftSquareTwoTone',
-          'RightSquareTwoTone'
-        ]
+          'RightSquareTwoTone',
+        ],
       },
       {
         title: '提示建议性',
@@ -742,8 +737,8 @@ export default [
           'CheckSquareTwoTone',
           'ClockCircleTwoTone',
           'WarningTwoTone',
-          'StopTwoTone'
-        ]
+          'StopTwoTone',
+        ],
       },
       {
         title: '编辑类图标',
@@ -753,23 +748,16 @@ export default [
           'DeleteTwoTone',
           'SnippetsTwoTone',
           'DiffTwoTone',
-          'HighlightTwoTone'
-        ]
+          'HighlightTwoTone',
+        ],
       },
       {
         title: '数据类图标',
-        icons: [
-          'PieChartTwoTone',
-          'BoxPlotTwoTone',
-          'FundTwoTone',
-          'SlidersTwoTone'
-        ]
+        icons: ['PieChartTwoTone', 'BoxPlotTwoTone', 'FundTwoTone', 'SlidersTwoTone'],
       },
       {
         title: '品牌和标识',
-        icons: [
-          'Html5TwoTone'
-        ]
+        icons: ['Html5TwoTone'],
       },
       {
         title: '网站通用图标',
@@ -888,9 +876,9 @@ export default [
           'UnlockTwoTone',
           'UsbTwoTone',
           'VideoCameraTwoTone',
-          'WalletTwoTone'
-        ]
-      }
-    ]
-  }
-]
+          'WalletTwoTone',
+        ],
+      },
+    ],
+  },
+];
