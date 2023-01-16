@@ -47,7 +47,7 @@
                   <template #icon>
                     <plus-outlined />
                   </template>
-                  <span>新建</span>
+                  <span>发布通知</span>
                 </a-button>
               </a-space>
             </div>
