@@ -1,3 +1,4 @@
+<!-- 我的项目（学生） -->
 <template>
   <div class="guns-body">
     <a-row :gutter="16">
@@ -92,7 +93,7 @@
     </a-row>
 
     <!-- 编辑弹窗 -->
-    <title-edit
+    <project-edit
       v-model:visible="showEdit"
       :data="current"
       @done="reload"
@@ -106,7 +107,7 @@
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table';
   import { onMounted, reactive, ref, createVNode } from 'vue';
-  import TitleEdit from './components/title-edit.vue';
+  import ProjectEdit from './components/project-edit.vue';
   import { UserApi } from '/@/api/system/user/UserApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
