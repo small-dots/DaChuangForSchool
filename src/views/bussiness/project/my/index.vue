@@ -42,13 +42,7 @@
               :api="UserApi.getUserPages"
               :where="where"
               :columns="columns"
-              showTableSetting
               rowKey="userId"
-              :rowSelection="{
-                type: 'checkbox',
-                selectedRowKeys: checkedKeys,
-                onChange: onSelectChange,
-              }"
             >
               <template #toolbar>
                 <div class="table-toolbar">
@@ -57,13 +51,7 @@
                       <template #icon>
                         <plus-outlined />
                       </template>
-                      <span>发布</span>
-                    </a-button>
-                    <a-button danger @click="removeBatch">
-                      <template #icon>
-                        <delete-outlined />
-                      </template>
-                      <span>批量删除</span>
+                      <span>新建项目</span>
                     </a-button>
                   </a-space>
                 </div>
@@ -75,14 +63,13 @@
                 <!-- table操作栏按钮 -->
                 <template v-else-if="column.key === 'action'">
                   <a-space>
+                    <a @click="openView(record)">查看</a>
+                    <a-divider type="vertical" />
                     <a @click="openEdit(record)">编辑</a>
                     <a-divider type="vertical" />
-                    <a @click="lock(record)">锁定</a>
-                    <a-divider type="vertical" />
-                    <a-popconfirm title="确定要删除此用户吗？" @confirm="remove(record)">
+                    <a-popconfirm title="确定要删除此项目吗？" @confirm="remove(record)">
                       <a class="guns-text-danger">删除</a>
                     </a-popconfirm>
-                    <a-divider type="vertical" />
                   </a-space>
                 </template>
               </template>
@@ -97,18 +84,19 @@
       v-model:visible="showEdit"
       :data="current"
       @done="reload"
+      :isView="isView"
       :defaultKey="defaultKey"
       v-if="showEdit"
-      ref="userEdit"
+      ref="ProjectEdit"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { BasicTable } from '/@/components/Table';
+  import { BasicTable } from '/@/components/Table/index.ts';
   import { onMounted, reactive, ref, createVNode } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
-  import { UserApi } from '/@/api/system/user/UserApi';
+  import { UserApi } from '/@/api/system/user/UserApi.ts';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
 
@@ -118,13 +106,13 @@
     account: '',
     realName: '',
   });
-
+  const isView = ref<boolean>(false);
   //ref
   const tableRef = ref<any>(null);
   //表格配置
   const columns = ref<string[]>([
     {
-      title: '题目名称',
+      title: '项目名称',
       dataIndex: 'account',
     },
     {
@@ -132,14 +120,14 @@
       dataIndex: 'realName',
     },
     {
-      title: '状态',
+      title: '团队成员',
       key: 'status',
       dataIndex: 'status',
       align: 'center',
     },
 
     {
-      title: '发布日期',
+      title: '创建日期',
       dataIndex: 'phone',
     },
     {
@@ -150,9 +138,6 @@
       hideInSetting: true,
     },
   ]);
-
-  // 表格多选选中列表
-  const checkedKeys = ref<Array<string | number>>([]);
 
   // 是否显示弹框
   const showEdit = ref<boolean>(false);
@@ -167,7 +152,6 @@
 
   // 查询
   const reload = () => {
-    checkedKeys.value = [];
     tableRef.value.reload({ page: 1 });
   };
 
@@ -217,35 +201,13 @@
     showEdit.value = true;
   };
 
-  /**
-   * 批量删除
-   * @author: nxy
-   * @Date: 2022-10-09 16:56:28
-   */
-  const removeBatch = () => {
-    showEdit.value = false;
-    if (!checkedKeys.value.length) {
-      message.error('请至少选择一条数据');
-      return;
-    }
-    Modal.confirm({
-      title: '提示',
-      content: '确定要删除选中的用户吗?',
-      icon: createVNode(ExclamationCircleOutlined),
-      maskClosable: true,
-      onOk: async () => {
-        let params = checkedKeys.value;
-        const result = await UserApi.batchDeleteUser({ userIds: params });
-        message.success(result.message);
-        reload();
-      },
-    });
+  const openView = (row: any) => {
+    defaultKey.value = '1';
+    current.value = row;
+    isView.value = true;
+    showEdit.value = true;
   };
 
-  // 表格选中改变
-  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
-    checkedKeys.value = selectedRowKeys;
-  };
   /**
    * 删除单个
    *
@@ -256,11 +218,6 @@
     const result = await UserApi.deleteUser({ userId: row.userId });
     message.success(result.message);
     reload();
-  };
-
-  // 锁定点击
-  const lock = (row: any) => {
-    console.log('题目锁定', row);
   };
 </script>
 

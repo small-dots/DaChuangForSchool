@@ -4,37 +4,72 @@
     <common-drawer
       :width="1200"
       :visible="visible"
-      title="编辑题目"
+      title="项目信息编辑"
+      :activeKey="activeKey"
+      :tabList="tabList"
+      :isShowTab="true"
+      @tabChange="tabChange"
       @close="updateVisible(false)"
       v-if="isUpdate"
     >
       <template #extra>
         <div style="height: 32px">
-          <a-button type="primary" @click="save" :loading="loading" v-show="activeKey == '1'"
-            >确定</a-button
-          >
+          <a-button type="primary" @click="save" :loading="loading">确认修改</a-button>
         </div>
       </template>
       <!-- 基本信息 -->
       <project-form
+        v-if="activeKey == '1'"
         v-model:form="state.form"
         ref="form"
         :rules="rules"
         :isUpdate="isUpdate"
-        v-show="activeKey == '1'"
       />
+      <!-- 过程文档 -->
+      <docs v-if="activeKey == '2'" :data="data" ref="docs" />
+    </common-drawer>
+
+    <!-- 查看 -->
+    <common-drawer
+      :width="1200"
+      :visible="visible"
+      title="项目信息查看"
+      :isShowTab="true"
+      :activeKey="activeKey"
+      :tabList="tabList"
+      @tabChange="tabChange"
+      @close="updateVisible(false)"
+      v-if="isView"
+    >
+      <!-- 基本信息 -->
+      <project-form
+        v-if="activeKey == '1'"
+        v-model:form="state.form"
+        ref="form"
+        :rules="rules"
+        :isUpdate="isUpdate"
+      />
+      <!-- 过程文档 -->
+      <docs v-if="activeKey == '2'" :data="data" ref="docs" />
     </common-drawer>
 
     <!-- 新增 -->
     <common-drawer
       :width="1200"
-      v-if="!isUpdate"
+      v-if="!isUpdate && !isView"
       :visible="visible"
-      title="发布题目"
+      title="创建项目"
       @close="updateVisible(false)"
     >
-      <project-form v-model:form="state.form" ref="form" :rules="rules"
-    /></common-drawer>
+      <template #extra>
+        <div style="height: 32px">
+          <a-button type="primary" @click="save" :loading="loading" v-show="activeKey == '1'"
+            >确认创建</a-button
+          >
+        </div>
+      </template>
+      <project-form v-model:form="state.form" ref="form" :rules="rules" />
+    </common-drawer>
   </div>
 </template>
 
@@ -44,7 +79,8 @@
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
   import { emailReg, phoneReg } from '/@/utils/common/util';
   import FieldExpandForm from '/@/components/FieldExpand/FieldExpandForm.vue';
-  import PrjectForm from './project-form.vue';
+  import ProjectForm from './project-form.vue';
+  import Docs from './docs.vue';
   import { nextTick, onMounted, reactive, ref, watch } from 'vue';
 
   const props = defineProps<{
@@ -52,6 +88,7 @@
     visible: Boolean;
     // 修改回显的数据
     data?: Object;
+    isView?: Boolean;
     // 默认选中tab
     defaultKey: String;
   }>();
@@ -64,7 +101,8 @@
   const state = reactive({
     form: {},
   });
-
+  // 默认选中
+  const activeKey = ref<string>('1');
   // 表单验证规则
   const rules = reactive({
     account: [{ required: true, message: '请输入用户账号', type: 'string', trigger: 'blur' }],
@@ -92,25 +130,19 @@
   const loading = ref<boolean>(false);
   // 是否是修改
   const isUpdate = ref<boolean>(false);
-  // 角色列表
-  const roleList = ref<string[]>([]);
-  // tab栏列表
-  const tabList = ref<string[]>([
+  const isView = ref<boolean>(false);
+  // ref
+  const form = ref(null);
+  const tabList = ref([
     {
       key: '1',
       name: '基本信息',
     },
     {
       key: '2',
-      name: '分配角色',
+      name: '过程文档',
     },
   ]);
-  // 默认选中
-  const activeKey = ref<string>('1');
-
-  // ref
-  const form = ref(null);
-
   onMounted(() => {
     init();
   });
@@ -118,18 +150,27 @@
   // 初始化
   const init = () => {
     if (props.visible) {
-      if (props.data) {
-        console.log('props.data', props.data);
-        isUpdate.value = true;
+      if (props.isView) {
+        isView.value = true;
       } else {
-        state.form = {};
-        isUpdate.value = false;
+        if (props.data) {
+          isUpdate.value = true;
+        } else {
+          state.form = {};
+          isUpdate.value = false;
+        }
       }
-
       // 清空校验
-      if (props.defaultKey == '1' && form.value.$refs.formRef) {
-        form.value.$refs.formRef.clearValidate();
+      if (props.defaultKey == '1' && form.value.$refs.ProjectFormRef) {
+        form.value.$refs.ProjectFormRef.clearValidate();
       }
+    }
+  };
+  // tab切换
+  const tabChange = (key: string) => {
+    activeKey.value = key;
+    if (key == '1') {
+      state.form = Object.assign({}, props.data);
     }
   };
 
@@ -139,15 +180,6 @@
       init();
     },
   );
-
-  // tab切换
-  const tabChange = (key: string) => {
-    activeKey.value = key;
-    if (key == '1') {
-      state.form = Object.assign({}, props.data);
-    }
-  };
-
   /**
    * 更新编辑用户界面的弹框是否显示
    *
@@ -162,7 +194,7 @@
   // 保存
   const save = () => {
     // 校验表单
-    form.value.$refs.formRef.validate().then(async (valid) => {
+    form.value.$refs.ProjectFormRef.validate().then(async (valid) => {
       if (valid) {
         // 修改加载框为正在加载
         loading.value = true;

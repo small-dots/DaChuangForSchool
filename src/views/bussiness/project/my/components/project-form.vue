@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-form
-      ref="formRef"
+      ref="ProjectFormRef"
       :model="form"
       :rules="rules"
       :label-col="{ md: { span: 4 }, sm: { span: 24 } }"
@@ -9,19 +9,12 @@
     >
       <a-row :gutter="8">
         <a-col :md="24" :sm="24" :xs="24">
-          <a-form-item label="题目名称:" name="account">
+          <a-form-item label="项目名称:" name="account">
             <a-input
               v-model:value="form.account"
-              placeholder="请输入题目名称"
+              placeholder="请输入项目名称"
               allow-clear
               autocomplete="off"
-            />
-          </a-form-item>
-          <a-form-item label="指导教师:" name="password">
-            <a-input-password
-              v-model:value="form.password"
-              placeholder="请输入登录密码"
-              autocomplete="new-password"
             />
           </a-form-item>
           <a-form-item label="课题背景:" name="password">
@@ -30,8 +23,35 @@
           <a-form-item label="具体内容:" name="orgId">
             <tinymce v-model:value="form.jtnr" />
           </a-form-item>
-          <a-form-item label="基本要求:" name="positionId">
-            <tinymce v-model:value="form.jbtq" />
+          <a-form-item label="成员邀请:" name="orgId">
+            <a-select
+              v-model:value="form.partters"
+              show-search
+              placeholder="输入学生姓名"
+              mode="multiple"
+              :default-active-first-option="false"
+              :show-arrow="true"
+              :filter-option="false"
+              not-found-content="未找到该用户"
+              :options="data"
+              @search="handleSearch"
+              @change="handleChange"
+            />
+          </a-form-item>
+          <a-form-item label="指教教师:" name="orgId">
+            <a-select
+              v-model:value="form.teacher"
+              show-search
+              placeholder="输入教师姓名"
+              style="width: 200px"
+              :default-active-first-option="false"
+              :show-arrow="false"
+              :filter-option="false"
+              :not-found-content="null"
+              :options="data"
+              @search="handleSearch"
+              @change="handleChange"
+            />
           </a-form-item>
           <a-form-item label="图片:" name="positionId">
             <a-upload
@@ -124,6 +144,7 @@
             url: 'http://www.baidu.com/zzz.png',
           },
         ],
+        data: [],
       });
 
       const fileHandleChange = ({ file, fileList }) => {
@@ -139,10 +160,53 @@
       const getPositionList = async () => {
         state.positionList = await UserApi.getPositionDropList();
       };
+      const handleSearch = (val) => {
+        if (val) {
+          fetch(val, (d) => {
+            state.data = d;
+          });
+        }
+      };
+      const handleChange = (val) => {
+        form.patters = val;
+      };
+      let timeout;
+      let currentValue = '';
+      const fetch = (query, callback) => {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
+        currentValue = query;
+        function getStudentList() {
+          // 获取学生列表
+          UserApi.getUserPages({
+            pageSize: 99999,
+            realName: query,
+            pageNo: 1,
+          }).then((res) => {
+            if (currentValue === query) {
+              const result = res?.rows || [];
+              console.log('result', res);
+              const data = [];
+              result.forEach((r) => {
+                data.push({
+                  value: r.userId,
+                  label: r.realName,
+                });
+              });
+              callback(data);
+            }
+          });
+        }
+        timeout = setTimeout(getStudentList, 300);
+      };
 
       return {
         ...toRefs(state),
         getPositionList,
+        handleSearch,
+        handleChange,
       };
     },
   });

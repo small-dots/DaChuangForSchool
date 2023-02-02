@@ -33,6 +33,13 @@
       title="发布题目"
       @close="updateVisible(false)"
     >
+      <template #extra>
+        <div style="height: 32px">
+          <a-button type="primary" @click="save" :loading="loading" v-show="activeKey == '1'"
+            >确定</a-button
+          >
+        </div>
+      </template>
       <title-form v-model:form="state.form" ref="form" :rules="rules"
     /></common-drawer>
   </div>
