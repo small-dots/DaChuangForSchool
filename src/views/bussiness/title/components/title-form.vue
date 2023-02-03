@@ -11,27 +11,26 @@
         <a-col :md="24" :sm="24" :xs="24">
           <a-form-item label="题目名称:" name="account">
             <a-input
-              v-model:value="form.account"
+              v-model:value="form.projectTitle"
               placeholder="请输入题目名称"
               allow-clear
               autocomplete="off"
             />
           </a-form-item>
           <a-form-item label="指导教师:" name="password">
-            <a-input-password
-              v-model:value="form.password"
-              placeholder="请输入登录密码"
-              autocomplete="new-password"
-            />
+            <a-input v-model:value="form.teacherName" placeholder="请输入指导教师" />
+          </a-form-item>
+          <a-form-item label="指导教师联系方式:" name="password">
+            <a-input v-model:value="form.teacherPhone" placeholder="请输入指导教师联系方式" />
           </a-form-item>
           <a-form-item label="课题背景:" name="password">
-            <tinymce v-model:value="form.ktbj" />
+            <tinymce v-model:value="form.projectBackground" />
           </a-form-item>
           <a-form-item label="具体内容:" name="orgId">
-            <tinymce v-model:value="form.jtnr" />
+            <tinymce v-model:value="form.projectContent" />
           </a-form-item>
           <a-form-item label="基本要求:" name="positionId">
-            <tinymce v-model:value="form.jbtq" />
+            <tinymce v-model:value="form.projectRequire" />
           </a-form-item>
           <a-form-item label="图片:" name="positionId">
             <a-upload

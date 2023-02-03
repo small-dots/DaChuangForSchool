@@ -48,6 +48,7 @@
 <script lang="ts" setup>
   import { message } from 'ant-design-vue';
   import { UserApi } from '/@/api/system/user/UserApi';
+  import { TitleApi } from '/@/api/dc/title/TitleApi';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
   import { emailReg, phoneReg } from '/@/utils/common/util';
   import FieldExpandForm from '/@/components/FieldExpand/FieldExpandForm.vue';
@@ -180,7 +181,7 @@
         if (isUpdate.value) {
           result = UserApi.editUser(state.form);
         } else {
-          result = UserApi.addUser(state.form);
+          result = TitleApi.addTitle(state.form);
         }
         result
           .then((result) => {

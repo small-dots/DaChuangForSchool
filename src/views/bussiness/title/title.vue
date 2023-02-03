@@ -23,7 +23,12 @@
                 </a-form-item>
                 <a-form-item class="ele-text-center">
                   <a-space>
-                    <a-button type="primary" @click="reload">查询</a-button>
+                    <a-button
+                      v-if="per('TITLE_CENTER_SEARCH_BUTTON')"
+                      type="primary"
+                      @click="reload"
+                      >查询</a-button
+                    >
                     <a-button @click="reset">重置</a-button>
                   </a-space>
                 </a-form-item>
@@ -52,13 +57,21 @@
               <template #toolbar>
                 <div class="table-toolbar">
                   <a-space>
-                    <a-button type="primary" @click="openEdit()">
+                    <a-button
+                      v-if="per('TITLE_CENTER_ADD_BUTTON')"
+                      type="primary"
+                      @click="openEdit()"
+                    >
                       <template #icon>
                         <plus-outlined />
                       </template>
                       <span>发布</span>
                     </a-button>
-                    <a-button danger @click="removeBatch">
+                    <a-button
+                      v-if="per('TITLE_CENTER_BATCH_DEL_BUTTON')"
+                      danger
+                      @click="removeBatch"
+                    >
                       <template #icon>
                         <delete-outlined />
                       </template>
@@ -68,18 +81,15 @@
                 </div>
               </template>
               <template #bodyCell="{ column, record }">
-                <template v-if="column.dataIndex == 'realName'">
-                  <a @click="openEdit(record)">{{ record.realName }}</a>
-                </template>
                 <!-- table操作栏按钮 -->
-                <template v-else-if="column.key === 'action'">
+                <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="openEdit(record)">编辑</a>
+                    <a @click="openEdit(record)" v-if="per('TITLE_CENTER_UPDATE_BUTTON')">编辑</a>
                     <a-divider type="vertical" />
-                    <a @click="lock(record)">锁定</a>
+                    <a @click="lock(record)" v-if="per('TITLE_CENTER_LOCK_BUTTON')">锁定</a>
                     <a-divider type="vertical" />
                     <a-popconfirm title="确定要删除此用户吗？" @confirm="remove(record)">
-                      <a class="guns-text-danger">删除</a>
+                      <a class="guns-text-danger" v-if="per('TITLE_CENTER_DEL_BUTTON')">删除</a>
                     </a-popconfirm>
                     <a-divider type="vertical" />
                   </a-space>
@@ -108,6 +118,7 @@
   import { onMounted, reactive, ref, createVNode } from 'vue';
   import TitleEdit from './components/title-edit.vue';
   import { UserApi } from '/@/api/system/user/UserApi';
+  import { TitleAPi } from '/@/api/dc/title/TitleApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
 
@@ -164,6 +175,13 @@
 
   onMounted(async () => {});
 
+  const per = (code) => {
+    const buttons = JSON.parse(localStorage.getItem('buttonCodes') as string);
+    if (buttons?.includes(code)) {
+      return true;
+    }
+    return false;
+  };
   // 查询
   const reload = () => {
     checkedKeys.value = [];
@@ -210,7 +228,7 @@
   };
 
   // 打开新增编辑弹框
-  const openEdit = (row: any) => {
+  const openEdit = (row?: any) => {
     defaultKey.value = '1';
     current.value = row;
     showEdit.value = true;

@@ -110,6 +110,8 @@ export const useUserStore = defineStore({
         const { goHome = true, mode, ...loginParams } = params;
         const data: any = await loginApi(loginParams, mode);
         localStorage.setItem('menuType', data.loginUser.menuType);
+        localStorage.setItem('UserInfo', JSON.stringify(data.loginUser));
+        localStorage.setItem('buttonCodes', JSON.stringify(data.loginUser.buttonCodes));
         const { token } = data;
 
         // save token
