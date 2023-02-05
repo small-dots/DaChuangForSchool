@@ -67,6 +67,12 @@
                       </template>
                       <span>发起申请</span>
                     </a-button>
+                    <a-button type="primary" @click="openEdit()">
+                      <template #icon>
+                        <CloudUploadOutlined />
+                      </template>
+                      <span>申请单上传</span>
+                    </a-button>
                   </a-space>
                 </div>
               </template>
@@ -76,6 +82,9 @@
                   <a-space>
                     <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
                       >审核</a
+                    >
+                    <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
+                      >流程打印</a
                     >
                     <a-divider type="vertical" />
                     <a @click="openEdit(record)" v-if="per('COMPONENT_APPLY_SEARCH_BUTTON')"
