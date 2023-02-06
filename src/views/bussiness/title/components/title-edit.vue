@@ -50,7 +50,7 @@
   import { UserApi } from '/@/api/system/user/UserApi';
   import { TitleApi } from '/@/api/dc/title/TitleApi';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
-  import { emailReg, phoneReg } from '/@/utils/common/util';
+  import { phoneReg } from '/@/utils/common/util';
   import FieldExpandForm from '/@/components/FieldExpand/FieldExpandForm.vue';
   import TitleForm from './title-form.vue';
   import { nextTick, onMounted, reactive, ref, watch } from 'vue';
@@ -75,26 +75,23 @@
 
   // 表单验证规则
   const rules = reactive({
-    account: [{ required: true, message: '请输入用户账号', type: 'string', trigger: 'blur' }],
-    password: [{ required: true, message: '请输入密码', type: 'string', trigger: 'blur' }],
-    repeatPassword: [
-      { required: true, message: '请输入重复密码', type: 'string', trigger: 'blur' },
-      {
-        type: 'string',
-        trigger: 'blur',
-        validator: async (rule, value, callback) => {
-          const password = state.form.password;
-          if (value && password !== value) {
-            return Promise.reject('两次密码输入不一致');
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
+    projectTitle: [{ required: true, message: '请输入题目名称', type: 'string', trigger: 'blur' }],
+    teacherName: [
+      { required: true, message: '请输入指导老师姓名', type: 'string', trigger: 'blur' },
     ],
-    email: [{ pattern: emailReg, message: '邮箱格式不正确', type: 'string', trigger: 'blur' }],
-    phone: [{ pattern: phoneReg, message: '手机号格式不正确', type: 'string', trigger: 'blur' }],
-    orgId: [{ required: true, message: '请选择组织机构', type: 'string', trigger: 'blur' }],
+    teacherPhone: [
+      { required: true, message: '请输入指导老师电话', type: 'string', trigger: 'blur' },
+      { pattern: phoneReg, message: '手机号格式不正确', type: 'string', trigger: 'blur' },
+    ],
+    projectBackground: [
+      { required: true, message: '请输入题目背景', type: 'string', trigger: 'blur' },
+    ],
+    projectContent: [
+      { required: true, message: '请输入题目具体内容', type: 'string', trigger: 'blur' },
+    ],
+    projectRequire: [
+      { required: true, message: '请输入题目基本要求', type: 'string', trigger: 'blur' },
+    ],
   });
   // 提交状态
   const loading = ref<boolean>(false);
@@ -102,17 +99,6 @@
   const isUpdate = ref<boolean>(false);
   // 角色列表
   const roleList = ref<string[]>([]);
-  // tab栏列表
-  const tabList = ref<string[]>([
-    {
-      key: '1',
-      name: '基本信息',
-    },
-    {
-      key: '2',
-      name: '分配角色',
-    },
-  ]);
   // 默认选中
   const activeKey = ref<string>('1');
 
@@ -157,7 +143,7 @@
   };
 
   /**
-   * 更新编辑用户界面的弹框是否显示
+   * 更新编辑题目界面的弹框是否显示
    *
    * @param value true-显示，false-隐藏
    * @author fengshuonan
@@ -177,10 +163,11 @@
 
         let result;
 
-        // 执行编辑或修改用户方法
+        // 执行编辑或修改题目方法
         if (isUpdate.value) {
           result = UserApi.editUser(state.form);
         } else {
+          console.log(state);
           result = TitleApi.addTitle(state.form);
         }
         result
@@ -191,7 +178,7 @@
             // 提示添加成功
             message.success(result.message);
 
-            // 如果是新增用户，则form表单置空
+            // 如果是新增题目，则form表单置空
             if (!isUpdate.value) {
               state.form = {};
             }

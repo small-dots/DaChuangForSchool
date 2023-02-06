@@ -1,0 +1,6 @@
+<template>
+  <div>大</div>
+</template>
+
+<script setup lang="ts"></script>
+<style lang="scss" scoped></style>

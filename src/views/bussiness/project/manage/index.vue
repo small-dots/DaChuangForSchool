@@ -41,11 +41,11 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="openView(record)">成员</a>
+                    <a @click="viewPattner(record)">查看成员</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)">编辑</a>
+                    <a @click="openEdit(record)">设置</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)">附件</a>
+                    <a @click="openViewDocs(record)">附件</a>
                   </a-space>
                 </template>
               </template>
@@ -172,13 +172,19 @@
 
   // 打开新增编辑弹框
   const openEdit = (row: any) => {
-    defaultKey.value = '1';
+    defaultKey.value = '3';
     current.value = row;
     showEdit.value = true;
   };
-
-  const openView = (row: any) => {
-    defaultKey.value = '1';
+  // 查看过程文档
+  const openViewDocs = (row: any) => {
+    defaultKey.value = '2';
+    current.value = row;
+    isView.value = true;
+    showEdit.value = true;
+  };
+  // 查看成员
+  const viewPattner = (row: any) => {
     current.value = row;
     isView.value = true;
     showEdit.value = true;
