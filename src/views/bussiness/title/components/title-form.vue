@@ -9,9 +9,9 @@
     >
       <a-row :gutter="8">
         <a-col :md="24" :sm="24" :xs="24">
-          <a-form-item label="题目名称:" name="projectTitle">
+          <a-form-item label="题目名称:" name="titleTitle">
             <a-input
-              v-model:value="form.projectTitle"
+              v-model:value="form.titleTitle"
               placeholder="请输入题目名称"
               allow-clear
               autocomplete="off"
@@ -23,14 +23,14 @@
           <a-form-item label="指导教师联系方式:" name="teacherPhone">
             <a-input v-model:value="form.teacherPhone" placeholder="请输入指导教师联系方式" />
           </a-form-item>
-          <a-form-item label="课题背景:" name="projectBackground">
-            <tinymce v-model:value="form.projectBackground" />
+          <a-form-item label="课题背景:" name="titleBackground">
+            <tinymce v-model:value="form.titleBackground" />
           </a-form-item>
-          <a-form-item label="具体内容:" name="projectContent">
-            <tinymce v-model:value="form.projectContent" />
+          <a-form-item label="具体内容:" name="titleContent">
+            <tinymce v-model:value="form.titleContent" />
           </a-form-item>
-          <a-form-item label="基本要求:" name="projectRequire">
-            <tinymce v-model:value="form.projectRequire" />
+          <a-form-item label="基本要求:" name="titleRequire">
+            <tinymce v-model:value="form.titleRequire" />
           </a-form-item>
           <a-form-item label="图片:" name="positionId">
             <a-upload

@@ -43,7 +43,7 @@
             <BasicTable
               :canResize="false"
               ref="tableRef"
-              :api="UserApi.getUserPages"
+              :api="TitleApi.getTitlePages"
               :where="where"
               :columns="columns"
               showTableSetting
@@ -118,13 +118,12 @@
   import { onMounted, reactive, ref, createVNode } from 'vue';
   import TitleEdit from './components/title-edit.vue';
   import { UserApi } from '/@/api/system/user/UserApi';
-  import { TitleAPi } from '/@/api/dc/title/TitleApi';
+  import { TitleApi } from '/@/api/dc/title/TitleApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
 
   // 搜索数据
   const where = reactive({
-    orgId: '',
     account: '',
     realName: '',
   });
@@ -132,7 +131,7 @@
   //ref
   const tableRef = ref<any>(null);
   //表格配置
-  const columns = ref<string[]>([
+  const columns = ref([
     {
       title: '题目名称',
       dataIndex: 'account',
