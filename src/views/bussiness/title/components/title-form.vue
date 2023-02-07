@@ -17,8 +17,18 @@
               autocomplete="off"
             />
           </a-form-item>
-          <a-form-item label="指导教师:" name="teacherName">
-            <a-input v-model:value="form.teacherName" placeholder="请输入指导教师" />
+          <a-form-item v-if="isSuper" label="指导教师:" name="teacherName">
+            <a-transfer
+              :data-source="userList"
+              show-search
+              :list-style="{
+                width: '40%',
+                height: '300px',
+              }"
+              :targetKeys="targetKeys"
+              :render="(item) => item.title"
+              @change="handleChange"
+            />
           </a-form-item>
           <a-form-item label="指导教师联系方式:" name="teacherPhone">
             <a-input v-model:value="form.teacherPhone" placeholder="请输入指导教师联系方式" />
@@ -40,7 +50,7 @@
               list-type="picture"
               v-model:file-list="form.imageList"
               :headers="headers"
-              @change="afterUpload"
+              @change="afterUploadImage"
             >
               <a-button type="primary">
                 <template #icon>
@@ -57,7 +67,7 @@
               :action="fileUploadUrl"
               v-model:file-list="form.fileList"
               :headers="headers"
-              @change="afterUpload"
+              @change="afterUploadFile"
             >
               <a-button>
                 <upload-outlined />
@@ -77,18 +87,26 @@
   import { Tinymce } from '/@/components/Tinymce/index';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
-
+  import { message } from 'ant-design-vue';
   const props = defineProps({
     form: {
       type: Object,
       default: () => ({}),
+    },
+    userList: {
+      type: Array,
+      default: () => [],
+    },
+    targetKeys: {
+      type: Array,
+      default: () => [],
     },
     rules: Object,
     // 新增还是编辑
     isUpdate: Boolean,
   });
   const userStore = useUserStore();
-
+  const isSuper = ref(false);
   // token
   const token = computed(() => {
     return userStore.getToken;
@@ -100,22 +118,33 @@
     Authorization: token.value,
   });
   /**
-   * 上传成功的回调
-   *
-   * @author fengshuonan
-   * @date 2021/4/2 17:03
+   * 图片上传成功的回调
    */
-  const afterUpload = ({ file }) => {
-    console.log(file);
+  const afterUploadImage = ({ file }) => {
     if (file.response) {
       message.success('上传成功');
     }
   };
-  const fileHandleChange = ({ file, fileList }) => {
-    if (file.status !== 'uploading') {
-      console.log(file, fileList);
+  /**
+   * 文件上传成功的回调
+   */
+  const afterUploadFile = ({ file }) => {
+    if (file.response) {
+      message.success('上传成功');
     }
   };
+  const emits = defineEmits(['handleChange']);
+
+  /**
+   * 选中人员时的监听
+   */
+  const handleChange = (targetKeys) => {
+    emits('handleChange', targetKeys);
+  };
+  onMounted(() => {
+    const userinfo = JSON.parse(localStorage.getItem('UserInfo'));
+    isSuper.value = userinfo.superAdmin;
+  });
 </script>
 
 <style lang="less" scoped>

@@ -4,13 +4,15 @@
       :visible="visible"
       :forceRender="true"
       :maskClosable="false"
-      title="元器件申请"
+      title="元器件申请表打印"
       width="40%"
+      okText="打印"
       :body-style="{ paddingBottom: '8px' }"
       @update:visible="updateVisible"
       @ok="onSubmit"
     >
       <a-form
+        id="print-target"
         ref="formRef"
         :model="formState"
         :rules="rules"
@@ -35,44 +37,20 @@
         <a-form-item label="项目负责人" name="resource">
           <a-input v-model:value="formState.name" disabled="true" />
         </a-form-item>
-        <a-form-item v-if="!isReview" label="申请单模板" name="desc">
-          <a-button type="link">申请单模板下载</a-button>
-        </a-form-item>
         <a-form-item label="附件" name="desc">
           <a-upload
             action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
             :multiple="true"
             :file-list="fileList"
             @change="handleChange"
-          >
-            <a-button v-if="!isReview">
-              <upload-outlined />
-              申请单上传
-            </a-button>
-          </a-upload>
+          />
         </a-form-item>
       </a-form>
-      <a-divider v-if="isReview" />
-      <a-descriptions v-if="isReview" title="审核信息" :column="1">
-        <a-descriptions-item label="审核结果"
-          ><a-radio-group v-model:value="reviewResult">
-            <a-radio :value="1">同意</a-radio>
-            <a-radio :value="2">拒绝</a-radio>
-          </a-radio-group></a-descriptions-item
-        >
-        <a-descriptions-item v-if="isSuper && isReview" label="是否需要复核"
-          ><a-radio-group v-model:value="reviewResult">
-            <a-radio :value="1">是</a-radio>
-            <a-radio :value="2">否</a-radio>
-          </a-radio-group></a-descriptions-item
-        >
-        <a-descriptions-item label="审核意见"
-          ><a-textarea
-            v-model:value="reviewDesc"
-            placeholder="输入您的审核意见"
-            :auto-size="{ minRows: 2, maxRows: 5 }"
-        /></a-descriptions-item>
-      </a-descriptions>
+      <a-divider />
+      <div class="review_container">
+        <div class="title">审核信息</div>
+        <div class="list"></div>
+      </div>
     </a-modal>
   </div>
 </template>
@@ -80,6 +58,7 @@
 <script setup lang="ts">
   import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
   import { reactive, ref, toRaw, UnwrapRef, onMounted } from 'vue';
+  import print from 'vue3-print-nb';
   interface FormState {
     name: string | undefined;
     phone: string | number | undefined;
@@ -207,4 +186,18 @@
   };
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+  .review_container {
+    margin-bottom: 20px;
+  }
+  .review_container .title {
+    flex: auto;
+    overflow: hidden;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1.5715;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>

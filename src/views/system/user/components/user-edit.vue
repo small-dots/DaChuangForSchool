@@ -96,6 +96,7 @@
   const rules = reactive({
     account: [{ required: true, message: '请输入用户账号', type: 'string', trigger: 'blur' }],
     password: [{ required: true, message: '请输入密码', type: 'string', trigger: 'blur' }],
+    realName: [{ required: true, message: '请输入用户姓名', type: 'string', trigger: 'blur' }],
     repeatPassword: [
       { required: true, message: '请输入重复密码', type: 'string', trigger: 'blur' },
       {

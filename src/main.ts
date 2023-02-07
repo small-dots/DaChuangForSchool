@@ -20,6 +20,7 @@ import * as antIcons from '@ant-design/icons-vue';
 import Antd from 'ant-design-vue'; //引入组件库
 import 'ant-design-vue/dist/antd.less';
 import permission from '/@/utils/permission';
+import print from 'vue3-print-nb';
 
 if (isDevMode()) {
   import('ant-design-vue/es/style/index.less');
@@ -66,7 +67,7 @@ async function bootstrap() {
   // await router.isReady();
   app.use(Antd);
   app.use(permission);
-
+  app.use(print);
   // 注册图标组件到全局
   Object.keys(antIcons).forEach((key) => {
     app.component(key, antIcons[key]);

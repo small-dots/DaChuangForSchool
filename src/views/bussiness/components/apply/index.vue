@@ -83,7 +83,7 @@
                     <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
                       >审核</a
                     >
-                    <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
+                    <a @click="print(record)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
                       >流程打印</a
                     >
                     <a-divider type="vertical" />
@@ -118,6 +118,15 @@
       v-if="showModal"
       ref="userEdit"
     />
+    <Print
+      v-model:visible="showPrintModal"
+      :data="current"
+      @done="reload"
+      :isReview="isReview"
+      :defaultKey="defaultKey"
+      v-if="showPrintModal"
+      ref="userEdit"
+    />
   </div>
 </template>
 
@@ -129,7 +138,7 @@
   import { TitleAPi } from '/@/api/dc/title/TitleApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
-
+  import Print from './print.vue';
   // 搜索数据
   const where = reactive({
     orgId: '',
@@ -196,7 +205,7 @@
 
   // 是否显示弹框
   const showModal = ref<boolean>(false);
-
+  const showPrintModal = ref<boolean>(false);
   // 当前行的数据
   const current = ref<any>(null);
 
@@ -263,6 +272,11 @@
     current.value = row;
     showModal.value = true;
     isReview.value = flag;
+  };
+  // 打印
+  const print = (row?: any) => {
+    current.value = row;
+    showPrintModal.value = true;
   };
 
   // 表格选中改变

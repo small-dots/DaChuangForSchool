@@ -9,14 +9,14 @@
               <a-row>
                 <a-form-item label="题目名称:">
                   <a-input
-                    v-model:value.trim="where.account"
+                    v-model:value.trim="where.titleTitle"
                     placeholder="请输入题目名称"
                     allow-clear
                   />
                 </a-form-item>
                 <a-form-item label="指导教师:">
                   <a-input
-                    v-model:value.trim="where.realName"
+                    v-model:value.trim="where.teacherName"
                     placeholder="请输入指导教师"
                     allow-clear
                   />
@@ -109,6 +109,7 @@
       :defaultKey="defaultKey"
       v-if="showEdit"
       ref="userEdit"
+      :userList="userList"
     />
   </div>
 </template>
@@ -124,8 +125,8 @@
 
   // 搜索数据
   const where = reactive({
-    account: '',
-    realName: '',
+    titleTitle: '',
+    teacherName: '',
   });
 
   //ref
@@ -134,16 +135,16 @@
   const columns = ref([
     {
       title: '题目名称',
-      dataIndex: 'account',
+      dataIndex: 'titleTitle',
     },
     {
       title: '指导教师',
-      dataIndex: 'realName',
+      dataIndex: 'teacherName',
     },
     {
       title: '状态',
-      key: 'status',
-      dataIndex: 'status',
+      key: 'statusFlag',
+      dataIndex: 'statusFlag',
       align: 'center',
     },
 
@@ -162,7 +163,7 @@
 
   // 表格多选选中列表
   const checkedKeys = ref<Array<string | number>>([]);
-
+  const userList = ref([]);
   // 是否显示弹框
   const showEdit = ref<boolean>(false);
 
@@ -171,8 +172,6 @@
 
   // 默认选中tab
   const defaultKey = ref<string>('1');
-
-  onMounted(async () => {});
 
   const per = (code) => {
     const buttons = JSON.parse(localStorage.getItem('buttonCodes') as string);
@@ -186,11 +185,13 @@
     checkedKeys.value = [];
     tableRef.value.reload({ page: 1 });
   };
-
+  onMounted(() => {
+    getUserList();
+  });
   // 重置
   const reset = () => {
-    where.account = '';
-    where.realName = '';
+    where.titleTitle = '';
+    where.teacherName = '';
     reload();
   };
 
@@ -232,6 +233,20 @@
     current.value = row;
     showEdit.value = true;
   };
+  /**
+   * 获取通知的用户列表
+   */
+  const getUserList = () => {
+    UserApi.getUserList({}).then((res) => {
+      userList.value = res.rows;
+      userList.value = userList.value.map((item) => ({
+        key: item.userId,
+        title: item.realName,
+        description: item.account,
+        disabled: false,
+      }));
+    });
+  };
 
   /**
    * 批量删除
@@ -269,7 +284,7 @@
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
-    const result = await UserApi.deleteUser({ userId: row.userId });
+    const result = await TitleApi.deleteTitle({ titleId: row.titleId });
     message.success(result.message);
     reload();
   };

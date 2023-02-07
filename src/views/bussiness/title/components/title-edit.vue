@@ -19,7 +19,10 @@
       <title-form
         v-model:form="state.form"
         ref="form"
+        :userList="userList"
         :rules="rules"
+        v-model:targetKeys="targetKeys"
+        @handleChange="handleChange"
         :isUpdate="isUpdate"
         v-show="activeKey == '1'"
       />
@@ -40,7 +43,13 @@
           >
         </div>
       </template>
-      <title-form v-model:form="state.form" ref="form" :rules="rules"
+      <title-form
+        v-model:form="state.form"
+        v-model:targetKeys="targetKeys"
+        :userList="userList"
+        ref="form"
+        @handleChange="handleChange"
+        :rules="rules"
     /></common-drawer>
   </div>
 </template>
@@ -53,7 +62,7 @@
   import { phoneReg } from '/@/utils/common/util';
   import FieldExpandForm from '/@/components/FieldExpand/FieldExpandForm.vue';
   import TitleForm from './title-form.vue';
-  import { nextTick, onMounted, reactive, ref, watch } from 'vue';
+  import { onMounted, reactive, ref, watch } from 'vue';
 
   const props = defineProps<{
     // 弹窗是否打开
@@ -62,6 +71,7 @@
     data?: Object;
     // 默认选中tab
     defaultKey: String;
+    userList: Array<any>;
   }>();
 
   const emits = defineEmits<{
@@ -75,21 +85,20 @@
 
   // 表单验证规则
   const rules = reactive({
-    projectTitle: [{ required: true, message: '请输入题目名称', type: 'string', trigger: 'blur' }],
+    titleTitle: [{ required: true, message: '请输入题目名称', type: 'string', trigger: 'blur' }],
     teacherName: [
       { required: true, message: '请输入指导老师姓名', type: 'string', trigger: 'blur' },
     ],
     teacherPhone: [
       { required: true, message: '请输入指导老师电话', type: 'string', trigger: 'blur' },
-      { pattern: phoneReg, message: '手机号格式不正确', type: 'string', trigger: 'blur' },
     ],
-    projectBackground: [
+    titleBackground: [
       { required: true, message: '请输入题目背景', type: 'string', trigger: 'blur' },
     ],
-    projectContent: [
+    titleContent: [
       { required: true, message: '请输入题目具体内容', type: 'string', trigger: 'blur' },
     ],
-    projectRequire: [
+    titleRequire: [
       { required: true, message: '请输入题目基本要求', type: 'string', trigger: 'blur' },
     ],
   });
@@ -113,7 +122,7 @@
   const init = () => {
     if (props.visible) {
       if (props.data) {
-        console.log('props.data', props.data);
+        state.form = Object.assign({}, props.data);
         isUpdate.value = true;
       } else {
         state.form = {};
@@ -133,6 +142,13 @@
       init();
     },
   );
+  /**
+   * 选中人员时的监听
+   */
+  const handleChange = (arr: string[]) => {
+    console.log(arr);
+    targetKeys.value = arr;
+  };
 
   // tab切换
   const tabChange = (key: string) => {
@@ -141,7 +157,8 @@
       state.form = Object.assign({}, props.data);
     }
   };
-
+  // 选中的人
+  const targetKeys = ref<any>([]);
   /**
    * 更新编辑题目界面的弹框是否显示
    *
@@ -160,15 +177,24 @@
       if (valid) {
         // 修改加载框为正在加载
         loading.value = true;
-
         let result;
-
         // 执行编辑或修改题目方法
+        let image = [];
+        let appendix = [];
+        if (state.form.imageList) {
+          image = state.form.imageList.map((item) => {
+            return item.response?.data?.fileId;
+          });
+        }
+        if (state.form.fileList) {
+          appendix = state.form.fileList.map((item) => {
+            return item.response?.data?.fileId;
+          });
+        }
         if (isUpdate.value) {
-          result = UserApi.editUser(state.form);
+          result = TitleApi.editTitle({ image, appendix, ...state.form });
         } else {
-          console.log(state);
-          result = TitleApi.addTitle(state.form);
+          result = TitleApi.addTitle({ image, appendix, ...state.form });
         }
         result
           .then((result) => {

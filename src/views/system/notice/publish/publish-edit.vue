@@ -15,7 +15,7 @@
         v-model:targetKeys="targetKeys"
         :userList="userList"
         @handleChange="handleChange"
-      ></publish-form>
+      />
       <template #extra>
         <a-button type="primary" @click="save" :loading="loading">确定</a-button>
       </template>
@@ -42,7 +42,7 @@
         v-model:targetKeys="targetKeys"
         :userList="userList"
         @handleChange="handleChange"
-      ></publish-form>
+      />
     </a-modal>
   </div>
 </template>
@@ -131,16 +131,13 @@
 
   /**
    * 获取通知的用户列表
-   *
-   * @author fengshuonan
-   * @date 2021/6/14 20:23
    */
   const getUserList = () => {
     UserApi.getUserList({}).then((res) => {
       userList.value = res.rows;
       userList.value = userList.value.map((item) => ({
         key: item.userId,
-        title: item.nickName,
+        title: item.realName,
         description: item.account,
         disabled: false,
       }));
@@ -149,9 +146,6 @@
 
   /**
    * 选中人员时的监听
-   *
-   * @author fengshuonan
-   * @date 2021/6/14 20:23
    */
   const handleChange = (arr: string[]) => {
     targetKeys.value = arr;
