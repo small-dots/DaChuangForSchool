@@ -1,64 +1,57 @@
 <template>
   <div>
     <a-modal
-      :visible="visible"
+      ref="printModal"
+      visible="visible"
       :forceRender="true"
       :maskClosable="false"
       title="元器件申请表打印"
       width="40%"
-      okText="打印"
       :body-style="{ paddingBottom: '8px' }"
       @update:visible="updateVisible"
-      @ok="onSubmit"
     >
-      <a-form
-        id="print-target"
-        ref="formRef"
-        :model="formState"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
-        <a-form-item ref="name" label="申请人姓名" name="name">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="学(工)号" name="number">
-          <a-input v-model:value="formState.number" disabled="true" />
-        </a-form-item>
-        <a-form-item label="联系电话" required name="phone">
-          <a-input v-model:value="formState.phone" disabled="true" />
-        </a-form-item>
-        <a-form-item label="项目名称" name="delivery">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="项目编号" name="type">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="项目负责人" name="resource">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="附件" name="desc">
-          <a-upload
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            :multiple="true"
-            :file-list="fileList"
-            @change="handleChange"
-          />
-        </a-form-item>
-      </a-form>
-      <a-divider />
-      <div class="review_container">
-        <div class="title">审核信息</div>
-        <div class="list"></div>
+      <div class="print_target" id="print-target">
+        <a-descriptions title="申请信息" :column="2" bordered>
+          <a-descriptions-item label="申请人姓名">{{ formState.name }}</a-descriptions-item>
+          <a-descriptions-item label="学(工)号">{{ formState.number }}</a-descriptions-item>
+          <a-descriptions-item label="申请日期">2023-01-09 15:33:01</a-descriptions-item>
+          <a-descriptions-item label="联系电话">{{ formState.phone }}</a-descriptions-item>
+          <a-descriptions-item label="项目名称">{{ formState.name }}</a-descriptions-item>
+          <a-descriptions-item label="项目编号" :span="2">{{ formState.name }}</a-descriptions-item>
+          <a-descriptions-item label="项目负责人" :span="3">
+            {{ formState.name }}</a-descriptions-item
+          >
+          <a-descriptions-item label="附件">
+            元器件申请单-2021-01-01.docx
+            <br />
+            元器件申请单-2021-01-01.docx
+            <br />
+            元器件申请单-2021-01-01.docx
+            <br />
+            元器件申请单-2021-01-01.docx
+            <br />
+            元器件申请单-2021-01-01.docx
+            <br />
+          </a-descriptions-item>
+        </a-descriptions>
+        <a-divider />
+        <div class="review_container">
+          <div class="title">审核信息</div>
+          <a-table :pagination="false" :dataSource="dataSource" :columns="columns" />
+        </div>
       </div>
+      <!-- <template #footer>
+        <div class="footer-buttons">
+          <a-button @click="close">取消</a-button>
+          <a-button type="primary" v-print="printObj">打印</a-button>
+        </div></template
+      > -->
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { reactive, ref, toRaw, UnwrapRef, onMounted } from 'vue';
-  import print from 'vue3-print-nb';
+  import { reactive, ref, UnwrapRef, onMounted } from 'vue';
   interface FormState {
     name: string | undefined;
     phone: string | number | undefined;
@@ -84,11 +77,56 @@
     response?: Response;
     url: string;
   }
-  const reviewResult = ref(1);
   interface FileInfo {
     file: FileItem;
     fileList: FileItem[];
   }
+  const columns = [
+    {
+      title: '审批人',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: '审批时间',
+      dataIndex: 'time',
+      key: 'time',
+    },
+    {
+      title: '审核状态',
+      dataIndex: 'status',
+      key: 'status',
+    },
+    {
+      title: '审核意见',
+      dataIndex: 'desc',
+      key: 'desc',
+    },
+  ];
+  const dataSource = ref([
+    {
+      key: '1',
+      name: '胡彦斌',
+      status: '同意',
+      desc: '条件满足',
+      time: '2023-01-06 12:02:19',
+    },
+    {
+      key: '2',
+      name: '张全',
+      status: '拒绝',
+      desc: '条件不满足',
+      time: '2023-01-06 18:20:46',
+    },
+  ]);
+  const fileList = ref<FileItem[]>([
+    {
+      uid: '-1',
+      name: '元器件申请单-2021-01-01.docx',
+      status: 'done',
+      url: 'http://www.baidu.com/xxx.png',
+    },
+  ]);
   const isSuper = ref<boolean>(false);
   const props = defineProps<{
     visible: Boolean;
@@ -100,6 +138,13 @@
   const wrapperCol = {
     span: 17,
   };
+  const printObj = ref({
+    id: 'print-target',
+    preview: false,
+    extraCss:
+      'https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.compat.css, https://cdn.bootcdn.net/ajax/libs/hover.css/2.3.1/css/hover-min.css',
+    extraHead: '<meta http-equiv="Content-Language"content="zh-cn"/>',
+  });
   const userinfo = ref<Userinfo>({});
   onMounted(() => {
     userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
@@ -109,8 +154,18 @@
     formState.phone = simpleUserInfo?.tel;
     formState.number = account;
   });
-  const reviewDesc = ref('');
+  const emits = defineEmits<{
+    (e: 'update:visible', visible: boolean): void;
+    (e: 'done'): void;
+  }>();
+  const updateVisible = (value) => {
+    emits('update:visible', value);
+  };
   const formRef = ref();
+  const printModal = ref();
+  const close = () => {
+    console.log(printModal.value.getContainer());
+  };
   const formState: UnwrapRef<FormState> = reactive({
     name: '',
     phone: undefined,
@@ -120,70 +175,6 @@
     resource: '',
     desc: '',
   });
-  const rules = {
-    name: [
-      { required: true, message: 'Please input Activity name', trigger: 'blur' },
-      { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
-    ],
-    region: [{ required: true, message: 'Please select Activity zone', trigger: 'change' }],
-    date1: [{ required: true, message: 'Please pick a date', trigger: 'change', type: 'object' }],
-    type: [
-      {
-        type: 'array',
-        required: true,
-        message: 'Please select at least one activity type',
-        trigger: 'change',
-      },
-    ],
-    resource: [{ required: true, message: 'Please select activity resource', trigger: 'change' }],
-    desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }],
-  };
-  const onSubmit = () => {
-    formRef.value
-      .validate()
-      .then(() => {
-        console.log('values', formState, toRaw(formState));
-      })
-      .catch((error: ValidateErrorEntity<FormState>) => {
-        console.log('error', error);
-      });
-  };
-  const resetForm = () => {
-    formRef.value.resetFields();
-  };
-  const emits = defineEmits<{
-    (e: 'update:visible', visible: boolean): void;
-    (e: 'done'): void;
-  }>();
-  const updateVisible = (value) => {
-    emits('update:visible', value);
-  };
-  const fileList = ref<FileItem[]>([
-    {
-      uid: '-1',
-      name: '元器件申请单-2021-01-01.docx',
-      status: 'done',
-      url: 'http://www.baidu.com/xxx.png',
-    },
-  ]);
-  const handleChange = (info: FileInfo) => {
-    let resFileList = [...info.fileList];
-
-    // 1. Limit the number of uploaded files
-    //    Only to show two recent uploaded files, and old ones will be replaced by the new
-    resFileList = resFileList.slice(-2);
-
-    // 2. read from response and show file link
-    resFileList = resFileList.map((file) => {
-      if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
-      }
-      return file;
-    });
-
-    fileList.value = resFileList;
-  };
 </script>
 
 <style scoped>
@@ -199,5 +190,10 @@
     line-height: 1.5715;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  .footer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
   }
 </style>
