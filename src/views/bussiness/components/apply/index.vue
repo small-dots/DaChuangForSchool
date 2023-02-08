@@ -126,6 +126,7 @@
       :defaultKey="defaultKey"
       v-if="showPrintModal"
       ref="userEdit"
+      @close="showPrintModal = false"
     />
   </div>
 </template>

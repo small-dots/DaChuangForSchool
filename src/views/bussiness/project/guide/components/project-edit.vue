@@ -160,6 +160,7 @@
           isUpdate.value = false;
         }
       }
+      activeKey.value = props.defaultKey;
       // 清空校验
       if (props.defaultKey == '1' && form.value.$refs.ProjectFormRef) {
         form.value.$refs.ProjectFormRef.clearValidate();

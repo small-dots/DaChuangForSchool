@@ -11,6 +11,7 @@
         <a-col :md="24" :sm="24" :xs="24">
           <a-form-item label="项目名称:" name="account">
             <a-input
+              :disabled="true"
               v-model:value="form.account"
               placeholder="请输入项目名称"
               allow-clear
@@ -18,13 +19,14 @@
             />
           </a-form-item>
           <a-form-item label="课题背景:" name="password">
-            <tinymce v-model:value="form.ktbj" />
+            <tinymce v-model:value="form.ktbj" :showImageUpload="false" :disabled="true" />
           </a-form-item>
           <a-form-item label="具体内容:" name="orgId">
-            <tinymce v-model:value="form.jtnr" />
+            <tinymce v-model:value="form.jtnr" :showImageUpload="false" :disabled="true" />
           </a-form-item>
           <a-form-item label="成员邀请:" name="orgId">
             <a-select
+              :disabled="true"
               v-model:value="form.partters"
               show-search
               placeholder="输入学生姓名"
@@ -40,6 +42,7 @@
           </a-form-item>
           <a-form-item label="指教教师:" name="orgId">
             <a-select
+              :disabled="true"
               v-model:value="form.teacher"
               show-search
               placeholder="输入教师姓名"
@@ -60,10 +63,10 @@
               v-model:file-list="imageList"
               class="upload-list-inline"
             >
-              <a-button>
+              <!-- <a-button>
                 <upload-outlined />
                 上传图片
-              </a-button>
+              </a-button> -->
             </a-upload>
           </a-form-item>
           <a-form-item label="相关附件:" name="positionId">
@@ -71,10 +74,10 @@
               action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
               v-model:file-list="fileList"
             >
-              <a-button>
+              <!-- <a-button>
                 <upload-outlined />
                 上传附件
-              </a-button>
+              </a-button> -->
             </a-upload>
           </a-form-item>
         </a-col>

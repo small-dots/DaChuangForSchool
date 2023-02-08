@@ -41,11 +41,9 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="openView(record)">成员</a>
+                    <a @click="viewPattner(record)">查看</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)">编辑</a>
-                    <a-divider type="vertical" />
-                    <a @click="openEdit(record)">附件</a>
+                    <a @click="openViewDocs(record)">附件</a>
                   </a-space>
                 </template>
               </template>
@@ -63,18 +61,17 @@
       :isView="isView"
       :defaultKey="defaultKey"
       v-if="showEdit"
-      ref="ProjectEdit"
+      @update:visible="closeCompanyEdit"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table/index.ts';
-  import { onMounted, reactive, ref, createVNode } from 'vue';
+  import { onMounted, reactive, ref } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
   import { UserApi } from '/@/api/system/user/UserApi.ts';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { message, Modal } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
 
   // 搜索数据
   const where = reactive({
@@ -86,7 +83,7 @@
   //ref
   const tableRef = ref<any>(null);
   //表格配置
-  const columns = ref<string[]>([
+  const columns = ref([
     {
       title: '项目名称',
       dataIndex: 'account',
@@ -138,7 +135,7 @@
     reload();
   };
 
-  // 打开公司部门抽屉时，关闭表格的抽屉
+  // 关闭表格的抽屉
   const closeCompanyEdit = () => {
     showEdit.value = false;
   };
@@ -172,12 +169,19 @@
 
   // 打开新增编辑弹框
   const openEdit = (row: any) => {
-    defaultKey.value = '1';
+    defaultKey.value = '3';
     current.value = row;
     showEdit.value = true;
   };
-
-  const openView = (row: any) => {
+  // 查看过程文档
+  const openViewDocs = (row: any) => {
+    defaultKey.value = '2';
+    current.value = row;
+    isView.value = true;
+    showEdit.value = true;
+  };
+  // 查看成员
+  const viewPattner = (row: any) => {
     defaultKey.value = '1';
     current.value = row;
     isView.value = true;

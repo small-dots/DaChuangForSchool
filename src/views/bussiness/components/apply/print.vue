@@ -40,18 +40,17 @@
           <a-table :pagination="false" :dataSource="dataSource" :columns="columns" />
         </div>
       </div>
-      <!-- <template #footer>
-        <div class="footer-buttons">
-          <a-button @click="close">取消</a-button>
-          <a-button type="primary" v-print="printObj">打印</a-button>
-        </div></template
-      > -->
+      <template #footer>
+        <a-button @click="close">取消</a-button>
+        <a-button v-print="printObj" type="primary">打印</a-button>
+      </template>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
   import { reactive, ref, UnwrapRef, onMounted } from 'vue';
+  import print from 'vue3-print-nb';
   interface FormState {
     name: string | undefined;
     phone: string | number | undefined;
@@ -138,15 +137,18 @@
   const wrapperCol = {
     span: 17,
   };
+
   const printObj = ref({
     id: 'print-target',
     preview: false,
+    popTitle: '元器件申请表单',
     extraCss:
       'https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.compat.css, https://cdn.bootcdn.net/ajax/libs/hover.css/2.3.1/css/hover-min.css',
     extraHead: '<meta http-equiv="Content-Language"content="zh-cn"/>',
   });
   const userinfo = ref<Userinfo>({});
   onMounted(() => {
+    console.log(print);
     userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
     const { simpleUserInfo, account } = userinfo.value;
     isSuper.value = userinfo.value.superAdmin as boolean;
@@ -157,15 +159,15 @@
   const emits = defineEmits<{
     (e: 'update:visible', visible: boolean): void;
     (e: 'done'): void;
+    (e: 'close', visible: boolean): void;
   }>();
+  const close = (value) => {
+    emits('close', value);
+  };
   const updateVisible = (value) => {
     emits('update:visible', value);
   };
-  const formRef = ref();
   const printModal = ref();
-  const close = () => {
-    console.log(printModal.value.getContainer());
-  };
   const formState: UnwrapRef<FormState> = reactive({
     name: '',
     phone: undefined,
@@ -181,6 +183,7 @@
   .review_container {
     margin-bottom: 20px;
   }
+
   .review_container .title {
     flex: auto;
     overflow: hidden;
@@ -191,6 +194,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+
   .footer-buttons {
     display: flex;
     justify-content: flex-end;

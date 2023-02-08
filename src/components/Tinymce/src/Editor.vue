@@ -107,6 +107,14 @@
       type: Boolean,
       default: true,
     },
+    disable: {
+      type: Boolean,
+      default: false,
+    },
+    inline: {
+      type: Boolean,
+      default: false,
+    },
   };
 
   export default defineComponent({
@@ -194,6 +202,7 @@
       );
 
       onMountedOrActivated(() => {
+        console.log(initOptions.value);
         if (!initOptions.value.inline) {
           tinymceId.value = buildShortUUID('tiny-vue');
         }
