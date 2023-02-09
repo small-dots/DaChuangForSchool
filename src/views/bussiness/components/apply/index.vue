@@ -90,7 +90,7 @@
                     <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
                       >审核</a
                     >
-                    <a @click="print(record)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
+                    <a @click="print(record)" v-if="per('COMPONENTS_APPLY_PRINT_BUTTON')"
                       >流程打印</a
                     >
                     <a-divider type="vertical" />
