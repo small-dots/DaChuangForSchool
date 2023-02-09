@@ -13,24 +13,24 @@
           <div class="user-info-list">
             <div class="ele-cell">
               <user-outlined />
-              <div class="ele-cell-content">stylefeng开源技术</div>
+              <div class="ele-cell-content">{{ form.account }}</div>
             </div>
-            <div class="ele-cell">
+            <!-- <div class="ele-cell">
               <home-outlined />
               <div class="ele-cell-content">某某公司 - 某某事业群 - 某某技术部</div>
-            </div>
+            </div> -->
             <div class="ele-cell">
               <environment-outlined />
               <div class="ele-cell-content">中国 • 北京</div>
             </div>
           </div>
-          <a-divider dashed />
+          <!-- <a-divider dashed />
           <h6>标签</h6>
           <div class="user-info-tags">
             <a-tag>Guns</a-tag>
             <a-tag>Roses</a-tag>
             <a-tag>Spring Boot</a-tag>
-          </div>
+          </div> -->
         </a-card>
       </a-col>
       <a-col :lg="18" :md="16" :sm="24" :xs="24">
@@ -82,7 +82,7 @@
                 </a-form-item>
               </a-form>
             </a-tab-pane>
-            <a-tab-pane tab="账号绑定" key="account">
+            <!-- <a-tab-pane tab="账号绑定" key="account">
               <div class="user-account-list">
                 <div class="ele-cell">
                   <div class="ele-cell-content">
@@ -135,7 +135,7 @@
                   <a>去绑定</a>
                 </div>
               </div>
-            </a-tab-pane>
+            </a-tab-pane> -->
           </a-tabs>
         </a-card>
       </a-col>
@@ -320,6 +320,8 @@
     display: inline-block;
     position: relative;
     cursor: pointer;
+    border: 1px rgb(189, 186, 186) solid;
+    border-radius: 50%;
   }
 
   .user-info-avatar-group .user-info-avatar-icon {

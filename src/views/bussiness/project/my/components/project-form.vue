@@ -92,8 +92,8 @@
   </div>
 </template>
 
-<script>
-  import { defineComponent, onMounted, reactive, toRefs } from 'vue';
+<script setup>
+  import { onMounted, computed, reactive, ref } from 'vue';
   import { UserApi } from '/@/api/system/user/UserApi';
   import { Tinymce } from '/@/components/Tinymce/index';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
@@ -181,12 +181,12 @@
   });
 
   const getPositionList = async () => {
-    state.positionList = await UserApi.getPositionDropList();
+    positionList.value = await UserApi.getPositionDropList();
   };
   const handleSearch = (val) => {
     if (val) {
       fetch(val, (d) => {
-        state.data = d;
+        data.value = d;
       });
     }
   };

@@ -86,7 +86,7 @@
   import ProjectForm from './project-form.vue';
   import Docs from './docs.vue';
   import Settings from './settings.vue';
-  import { nextTick, onMounted, reactive, ref, watch } from 'vue';
+  import { onMounted, reactive, ref, watch } from 'vue';
 
   const props = defineProps<{
     // 弹窗是否打开

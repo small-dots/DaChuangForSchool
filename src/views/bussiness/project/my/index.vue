@@ -84,7 +84,6 @@
       :isView="isView"
       :defaultKey="defaultKey"
       v-if="showEdit"
-      ref="ProjectEdit"
     />
   </div>
 </template>

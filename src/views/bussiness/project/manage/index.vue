@@ -41,7 +41,7 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="viewPattner(record)">查看成员</a>
+                    <a @click="viewPattner(record)">查看</a>
                     <a-divider type="vertical" />
                     <a @click="openEdit(record)">设置</a>
                     <a-divider type="vertical" />
@@ -63,7 +63,7 @@
       :isView="isView"
       :defaultKey="defaultKey"
       v-if="showEdit"
-      ref="ProjectEdit"
+      @update:visible="closeCompanyEdit"
     />
   </div>
 </template>
@@ -185,6 +185,7 @@
   };
   // 查看成员
   const viewPattner = (row: any) => {
+    defaultKey.value = '1';
     current.value = row;
     isView.value = true;
     showEdit.value = true;

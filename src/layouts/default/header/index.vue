@@ -33,10 +33,10 @@
 
     <!-- action  -->
     <div :class="`${prefixCls}-action`">
-      <div :class="`${prefixCls}-action__item `" @click="jumpGuns">
+      <!-- <div :class="`${prefixCls}-action__item `" @click="jumpGuns">
         <img src="../../../assets/images/guns.png" alt="" class="guns-img" />
         <span class="guns-title">Guns-DevOps</span>
-      </div>
+      </div> -->
 
       <AppChange :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
 

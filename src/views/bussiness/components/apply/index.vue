@@ -67,12 +67,19 @@
                       </template>
                       <span>发起申请</span>
                     </a-button>
-                    <a-button type="primary" @click="openEdit()">
-                      <template #icon>
-                        <CloudUploadOutlined />
-                      </template>
-                      <span>申请单上传</span>
-                    </a-button>
+                    <a-upload
+                      name="file"
+                      :multiple="true"
+                      :action="fileUploadUrl"
+                      v-model:file-list="fileList"
+                      :headers="headers"
+                      @change="afterUploadFile"
+                    >
+                      <a-button type="primary">
+                        <upload-outlined />
+                        申请单上传
+                      </a-button>
+                    </a-upload>
                   </a-space>
                 </div>
               </template>
@@ -116,7 +123,6 @@
       :isReview="isReview"
       :defaultKey="defaultKey"
       v-if="showModal"
-      ref="userEdit"
     />
     <Print
       v-model:visible="showPrintModal"
@@ -125,7 +131,6 @@
       :isReview="isReview"
       :defaultKey="defaultKey"
       v-if="showPrintModal"
-      ref="userEdit"
       @close="showPrintModal = false"
     />
   </div>
@@ -133,13 +138,15 @@
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table';
-  import { onMounted, reactive, ref, createVNode } from 'vue';
+  import { onMounted, reactive, ref, computed } from 'vue';
   import Diolag from './modal.vue';
   import { UserApi } from '/@/api/system/user/UserApi';
   import { TitleAPi } from '/@/api/dc/title/TitleApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
   import Print from './print.vue';
+  import { FileUploadUrl } from '/@/api/system/operation/FileApi';
+  import { useUserStore } from '/@/store/modules/user';
   // 搜索数据
   const where = reactive({
     orgId: '',
@@ -153,6 +160,7 @@
     age: number;
     date: string;
   };
+  const fileList = ref([]);
   //ref
   const tableRef = ref<any>(null);
   const isReview = ref<boolean>(false);
@@ -239,7 +247,33 @@
   const closeCompanyEdit = () => {
     showModal.value = false;
   };
+  const userStore = useUserStore();
+  // token
+  const token = computed(() => {
+    return userStore.getToken;
+  });
+  // 上传文件的url
+  const fileUploadUrl = ref(`${import.meta.env.VITE_GLOB_API_URL}${FileUploadUrl}?secretFlag=N`);
 
+  const headers = reactive({
+    Authorization: token.value,
+  });
+  /**
+   * 图片上传成功的回调
+   */
+  const afterUploadImage = ({ file }) => {
+    if (file.response) {
+      message.success('上传成功');
+    }
+  };
+  /**
+   * 文件上传成功的回调
+   */
+  const afterUploadFile = ({ file }) => {
+    if (file.response) {
+      message.success('上传成功');
+    }
+  };
   /**
    * 修改用户状态
    *

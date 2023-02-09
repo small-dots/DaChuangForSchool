@@ -1,26 +1,5 @@
 <template>
   <div>
-    <a-alert
-      message="文件命名规范"
-      description="请将过程文档名称命名为:XXX_项目名称。例:大学生创新训 练项目申请书_能级强关联上转换纳米探针构筑及谷胱甘肽的高灵敏 检测应用研究"
-      type="info"
-      show-icon
-    />
-    <a-divider />
-    <a-upload
-      v-model:file-list="fileList"
-      name="file"
-      :multiple="false"
-      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-      :headers="headers"
-      @change="handleChange"
-    >
-      <a-button>
-        <upload-outlined />
-        过程文档上传
-      </a-button>
-    </a-upload>
-    <a-divider />
     <div class="doc_list">
       <a-table :columns="columns" :data-source="data">
         <template #name="{ text }">
