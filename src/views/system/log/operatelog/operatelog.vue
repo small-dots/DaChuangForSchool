@@ -178,7 +178,7 @@
   /**
    * 批量删除
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const removeBatch = () => {
@@ -202,7 +202,7 @@
   /**
    * 打开详情窗口
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const openDetail = async (row: any) => {

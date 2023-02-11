@@ -12,7 +12,7 @@ export class SysAppApi {
   /**
    * 分页获取列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/8 20:36
    */
   static findPage(params: SysAppRequest) {
@@ -75,7 +75,7 @@ export class SysAppApi {
   /**
    * 获取系统顶部导航的应用列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/21 16:20
    */
   static getAppList() {

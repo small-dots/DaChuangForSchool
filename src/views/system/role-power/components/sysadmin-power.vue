@@ -30,7 +30,7 @@
           <div v-if="activeKey" class="right">
             <div class="right-top">
               <a-tabs v-model:activeKey="rightActiveKey" animated class="right-tab">
-                <a-tab-pane key="menu" tab="菜单权限"></a-tab-pane>
+                <a-tab-pane key="menu" tab="菜单权限" />
               </a-tabs>
             </div>
             <div class="right-bottom">
@@ -50,7 +50,7 @@
                         <a-checkbox
                           v-model:checked="checkedAll"
                           @change="(val) => selectAll(val, 'menu')"
-                        ></a-checkbox>
+                        />
                         一级菜单
                       </template>
                     </template>
@@ -92,7 +92,7 @@
       :showTab="['user']"
       @done="closeAdd"
       :data="allRoleData"
-    ></flow-pick>
+    />
   </a-row>
 </template>
 
@@ -162,7 +162,7 @@
   /**
    * 菜单查询权限数据
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/10 21:20
    */
   const loadAuthData = async () => {

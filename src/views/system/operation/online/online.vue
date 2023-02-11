@@ -115,7 +115,7 @@
   /**
    * 踢下线
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/13 14:47
    */
   const kickOff = async (row: any) => {

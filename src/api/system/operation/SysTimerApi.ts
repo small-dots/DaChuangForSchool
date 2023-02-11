@@ -10,7 +10,7 @@ export class SysTimerApi {
   /**
    * 获取定时任务列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/12 22:25
    */
   static findTimerPage(params) {

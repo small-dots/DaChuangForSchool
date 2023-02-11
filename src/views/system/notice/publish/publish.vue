@@ -163,7 +163,7 @@
   /**
    * 删除通知
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/6/14 21:00
    */
   const deleteNotice = async (row: any) => {

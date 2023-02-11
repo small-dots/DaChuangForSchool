@@ -10,7 +10,7 @@ export default class PublishApi {
   /**
    * 获取通知列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/1 16:07
    */
   static findPage(params) {

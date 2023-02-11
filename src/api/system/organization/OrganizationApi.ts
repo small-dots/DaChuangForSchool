@@ -10,7 +10,7 @@ export class OrganizationApi {
   /**
    * 获取组织机构界面
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/20 17:18
    */
   static organizationTreeList(params) {
@@ -20,7 +20,7 @@ export class OrganizationApi {
   /**
    * 公司树列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/20 17:18
    */
   static companyTreeList(params) {

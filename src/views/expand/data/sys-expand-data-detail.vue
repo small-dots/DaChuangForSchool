@@ -142,7 +142,7 @@
   /**
    * 加载详情
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/3/31 11:52
    */
   const loadDetail = async (expandDataId: string) => {

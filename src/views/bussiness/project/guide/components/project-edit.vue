@@ -185,7 +185,7 @@
    * 更新编辑用户界面的弹框是否显示
    *
    * @param value true-显示，false-隐藏
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/7 11:00
    */
   const updateVisible = (value) => {

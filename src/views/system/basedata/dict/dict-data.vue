@@ -151,7 +151,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: SysDict) => {
@@ -163,7 +163,7 @@
   /**
    * 打开编辑弹窗
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const openEdit = (row: SysDict) => {

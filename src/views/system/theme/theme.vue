@@ -166,7 +166,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
@@ -178,7 +178,7 @@
   /**
    * 打开编辑页面
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/6/15 23:14
    */
   const openEdit = (record: any) => {
@@ -189,7 +189,7 @@
   /**
    * 修改主题状态
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/12/21 11:30:07
    */
   const editStatus = async (checked: boolean, row: any) => {

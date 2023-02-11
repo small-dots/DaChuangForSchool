@@ -203,7 +203,7 @@
   /**
    * 修改用户状态
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:04
    */
   const editState = async (checked: boolean, row: any) => {
@@ -218,7 +218,7 @@
   /**
    * 解除冻结用户
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/31 14:17
    */
   const unFreezeUser = async (record) => {
@@ -280,7 +280,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {

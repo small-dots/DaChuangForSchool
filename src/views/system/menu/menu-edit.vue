@@ -19,13 +19,9 @@
         ref="formRef"
         :appList="appList"
         v-if="activeKey == '1'"
-      ></menu-form>
+      />
       <!-- 按钮管理 -->
-      <menu-button
-        v-if="activeKey == '2'"
-        :data="data"
-        @openBindResource="openBindResource"
-      ></menu-button>
+      <menu-button v-if="activeKey == '2'" :data="data" @openBindResource="openBindResource" />
       <!-- 权限管理 -->
       <menu-resource ref="resourceBindRef" v-if="activeKey == '3'" />
       <template #extra>
@@ -51,12 +47,7 @@
       v-else
       @close="updateVisible(false)"
     >
-      <menu-form
-        v-model:form="state.form"
-        :menuList="menuList"
-        ref="formRef"
-        :appList="appList"
-      ></menu-form>
+      <menu-form v-model:form="state.form" :menuList="menuList" ref="formRef" :appList="appList" />
     </a-modal>
 
     <!-- 按钮管理权限弹窗 -->
@@ -278,7 +269,7 @@
   /**
    * 判断是否是网址
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/31 11:21
    */
   const isUrl = (url: string) => {

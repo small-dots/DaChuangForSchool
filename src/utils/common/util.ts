@@ -67,7 +67,7 @@ export function eachTreeData(data: any, callback: any, childKey = 'children') {
 /**
  * 删除空的children对象，为了显示树形菜单时不显示多余的 + 号
  *
- * @author fengshuonan
+ * @author anzhongqi
  * @date 2022/5/20 18:33
  */
 export function deleteEmptyChild(nodes: any) {

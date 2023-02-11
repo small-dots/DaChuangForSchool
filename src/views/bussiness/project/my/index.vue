@@ -10,15 +10,8 @@
               <a-row>
                 <a-form-item label="题目名称:">
                   <a-input
-                    v-model:value.trim="where.account"
+                    v-model:value.trim="where.projectTitle"
                     placeholder="请输入题目名称"
-                    allow-clear
-                  />
-                </a-form-item>
-                <a-form-item label="指导教师:">
-                  <a-input
-                    v-model:value.trim="where.realName"
-                    placeholder="请输入指导教师"
                     allow-clear
                   />
                 </a-form-item>
@@ -39,7 +32,7 @@
             <BasicTable
               :canResize="false"
               ref="tableRef"
-              :api="UserApi.getUserPages"
+              :api="ProjectApi.getProjectPages"
               :where="where"
               :columns="columns"
               rowKey="userId"
@@ -90,30 +83,31 @@
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table/index.ts';
-  import { onMounted, reactive, ref, createVNode } from 'vue';
+  import { reactive, ref } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
-  import { UserApi } from '/@/api/system/user/UserApi.ts';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { message, Modal } from 'ant-design-vue';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { message } from 'ant-design-vue';
 
   // 搜索数据
   const where = reactive({
-    orgId: '',
-    account: '',
-    realName: '',
+    projectTitle: '',
   });
   const isView = ref<boolean>(false);
   //ref
   const tableRef = ref<any>(null);
   //表格配置
-  const columns = ref<string[]>([
+  const columns = ref([
     {
       title: '项目名称',
-      dataIndex: 'account',
+      dataIndex: 'projectTitle',
     },
     {
       title: '指导教师',
-      dataIndex: 'realName',
+      dataIndex: 'teacherName',
+    },
+    {
+      title: '教师电话',
+      dataIndex: 'teacherPhone',
     },
     {
       title: '团队成员',
@@ -121,10 +115,21 @@
       dataIndex: 'status',
       align: 'center',
     },
-
     {
       title: '创建日期',
-      dataIndex: 'phone',
+      dataIndex: 'createTime',
+    },
+    {
+      title: '状态',
+      dataIndex: 'statusFlag',
+    },
+    {
+      title: '立项时间',
+      dataIndex: 'publishTime',
+    },
+    {
+      title: '结题时间',
+      dataIndex: 'endTime',
     },
     {
       title: '操作',
@@ -144,8 +149,6 @@
   // 默认选中tab
   const defaultKey = ref<string>('1');
 
-  onMounted(async () => {});
-
   // 查询
   const reload = () => {
     tableRef.value.reload({ page: 1 });
@@ -158,36 +161,19 @@
     reload();
   };
 
-  // 打开公司部门抽屉时，关闭表格的抽屉
-  const closeCompanyEdit = () => {
-    showEdit.value = false;
-  };
-
   /**
-   * 修改用户状态
+   * 修改项目状态
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:04
    */
   const editState = async (checked: boolean, row: any) => {
     const userId = row.userId;
-    // 用户状态：1-启用，2-禁用
+    // 项目状态：1-启用，2-禁用
     const statusFlag = checked ? 1 : 2;
-    const result = await UserApi.changeStatus({ userId, statusFlag });
+    const result = await ProjectApi.changeStatus({ userId, statusFlag });
     message.success(result.message);
     row.statusFlag = statusFlag;
-  };
-
-  /**
-   * 解除冻结用户
-   *
-   * @author fengshuonan
-   * @date 2022/5/31 14:17
-   */
-  const unFreezeUser = async (record) => {
-    const result = await UserApi.unFreezeUser({ account: record.account });
-    message.success(result.message);
-    reload();
   };
 
   // 打开新增编辑弹框
@@ -207,11 +193,11 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
-    const result = await UserApi.deleteUser({ userId: row.userId });
+    const result = await ProjectApi.deleteProject({ projectId: row.projectId });
     message.success(result.message);
     reload();
   };

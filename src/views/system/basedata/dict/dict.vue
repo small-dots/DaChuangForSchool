@@ -98,7 +98,7 @@
   /**
    * 刷新系统配置分类表格
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/9 11:49
    */
   const reload = () => {
@@ -110,7 +110,7 @@
   /**
    * 打开编辑系统配置分类
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/9 11:49
    */
   const openEdit = () => {
@@ -120,7 +120,7 @@
   /**
    * 删除系统配置分类
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/9 11:49
    */
   const remove = () => {

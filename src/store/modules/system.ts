@@ -45,7 +45,7 @@ export const useSystemStore = defineStore({
      * 更新初始化状态
      *
      * @param {Boolean} initFlag 是否初始化了系统
-     * @author fengshuonan
+     * @author anzhongqi
      * @date 2021/6/12 19:20
      */
     updateInitFlag(initFlag: boolean) {
@@ -55,7 +55,7 @@ export const useSystemStore = defineStore({
     /**
      * 更新初始化状态
      *
-     * @author fengshuonan
+     * @author anzhongqi
      * @date 2021/6/12 19:20
      */
     loadThemeInfo() {
@@ -80,7 +80,7 @@ export const useSystemStore = defineStore({
     /**
      * 设置菜单类型，前台菜单还是后台菜单
      *
-     * @author fengshuonan
+     * @author anzhongqi
      * @date 2022/3/4 10:37
      */
     setMenuFrontType(antdvFrontType: any) {
@@ -91,7 +91,7 @@ export const useSystemStore = defineStore({
     /**
      * 设置基础url
      *
-     * @author fengshuonan
+     * @author anzhongqi
      * @date 2022/3/4 10:37
      */
     loadBaseUrl() {

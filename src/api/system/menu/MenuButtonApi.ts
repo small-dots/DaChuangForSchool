@@ -11,7 +11,7 @@ export class MenuButtonApi {
    * 获取分页数据
    *
    * @param {String} params.menuId - 菜单id
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/1 16:07
    */
   static findPage(params) {

@@ -213,7 +213,7 @@
   /**
    * 更新个人信息
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/13 17:50
    */
   const save = () => {
@@ -237,7 +237,7 @@
   /**
    * 头像裁剪完成回调
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/13 17:50
    */
   const onCrop = async (blob) => {

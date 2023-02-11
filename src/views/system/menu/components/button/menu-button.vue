@@ -262,7 +262,7 @@
   /**
    * 打开绑定资源
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/10 17:44
    */
   const openBindResource = (row: any) => {

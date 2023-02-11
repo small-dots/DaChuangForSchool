@@ -37,7 +37,7 @@
     <!-- 系统企业概况 -->
     <a-row :gutter="16">
       <!-- 系统企业概况 -->
-      <a-col :lg="12" :md="24" :sm="24" :xs="24">
+      <!-- <a-col :lg="12" :md="24" :sm="24" :xs="24">
         <a-card class="function" :body-style="{ padding: '1em' }">
           <template #title> 系统企业概况 </template>
           <a-row :gutter="16">
@@ -70,9 +70,9 @@
             </a-col>
           </a-row>
         </a-card>
-      </a-col>
+      </a-col> -->
       <!-- 当前公司概况 -->
-      <a-col :lg="12" :md="24" :sm="24" :xs="24">
+      <!-- <a-col :lg="12" :md="24" :sm="24" :xs="24">
         <a-card class="function" :body-style="{ padding: '1em' }">
           <template #title> 当前公司概况 </template>
           <a-row :gutter="16">
@@ -110,10 +110,10 @@
             </a-col>
           </a-row>
         </a-card>
-      </a-col>
+      </a-col> -->
 
       <!-- 在线用户 -->
-      <a-col :lg="12" :md="24" :sm="24" :xs="24">
+      <!-- <a-col :lg="12" :md="24" :sm="24" :xs="24">
         <a-card
           :title="'在线用户：' + userList.totalNum"
           :bordered="false"
@@ -133,18 +133,19 @@
             </div>
           </div>
         </a-card>
-      </a-col>
+      </a-col> -->
 
-      <!-- 最近操作记录 -->
-      <a-col :lg="12" :md="24" :sm="24" :xs="24">
-        <a-card title="最近操作记录" :bordered="false" :body-style="{ padding: 0 }">
-          <div style="height: 347px; padding: 28px 20px 0 20px" class="ele-scrollbar-hover">
-            <a-timeline>
+      <!-- 最新消息通知 -->
+      <a-col :lg="24" :md="24" :sm="24" :xs="24">
+        <a-card title="最新消息通知" :bordered="false" :body-style="{ padding: 0 }">
+          <div class="ele-scrollbar-hover">
+            <!-- <a-timeline>
               <a-timeline-item v-for="(item, index) in activities" :key="index" :color="item.color">
                 <em>{{ item.createTime }}</em>
                 <em>{{ item.logName + '-' + item.logContent }}</em>
               </a-timeline-item>
-            </a-timeline>
+            </a-timeline> -->
+            <noticeList />
           </div>
         </a-card>
       </a-col>
@@ -156,7 +157,7 @@
   import { computed, onMounted, reactive, ref } from 'vue';
   import { HomeApi } from '/@/api/system/dashboard/HomeApi';
   import { useUserStore } from '/@/store/modules/user';
-
+  import noticeList from '/@/views/system/notice/mynotice/mynotice.vue';
   Date.prototype.Format = function (fmt) {
     let o = {
       'M+': this.getMonth() + 1, // 月份
@@ -190,7 +191,7 @@
   const currentDate = ref(new Date().Format('yyyy年MM月dd日'));
 
   // 常用功能
-  const recentMenus = ref<string[]>([]);
+  const recentMenus = ref<object[]>([]);
 
   // 企业概况数据
   const orgInfo = ref<any>({
@@ -211,42 +212,88 @@
   const activities = ref<string[]>([]);
 
   onMounted(() => {
-    // 获取常用功能
-    recentMenus.value = [
-      {
-        antdvIcon: 'UserOutlined',
-        antdvRouter: '/personal/info',
-        menuName: '题目中心',
-      },
-      {
-        antdvIcon: 'UserOutlined',
-        antdvRouter: '/personal/info',
-        menuName: '我的题目',
-      },
-      {
-        antdvIcon: 'UserOutlined',
-        antdvRouter: '/personal/info',
-        menuName: '元器件申请',
-      },
-    ];
+    const roleCode = loginUser.value.roles[0].roleCode || '';
+    console.log(loginUser.value);
+    // 获取常用功能;
+    if (!roleCode) {
+      recentMenus.value = [];
+    } else {
+      if (roleCode === 'student') {
+        recentMenus.value = [
+          {
+            antdvIcon: 'AppstoreOutlined',
+            antdvRouter: '/system/titleCenter',
+            menuName: '题目中心',
+          },
+          {
+            antdvIcon: 'AppstoreAddOutlined',
+            antdvRouter: '/system/project/person',
+            menuName: '我的项目',
+          },
+          {
+            antdvIcon: 'NodeIndexOutlined',
+            antdvRouter: '/system/componentApply',
+            menuName: '元器件申请',
+          },
+        ];
+      }
+      if (roleCode === 'teacher') {
+        recentMenus.value = [
+          {
+            antdvIcon: 'AppstoreOutlined',
+            antdvRouter: '/system/titleCenter',
+            menuName: '题目中心',
+          },
+          {
+            antdvIcon: 'AppstoreAddOutlined',
+            antdvRouter: '/system/title/guide',
+            menuName: '我指导的项目',
+          },
+          {
+            antdvIcon: 'NodeIndexOutlined',
+            antdvRouter: '/system/componentApply',
+            menuName: '元器件申请',
+          },
+        ];
+      }
+      if (roleCode === 'superAdmin') {
+        recentMenus.value = [
+          {
+            antdvIcon: 'AppstoreOutlined',
+            antdvRouter: '/system/titleCenter',
+            menuName: '题目中心',
+          },
+          {
+            antdvIcon: 'AppstoreAddOutlined',
+            antdvRouter: '/system/projects',
+            menuName: '项目维护',
+          },
+          {
+            antdvIcon: 'NodeIndexOutlined',
+            antdvRouter: '/system/componentApply',
+            menuName: '元器件申请',
+          },
+        ];
+      }
+    }
     // HomeApi.getCommonFunctions().then((response) => {
     //   recentMenus.value = response;
     // });
 
     // 获取企业概况数据
-    HomeApi.orgInfoStat().then((response) => {
-      orgInfo.value = response;
-    });
+    // HomeApi.orgInfoStat().then((response) => {
+    //   orgInfo.value = response;
+    // });
 
     // 获取在线用户数
-    HomeApi.getOnlineUserStat().then((response) => {
-      userList.value = response;
-    });
+    // HomeApi.getOnlineUserStat().then((response) => {
+    //   userList.value = response;
+    // });
 
     // 获取最近操作记录
-    HomeApi.getRecentLogs().then((response) => {
-      activities.value = response;
-    });
+    // HomeApi.getRecentLogs().then((response) => {
+    //   activities.value = response;
+    // });
   });
 </script>
 
@@ -314,6 +361,10 @@
   /** 时间轴 */
   .ele-scrollbar-hover :deep(.ant-timeline-item-last > .ant-timeline-item-content) {
     min-height: auto;
+  }
+
+  .ele-scrollbar-hover :deep(.table-height) {
+    height: calc(58vh - 108px) !important;
   }
 
   /** 本月目标 */

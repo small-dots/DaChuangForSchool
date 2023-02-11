@@ -169,7 +169,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
@@ -181,7 +181,7 @@
   /**
    * 打开新增弹窗
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const openAdd = () => {

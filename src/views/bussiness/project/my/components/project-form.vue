@@ -9,19 +9,19 @@
     >
       <a-row :gutter="8">
         <a-col :md="24" :sm="24" :xs="24">
-          <a-form-item label="项目名称:" name="account">
+          <a-form-item label="项目名称:" name="projectTitle">
             <a-input
-              v-model:value="form.account"
+              v-model:value="form.projectTitle"
               placeholder="请输入项目名称"
               allow-clear
               autocomplete="off"
             />
           </a-form-item>
-          <a-form-item label="课题背景:" name="password">
-            <tinymce v-model:value="form.ktbj" />
+          <a-form-item label="课题背景:" name="projectBackground">
+            <tinymce v-model:value="form.projectBackground" />
           </a-form-item>
-          <a-form-item label="具体内容:" name="orgId">
-            <tinymce v-model:value="form.jtnr" />
+          <a-form-item label="具体内容:" name="projectContent">
+            <tinymce v-model:value="form.projectContent" />
           </a-form-item>
           <a-form-item label="成员邀请:" name="orgId">
             <a-select
@@ -38,12 +38,11 @@
               @change="handleChange"
             />
           </a-form-item>
-          <a-form-item label="指教教师:" name="orgId">
+          <a-form-item label="指教教师:" name="teacherId">
             <a-select
-              v-model:value="form.teacher"
+              v-model:value="form.teacherId"
               show-search
               placeholder="输入教师姓名"
-              style="width: 200px"
               :default-active-first-option="false"
               :show-arrow="false"
               :filter-option="false"
@@ -53,13 +52,13 @@
               @change="handleChange"
             />
           </a-form-item>
-          <a-form-item label="图片:" name="positionId">
+          <a-form-item label="图片:">
             <a-upload
               name="file"
               :multiple="true"
               :action="fileUploadUrl"
               list-type="picture"
-              v-model:file-list="imageList"
+              v-model:file-list="form.imageList"
               :headers="headers"
               @change="afterUpload"
             >
@@ -71,12 +70,12 @@
               </a-button>
             </a-upload>
           </a-form-item>
-          <a-form-item label="相关附件:" name="positionId">
+          <a-form-item label="相关附件:">
             <a-upload
               name="file"
               :multiple="true"
               :action="fileUploadUrl"
-              v-model:file-list="fileList"
+              v-model:file-list="form.fileList"
               :headers="headers"
               @change="afterUpload"
             >
@@ -109,44 +108,6 @@
   });
   // 职位列表
   const positionList = ref([]);
-  const imageList = [
-    {
-      uid: '-1',
-      name: 'xxx.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-2',
-      name: 'yyy.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-  ];
-  const fileList = [
-    {
-      uid: '1',
-      name: 'xxx.doc',
-      status: 'done',
-      response: 'Server Error 500', // custom error message to show
-      url: 'http://www.baidu.com/xxx.png',
-    },
-    {
-      uid: '2',
-      name: 'yyy.txt',
-      status: 'done',
-      url: 'http://www.baidu.com/yyy.png',
-    },
-    {
-      uid: '3',
-      name: 'zzz.png',
-      status: 'error',
-      response: '上传失败', // custom error message to show
-      url: 'http://www.baidu.com/zzz.png',
-    },
-  ];
   const data = ref([]);
   const userStore = useUserStore();
 
@@ -168,7 +129,7 @@
   /**
    * 上传成功的回调
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const afterUpload = ({ file }) => {
@@ -191,7 +152,7 @@
     }
   };
   const handleChange = (val) => {
-    form.patters = val;
+    console.log(val);
   };
   let timeout;
   let currentValue = '';
@@ -239,14 +200,17 @@
     line-height: 2em;
     margin-bottom: 2em;
   }
+
   .upload-list-inline :deep(.ant-upload-list-item) {
     float: left;
     width: 200px;
     margin-right: 8px;
   }
+
   .upload-list-inline :deep(.ant-upload-animate-enter) {
     animation-name: uploadAnimateInlineIn;
   }
+
   .upload-list-inline :deep(.ant-upload-animate-leave) {
     animation-name: uploadAnimateInlineOut;
   }

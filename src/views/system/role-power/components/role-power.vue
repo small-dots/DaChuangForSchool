@@ -18,10 +18,10 @@
                 @change="rightChange"
                 class="right-tab"
               >
-                <a-tab-pane key="menu" tab="菜单权限"></a-tab-pane>
-                <a-tab-pane key="button" tab="操作权限"></a-tab-pane>
-                <a-tab-pane key="api" tab="分配接口"></a-tab-pane>
-                <a-tab-pane key="data" tab="数据权限"></a-tab-pane>
+                <a-tab-pane key="menu" tab="菜单权限" />
+                <a-tab-pane key="button" tab="操作权限" />
+                <a-tab-pane key="api" tab="分配接口" />
+                <a-tab-pane key="data" tab="数据权限" />
               </a-tabs>
             </div>
             <div class="right-bottom">
@@ -41,7 +41,7 @@
                         <a-checkbox
                           v-model:checked="checkedAll"
                           @change="(val) => selectAll(val, 'menu')"
-                        ></a-checkbox>
+                        />
                         一级菜单
                       </template>
                     </template>
@@ -83,7 +83,7 @@
                         <a-checkbox
                           v-model:checked="checkedButtonAll"
                           @change="(val) => selectAll(val, 'buttons')"
-                        ></a-checkbox>
+                        />
                         菜单
                       </template>
                     </template>
@@ -123,7 +123,7 @@
                         <a-checkbox
                           v-model:checked="checkedApiAll"
                           @change="(val) => selectAll(val, 'api')"
-                        ></a-checkbox>
+                        />
                         接口分类
                       </template>
                     </template>
@@ -318,7 +318,7 @@
   /**
    * 菜单查询权限数据
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/10 21:20
    */
   const loadAuthData = async () => {
@@ -359,7 +359,7 @@
   /**
    * 菜单处理选中组的事件
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/8 23:35
    */
   const menuCheckedGroup = async (event: any, record: any) => {
@@ -391,7 +391,7 @@
   /**
    * 菜单处理选中的节点数据
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/8 23:35
    */
   const menuCheckedItem = async (event: any, record: any, chilItem: any) => {
@@ -428,7 +428,7 @@
   /**
    * api处理选中组的事件
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/8 23:35
    */
   const apiCheckedGroup = async (event: any, record: any) => {
@@ -459,7 +459,7 @@
   /**
    * api处理选中的节点数据
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/8 23:35
    */
   const apiCheckedItem = async (checkedValue: string[], record: any) => {
@@ -500,7 +500,7 @@
   /**
    * api加载资源列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/8 23:34
    */
   const loadMenuResource = async () => {

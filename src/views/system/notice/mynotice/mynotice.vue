@@ -155,7 +155,7 @@
   /**
    * 设置为已读
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/6/15 23:08
    */
   const setAlready = async () => {
@@ -167,7 +167,7 @@
   /**
    * 打开编辑页面
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/6/15 23:14
    */
   const openEdit = (record) => {
@@ -178,7 +178,7 @@
   /**
    * 删除消息
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/6/14 22:31
    */
   const deleteMessage = async (record) => {

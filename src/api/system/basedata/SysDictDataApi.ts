@@ -16,7 +16,7 @@ export class SysDictDataApi {
   /**
    * 获取字典类型分页列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/1 16:07
    */
   static findDictPage(params: DictRequest) {

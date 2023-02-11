@@ -182,7 +182,7 @@
   /**
    * 打开编辑弹窗
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const openEdit = (row) => {
@@ -193,7 +193,7 @@
   /**
    * 修改职位状态
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:04
    */
   const editState = async (checked: boolean, row: any) => {
@@ -208,7 +208,7 @@
   /**
    * 批量删除
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const removeBatch = () => {
@@ -234,7 +234,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {

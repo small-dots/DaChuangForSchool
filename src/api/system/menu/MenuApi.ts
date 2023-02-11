@@ -10,7 +10,7 @@ export class MenuApi {
   /**
    * 获取表格数据
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/1 16:07
    */
   static findTableMenus(params) {
@@ -80,7 +80,7 @@ export class MenuApi {
   /**
    * 绑定菜单和资源
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/10 14:57
    */
   static async addMenuResourceBind(params) {

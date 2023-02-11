@@ -22,7 +22,7 @@ export class SysMenuApi {
    *
    * @param {String} params.appCode - 应用编码
    * @param {Boolean} params.totalMenus - 全部应用（true-全部，false-非全部）
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/21 16:35
    */
   static getLeftMenuList(params) {

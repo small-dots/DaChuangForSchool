@@ -20,7 +20,7 @@ export class SysResourceApi {
   /**
    * 获取菜单绑定资源的列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/8/8 22:55
    */
   static async getMenuResourceList(params) {

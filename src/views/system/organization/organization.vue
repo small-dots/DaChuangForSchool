@@ -203,7 +203,7 @@
   /**
    * 打开编辑弹窗
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/20 17:54
    */
   const openEdit = async (row: any, flag: string) => {
@@ -216,7 +216,7 @@
   /**
    * 打开编辑弹窗
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/20 17:54
    */
   const openAdd = () => {
@@ -229,7 +229,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2022/5/20 17:54
    */
   const remove = async (row: any) => {

@@ -16,7 +16,7 @@ export class SysDictTypeApi {
   /**
    * 获取字典类型分页列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/1 16:07
    */
   static findDictTypePage(params: DictTypeRequest) {
@@ -66,7 +66,7 @@ export class SysDictTypeApi {
   /**
    * 获取字典类型下的所有字典
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/19 22:42
    */
   static getDictListByParams() {
@@ -76,7 +76,7 @@ export class SysDictTypeApi {
   /**
    * 获取所有字典类型列表
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/20 10:41
    */
   static getDictTypeList() {

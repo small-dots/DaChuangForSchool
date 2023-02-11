@@ -252,7 +252,7 @@
   /**
    * 删除单个
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
@@ -264,7 +264,7 @@
   /**
    * 下载文件
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/12 22:11
    */
   const download = (row: any) => {
@@ -278,7 +278,7 @@
   /**
    * 打开详情界面
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/12 22:29
    */
   const detail = (row: any) => {
@@ -289,7 +289,7 @@
   /**
    * 控制上传到数据库的图片不能超过1M
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/12 22:29
    */
   const beforeUpload = (file: any) => {
@@ -303,7 +303,7 @@
   /**
    * 上传成功的回调
    *
-   * @author fengshuonan
+   * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const afterUpload = ({ file }) => {
