@@ -91,4 +91,8 @@ export class FileApi {
   static detail(params) {
     return defHttp.get({ url: '/sysFileInfo/detail', params });
   }
+  /* 预览 */
+  static preview(params) {
+    return defHttp.get({ url: '/sysFileInfo/previewByObjectName', params });
+  }
 }

@@ -1,0 +1,221 @@
+<template>
+  <div class="pannter_container">
+    <a-table :columns="columns" bordered :pagination="false" :data-source="data">
+      <template #name="{ text }">
+        <a>{{ text }}</a>
+      </template>
+      <template #status="{ text }">
+        <a-tag color="purple">{{ text }}</a-tag>
+      </template>
+      <template #operation="{ record }">
+        <a-popconfirm title="Sure to delete?" @confirm="onDelete(record.key)">
+          <a-button type="text" danger>删除</a-button>
+        </a-popconfirm>
+      </template>
+    </a-table>
+    <a-divider /><a-form
+      :model="form"
+      v-show="showForm"
+      :label-col="{ md: { span: 4 }, sm: { span: 24 } }"
+      :wrapper-col="{ md: { span: 20 }, sm: { span: 24 } }"
+    >
+      <a-form-item label="成员邀请:" name="partters">
+        <a-select
+          v-model:value="form.partters"
+          show-search
+          placeholder="输入学生姓名"
+          mode="multiple"
+          :default-active-first-option="false"
+          :show-arrow="true"
+          :filter-option="false"
+          not-found-content="未找到该用户"
+          :options="options"
+          @search="handleSearch"
+          @change="handleChange"
+        />
+      </a-form-item>
+      <a-form-item label="指教教师:" name="teacherId">
+        <a-select
+          v-model:value="form.teacherId"
+          show-search
+          placeholder="输入教师姓名"
+          :default-active-first-option="false"
+          :show-arrow="false"
+          :filter-option="false"
+          :not-found-content="null"
+          :options="options"
+          @search="handleSearch"
+          @change="handleChange"
+        />
+      </a-form-item>
+    </a-form>
+    <a-button type="primary" v-show="showAdd" @click="addMember">添加成员</a-button>
+    <a-divider type="vertical" />
+    <a-button type="primary" v-show="showCancel" @click="cancleAdd">取消</a-button>
+    <a-divider type="vertical" />
+    <a-button type="primary" v-show="showCancel" @click="add">确定</a-button>
+  </div>
+</template>
+<script setup>
+  import { ref, onMounted, reactive } from 'vue';
+  import { UserApi } from '/@/api/system/user/UserApi';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import PublishApi from '/@/api/system/notice/PublishApi';
+
+  const props = defineProps({
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
+  });
+  const showForm = ref(false);
+  const showCancel = ref(false);
+  const showAdd = ref(true);
+  const options = ref([]);
+  const form = reactive({
+    partters: [],
+    teacherId: '',
+  });
+  const userList = ref([]);
+  const studentList = ref([]);
+  const teacherId = ref('');
+  const targetKeyss = ref([]);
+  const targetKeyt = ref([]);
+  const columns = [
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
+      slots: { customRender: 'name' },
+    },
+    {
+      title: '状态',
+      dataIndex: 'time',
+      key: 'time',
+      slots: { customRender: 'status' },
+    },
+    {
+      title: '操作',
+      key: 'operation',
+      slots: { customRender: 'operation' },
+    },
+  ];
+  const data = [
+    {
+      key: '1',
+      name: 'John Brown',
+      time: '已加入',
+      address: 'New York No. 1 Lake Park',
+    },
+    {
+      key: '2',
+      name: 'Jim Green',
+      time: '等待加入',
+      address: 'London No. 1 Lake Park',
+    },
+  ];
+  onMounted(() => {
+    getUserList();
+  });
+  const addMember = () => {
+    showForm.value = true;
+    showCancel.value = true;
+    showAdd.value = false;
+  };
+  const cancleAdd = () => {
+    showForm.value = false;
+    showCancel.value = false;
+    showAdd.value = true;
+  };
+  // 添加成员
+  const add = () => {
+    console.log(form);
+    const parmas = {
+      projectId: props.data.projectId,
+      memberId: form.partters,
+      teacherId: [form.teacherId],
+      status: 1,
+    };
+    const users = [form.teacherId, ...form.partters];
+    ProjectApi.addProjectMember(parmas).then((res) => {
+      sendMsg();
+    });
+  };
+  const sendMsg = (userlist) => {
+    console.log(userlist);
+    const parmas = {
+      noticeContent: `<div>
+          <p>项目<a>${props.data.projectTitle}</a>,ID:<b>${props.data.projectId}</b>负责人<b>${
+        JSON.parse(localStorage.getItem('UserInfo')).simpleUserInfo.realName
+      }</b> 邀请您加入他(她)的项目。</p>
+      <button id="project_invert_confirm" class="btn_custom" 
+            >加入</button
+          >
+          <button id="project_invert_refuse"  class="btn_custom refuse" 
+            >拒绝</button
+          >
+        </div>`,
+      noticeScope: userlist.join(',') || '',
+      noticeScopeType: 'part',
+      noticeTitle: '项目邀请',
+    };
+    PublishApi.addPublish(parmas);
+  };
+  /**
+   * 获取通知的用户列表
+   */
+  const getUserList = () => {
+    UserApi.getUserList({}).then((res) => {
+      userList.value = res.rows;
+      userList.value = userList.value.map((item) => ({
+        value: item.userId,
+        label: item.realName,
+        description: item.account,
+        disabled: false,
+      }));
+    });
+  };
+  const handleSearch = (val) => {
+    if (val) {
+      fetch(val, (d) => {
+        options.value = d;
+      });
+    }
+  };
+  const handleChange = (val) => {
+    console.log(val);
+  };
+  let timeout;
+  let currentValue = '';
+  const fetch = (query, callback) => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    currentValue = query;
+    function getStudentList() {
+      // 获取学生列表
+      UserApi.getUserPages({
+        pageSize: 99999,
+        realName: query,
+        pageNo: 1,
+      }).then((res) => {
+        if (currentValue === query) {
+          const result = res?.rows || [];
+          console.log('result', res);
+          const data = [];
+          result.forEach((r) => {
+            data.push({
+              value: r.userId,
+              label: r.realName,
+            });
+          });
+          callback(data);
+        }
+      });
+    }
+    timeout = setTimeout(getStudentList, 300);
+  };
+</script>
+
+<style scoped></style>

@@ -23,35 +23,6 @@
           <a-form-item label="具体内容:" name="projectContent">
             <tinymce v-model:value="form.projectContent" />
           </a-form-item>
-          <a-form-item label="成员邀请:" name="orgId">
-            <a-select
-              v-model:value="form.partters"
-              show-search
-              placeholder="输入学生姓名"
-              mode="multiple"
-              :default-active-first-option="false"
-              :show-arrow="true"
-              :filter-option="false"
-              not-found-content="未找到该用户"
-              :options="data"
-              @search="handleSearch"
-              @change="handleChange"
-            />
-          </a-form-item>
-          <a-form-item label="指教教师:" name="teacherId">
-            <a-select
-              v-model:value="form.teacherId"
-              show-search
-              placeholder="输入教师姓名"
-              :default-active-first-option="false"
-              :show-arrow="false"
-              :filter-option="false"
-              :not-found-content="null"
-              :options="data"
-              @search="handleSearch"
-              @change="handleChange"
-            />
-          </a-form-item>
           <a-form-item label="图片:">
             <a-upload
               name="file"
@@ -97,6 +68,7 @@
   import { Tinymce } from '/@/components/Tinymce/index';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
+  import { message } from 'ant-design-vue';
   const props = defineProps({
     form: {
       type: Object,
@@ -143,47 +115,6 @@
 
   const getPositionList = async () => {
     positionList.value = await UserApi.getPositionDropList();
-  };
-  const handleSearch = (val) => {
-    if (val) {
-      fetch(val, (d) => {
-        data.value = d;
-      });
-    }
-  };
-  const handleChange = (val) => {
-    console.log(val);
-  };
-  let timeout;
-  let currentValue = '';
-  const fetch = (query, callback) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    currentValue = query;
-    function getStudentList() {
-      // 获取学生列表
-      UserApi.getUserPages({
-        pageSize: 99999,
-        realName: query,
-        pageNo: 1,
-      }).then((res) => {
-        if (currentValue === query) {
-          const result = res?.rows || [];
-          console.log('result', res);
-          const data = [];
-          result.forEach((r) => {
-            data.push({
-              value: r.userId,
-              label: r.realName,
-            });
-          });
-          callback(data);
-        }
-      });
-    }
-    timeout = setTimeout(getStudentList, 300);
   };
 </script>
 

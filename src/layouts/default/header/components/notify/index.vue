@@ -54,7 +54,7 @@
       :footer="null"
       :maskClosable="false"
     >
-      <p>{{ noticeDetailObject.messageContent }}</p>
+      <div v-html="noticeDetailObject.messageContent"></div>
     </a-modal>
   </div>
 </template>
@@ -65,6 +65,7 @@
   import { useNoticeStore } from '/@/store/modules/notice';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useRouter } from 'vue-router';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
 
   const { prefixCls } = useDesign('header-notify');
   let noticeStore = useNoticeStore();
@@ -123,11 +124,29 @@
 
     // 移除数组中已读消息
     noticeStore.removeMessage(messageObject.messageId);
+    window.addEventListener('click', (e) => {
+      let target = e.target as HTMLElement;
+      if (target.id == 'project_invert_confirm') {
+        finish(2);
+      } else if (target.id == 'project_invert_refuse') {
+        finish(3);
+      }
+    });
   };
 
   /* 清空通知 */
   const closeDetail = () => {
     noticeDetailShow.value = false;
+  };
+
+  const finish = (flag) => {
+    const parmas = {
+      projectId: '',
+      memberId: '',
+      teacherId: '',
+      status: flag,
+    };
+    ProjectApi.joinProjectMember(parmas);
   };
 
   /* 查看更多通知 */
@@ -189,5 +208,19 @@
     .ant-tabs-nav {
       margin-bottom: 0;
     }
+  }
+  .btn_custom {
+    color: #fff;
+    background: #1890ff;
+    border-color: #1890ff;
+    text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+    box-shadow: 0 2px #0000000b;
+    border-radius: 4px;
+    padding: 2px 10px;
+    margin-right: 10px;
+  }
+  .refuse {
+    background: #ff4d4f;
+    border-color: #ff4d4f;
   }
 </style>

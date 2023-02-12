@@ -28,4 +28,26 @@ export class ProjectApi {
   static deleteProject(params) {
     return defHttp.post({ url: '/dc/project/delete', params }, { isTransformResponse: false });
   }
+
+  static addProjectMember(params) {
+    return defHttp.post({ url: '/dc/project/add/member', params }, { isTransformResponse: false });
+  }
+  static joinProjectMember(params) {
+    return defHttp.post({ url: '/dc/project/join/member', params }, { isTransformResponse: false });
+  }
+  static listProjectMember(params) {
+    return defHttp.post({ url: '/dc/project/list/member', params }, { isTransformResponse: false });
+  }
+  static addProjectDucument(params) {
+    return defHttp.post(
+      { url: '/dc/project/add/ducument', params },
+      { isTransformResponse: false },
+    );
+  }
+  static listProjectDucument(params) {
+    return defHttp.post(
+      { url: '/dc/project/list/ducument', params },
+      { isTransformResponse: false },
+    );
+  }
 }

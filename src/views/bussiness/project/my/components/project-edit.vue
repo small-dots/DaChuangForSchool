@@ -25,8 +25,11 @@
         :rules="rules"
         :isUpdate="isUpdate"
       />
+
+      <!-- 项目成员 -->
+      <Pattner v-if="activeKey == '2'" :data="data" ref="docs" />
       <!-- 过程文档 -->
-      <docs v-if="activeKey == '2'" :data="data" ref="docs" />
+      <docs v-if="activeKey == '3'" :data="data" ref="docs" />
     </common-drawer>
 
     <!-- 查看 -->
@@ -49,8 +52,10 @@
         :rules="rules"
         :isUpdate="isUpdate"
       />
+      <!-- 项目成员 -->
+      <Pattner v-if="activeKey == '2'" :data="data" ref="docs" />
       <!-- 过程文档 -->
-      <docs v-if="activeKey == '2'" :data="data" ref="docs" />
+      <docs v-if="activeKey == '3'" :data="data" ref="docs" />
     </common-drawer>
 
     <!-- 新增 -->
@@ -76,9 +81,11 @@
 <script lang="ts" setup>
   import { message } from 'ant-design-vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { FileApi } from '/@/api/system/operation/FileApi';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
   import ProjectForm from './project-form.vue';
   import Docs from './docs.vue';
+  import Pattner from './pattner.vue';
   import { onMounted, reactive, ref, watch } from 'vue';
 
   const props = defineProps<{
@@ -110,6 +117,7 @@
     projectContent: [
       { required: true, message: '请输入项目内容', type: 'string', trigger: 'blur' },
     ],
+    partters: [{ required: true, message: '请选择团队成员', trigger: 'blur' }],
     teacherId: [{ required: true, message: '请选择指导教师', type: 'string', trigger: 'blur' }],
   });
   // 提交状态
@@ -119,7 +127,6 @@
   const isView = ref<boolean>(false);
   // ref
   const form = ref(null);
-  const addForm = ref(null);
   const tabList = ref([
     {
       key: '1',
@@ -127,6 +134,10 @@
     },
     {
       key: '2',
+      name: '项目成员',
+    },
+    {
+      key: '3',
       name: '过程文档',
     },
   ]);
@@ -142,12 +153,27 @@
       } else {
         if (props.data) {
           state.form = Object.assign({}, props.data);
+          state.form.imageList = props.data.imageFile || [];
+          state.form.imageList.map((item) => {
+            item.name = item.fileOriginName;
+            item.thumbUrl =
+              window.location.origin +
+              `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+          });
+          state.form.fileList = props.data.appendixFile || [];
+          state.form.fileList.map((item) => {
+            item.name = item.fileOriginName;
+            item.thumbUrl =
+              window.location.origin +
+              `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+          });
           isUpdate.value = true;
         } else {
           state.form = {};
           isUpdate.value = false;
         }
       }
+      activeKey.value = props.defaultKey;
       // 清空校验
       if (props.defaultKey == '1' && form.value.$refs.ProjectFormRef) {
         form.value.$refs.ProjectFormRef.clearValidate();
@@ -187,7 +213,6 @@
       if (valid) {
         // 修改加载框为正在加载
         loading.value = true;
-
         let result;
         let image = [];
         let appendix = [];
@@ -206,14 +231,18 @@
           image,
           appendix,
         };
-        delete params.imageList;
-        delete params.fileList;
+        // delete params.imageList;
+        // delete params.fileList;
 
         // 执行编辑或修改用户方法
         if (isUpdate.value) {
           result = ProjectApi.editProject(params);
         } else {
           result = ProjectApi.addProject(params);
+          if (state.form.teacherId && state.form.partters) {
+            const list = [state.form.teacherId, ...state.form.partters];
+            sendMsg(state.form.projectTitle, list);
+          }
         }
         result
           .then((result) => {

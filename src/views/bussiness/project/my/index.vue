@@ -53,6 +53,8 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
+                    <a @click="pattner(record)">成员</a>
+                    <a-divider type="vertical" />
                     <a @click="openView(record)">查看</a>
                     <a-divider type="vertical" />
                     <a @click="openEdit(record)">编辑</a>
@@ -180,6 +182,13 @@
   const openEdit = (row: any) => {
     defaultKey.value = '1';
     current.value = row;
+    isView.value = false;
+    showEdit.value = true;
+  };
+  const pattner = (row: any) => {
+    defaultKey.value = '2';
+    current.value = row;
+    isView.value = false;
     showEdit.value = true;
   };
 
