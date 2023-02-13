@@ -130,7 +130,15 @@
         finish(2);
       } else if (target.id == 'project_invert_refuse') {
         finish(3);
+      } else if (target.id == 'projectLink') {
+        router.push({
+          path: '/system/project/detail',
+          query: {
+            projectName: target.innerText,
+          },
+        });
       }
+      closeDetail();
     });
   };
 

@@ -61,7 +61,7 @@
   import { UserApi } from '/@/api/system/user/UserApi';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import PublishApi from '/@/api/system/notice/PublishApi';
-
+  import { message } from 'ant-design-vue';
   const props = defineProps({
     data: {
       type: Object,
@@ -129,7 +129,6 @@
   };
   // 添加成员
   const add = () => {
-    console.log(form);
     const parmas = {
       projectId: props.data.projectId,
       memberId: form.partters,
@@ -138,14 +137,17 @@
     };
     const users = [form.teacherId, ...form.partters];
     ProjectApi.addProjectMember(parmas).then((res) => {
-      sendMsg();
+      message.success('邀请已发送');
+      sendMsg(users);
     });
   };
   const sendMsg = (userlist) => {
     console.log(userlist);
     const parmas = {
       noticeContent: `<div>
-          <p>项目<a>${props.data.projectTitle}</a>,ID:<b>${props.data.projectId}</b>负责人<b>${
+          <p>项目<a id="projectLink">${props.data.projectTitle}</a>,ID:<b>${
+        props.data.projectId
+      }</b>负责人<b>${
         JSON.parse(localStorage.getItem('UserInfo')).simpleUserInfo.realName
       }</b> 邀请您加入他(她)的项目。</p>
       <button id="project_invert_confirm" class="btn_custom" 

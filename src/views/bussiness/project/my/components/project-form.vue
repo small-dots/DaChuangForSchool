@@ -64,7 +64,6 @@
 
 <script setup>
   import { onMounted, computed, reactive, ref } from 'vue';
-  import { UserApi } from '/@/api/system/user/UserApi';
   import { Tinymce } from '/@/components/Tinymce/index';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
@@ -108,13 +107,6 @@
     if (file.response) {
       message.success('上传成功');
     }
-  };
-  onMounted(() => {
-    getPositionList();
-  });
-
-  const getPositionList = async () => {
-    positionList.value = await UserApi.getPositionDropList();
   };
 </script>
 
