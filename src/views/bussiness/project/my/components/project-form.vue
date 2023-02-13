@@ -18,10 +18,12 @@
             />
           </a-form-item>
           <a-form-item label="课题背景:" name="projectBackground">
-            <tinymce v-model:value="form.projectBackground" />
+            <tinymce v-if="!isView" v-model:value="form.projectBackground" />
+            <div v-else v-html="form.projectBackground"></div>
           </a-form-item>
           <a-form-item label="具体内容:" name="projectContent">
-            <tinymce v-model:value="form.projectContent" />
+            <tinymce v-if="!isView" v-model:value="form.projectContent" />
+            <div v-else v-html="form.projectContent"></div>
           </a-form-item>
           <a-form-item label="图片:">
             <a-upload
@@ -32,8 +34,11 @@
               v-model:file-list="form.imageList"
               :headers="headers"
               @change="afterUpload"
+              :show-upload-list="{
+                showRemoveIcon: !isView,
+              }"
             >
-              <a-button type="primary">
+              <a-button v-if="!isView" type="primary">
                 <template #icon>
                   <CloudUploadOutlined />
                 </template>
@@ -49,8 +54,11 @@
               v-model:file-list="form.fileList"
               :headers="headers"
               @change="afterUpload"
+              :show-upload-list="{
+                showRemoveIcon: !isView,
+              }"
             >
-              <a-button>
+              <a-button v-if="!isView">
                 <upload-outlined />
                 上传附件
               </a-button>
@@ -76,6 +84,7 @@
     rules: Object,
     // 新增还是编辑
     isUpdate: Boolean,
+    isView: Boolean,
   });
   // 职位列表
   const positionList = ref([]);

@@ -29,6 +29,11 @@
               :multiple="true"
               class="upload-list-inline"
               list-type="picture"
+              :show-upload-list="{
+                showDownloadIcon: true,
+                showPreviewIcon: true,
+                showRemoveIcon: false,
+              }"
               v-model:file-list="form.imageList"
             >
               <template #downloadIcon>
@@ -40,11 +45,17 @@
             <a-upload
               class="upload-list-inline"
               name="file"
+              :show-upload-list="{ showRemoveIcon: false }"
               :multiple="true"
               v-model:file-list="form.fileList"
             >
-              <template #downloadIcon> <CloudDownloadOutlined /> </template
-            ></a-upload>
+              <template #itemRender="{ file }">
+                <a-space>
+                  <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                  <a href="javascript:;" @click="download(file)"><CloudDownloadOutlined /></a>
+                </a-space>
+              </template>
+            </a-upload>
           </a-form-item>
         </a-col>
       </a-row>
@@ -61,6 +72,8 @@
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { FileApi } from '/@/api/system/operation/FileApi';
   import { useRouter } from 'vue-router';
+  import { downloadByUrl } from '/@/utils/file/download';
+
   const form = reactive({
     projectTitle: '',
     projectBackground: '',
@@ -70,8 +83,12 @@
     createName: '',
     createTime: '',
   });
-  let router = useRouter();
   const userStore = useUserStore();
+  // token
+  const token = computed(() => {
+    return userStore.getToken;
+  });
+  let router = useRouter();
   onMounted(() => {
     getProjectList();
   });
@@ -118,11 +135,13 @@
    * @date 2021/4/12 22:11
    */
   const download = (row) => {
+    console.log(row);
     // FileApi.download({
     //   fileId: row.fileId,
     //   secretFlag: row.secretFlag,
     //   token: token.value,
     // });
+    downloadByUrl({ url: row.thumbUrl, fileName: row.fileOriginName });
   };
 </script>
 

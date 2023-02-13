@@ -12,11 +12,6 @@
       @close="updateVisible(false)"
       v-if="isUpdate"
     >
-      <template #extra>
-        <div style="height: 32px">
-          <a-button type="primary" @click="save" :loading="loading">确认修改</a-button>
-        </div>
-      </template>
       <!-- 基本信息 -->
       <project-form
         v-if="activeKey == '1'"
@@ -25,10 +20,11 @@
         :rules="rules"
         :isUpdate="isUpdate"
       />
+      <Setting v-if="activeKey == '4'" :data="data" ref="setting" @close="closeSetting" />
+      <!-- 项目成员 -->
+      <Pattner v-if="activeKey == '2'" :data="data" ref="pattner" />
       <!-- 过程文档 -->
-      <docs v-if="activeKey == '2'" :data="data" ref="docs" />
-      <!-- 项目设置 -->
-      <settings v-if="activeKey == '3'" :data="data" ref="settings" />
+      <docs v-if="activeKey == '3'" :data="data" ref="docs" />
     </common-drawer>
 
     <!-- 查看 -->
@@ -49,43 +45,25 @@
         v-model:form="state.form"
         ref="form"
         :rules="rules"
-        :isUpdate="isUpdate"
+        :isView="isView"
       />
+      <!-- 项目成员 -->
+      <Pattner v-if="activeKey == '2'" :isView="isView" :data="data" ref="docs" />
       <!-- 过程文档 -->
-      <docs v-if="activeKey == '2'" :data="data" ref="docs" />
-      <!-- 项目设置 -->
-      <settings v-if="activeKey == '3'" :data="data" ref="settings" />
-    </common-drawer>
-
-    <!-- 新增 -->
-    <common-drawer
-      :width="1200"
-      v-if="!isUpdate && !isView"
-      :visible="visible"
-      title="创建项目"
-      @close="updateVisible(false)"
-    >
-      <template #extra>
-        <div style="height: 32px">
-          <a-button type="primary" @click="save" :loading="loading" v-show="activeKey == '1'"
-            >确认创建</a-button
-          >
-        </div>
-      </template>
-      <project-form v-model:form="state.form" ref="form" :rules="rules" />
+      <docs v-if="activeKey == '3'" :isView="isView" :data="data" ref="docs" />
     </common-drawer>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { message } from 'ant-design-vue';
-  import { UserApi } from '/@/api/system/user/UserApi';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { FileApi } from '/@/api/system/operation/FileApi';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
-  import { emailReg, phoneReg } from '/@/utils/common/util';
-  import FieldExpandForm from '/@/components/FieldExpand/FieldExpandForm.vue';
   import ProjectForm from './project-form.vue';
   import Docs from './docs.vue';
-  import Settings from './settings.vue';
+  import Setting from './settings.vue';
+  import Pattner from './pattner.vue';
   import { onMounted, reactive, ref, watch } from 'vue';
 
   const props = defineProps<{
@@ -107,29 +85,18 @@
     form: {},
   });
   // 默认选中
-  const activeKey = ref<String>('1');
+  const activeKey = ref<string>('1');
   // 表单验证规则
   const rules = reactive({
-    account: [{ required: true, message: '请输入用户账号', type: 'string', trigger: 'blur' }],
-    password: [{ required: true, message: '请输入密码', type: 'string', trigger: 'blur' }],
-    repeatPassword: [
-      { required: true, message: '请输入重复密码', type: 'string', trigger: 'blur' },
-      {
-        type: 'string',
-        trigger: 'blur',
-        validator: async (rule, value, callback) => {
-          const password = state.form.password;
-          if (value && password !== value) {
-            return Promise.reject('两次密码输入不一致');
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
+    projectTitle: [{ required: true, message: '请输入项目名称', type: 'string', trigger: 'blur' }],
+    projectBackground: [
+      { required: true, message: '请输入项目背景', type: 'string', trigger: 'blur' },
     ],
-    email: [{ pattern: emailReg, message: '邮箱格式不正确', type: 'string', trigger: 'blur' }],
-    phone: [{ pattern: phoneReg, message: '手机号格式不正确', type: 'string', trigger: 'blur' }],
-    orgId: [{ required: true, message: '请选择组织机构', type: 'string', trigger: 'blur' }],
+    projectContent: [
+      { required: true, message: '请输入项目内容', type: 'string', trigger: 'blur' },
+    ],
+    partters: [{ required: true, message: '请选择团队成员', trigger: 'blur' }],
+    teacherId: [{ required: true, message: '请选择指导教师', type: 'string', trigger: 'blur' }],
   });
   // 提交状态
   const loading = ref<boolean>(false);
@@ -145,10 +112,14 @@
     },
     {
       key: '2',
-      name: '过程文档',
+      name: '项目成员',
     },
     {
       key: '3',
+      name: '过程文档',
+    },
+    {
+      key: '4',
       name: '项目设置',
     },
   ]);
@@ -159,15 +130,30 @@
   // 初始化
   const init = () => {
     if (props.visible) {
-      if (props.isView) {
-        isView.value = true;
-      } else {
-        if (props.data) {
-          isUpdate.value = true;
+      if (props.data) {
+        state.form = Object.assign({}, props.data);
+        state.form.imageList = props.data.imageFile || [];
+        state.form.imageList.map((item) => {
+          item.name = item.fileOriginName;
+          item.thumbUrl =
+            window.location.origin +
+            `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+        });
+        state.form.fileList = props.data.appendixFile || [];
+        state.form.fileList.map((item) => {
+          item.name = item.fileOriginName;
+          item.thumbUrl =
+            window.location.origin +
+            `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+        });
+        if (props.isView) {
+          isView.value = true;
         } else {
-          state.form = {};
-          isUpdate.value = false;
+          isUpdate.value = true;
         }
+      } else {
+        state.form = {};
+        isUpdate.value = false;
       }
       activeKey.value = props.defaultKey;
       // 清空校验
@@ -183,7 +169,9 @@
       state.form = Object.assign({}, props.data);
     }
   };
-
+  const closeSetting = () => {
+    emits('done');
+  };
   watch(
     () => props.data,
     (val) => {
@@ -203,19 +191,42 @@
 
   // 保存
   const save = () => {
+    console.log(form.value);
     // 校验表单
     form.value.$refs.ProjectFormRef.validate().then(async (valid) => {
       if (valid) {
         // 修改加载框为正在加载
         loading.value = true;
-
         let result;
+        let image = [];
+        let appendix = [];
+        if (state.form.imageList) {
+          image = state.form.imageList.map((item) => {
+            return item.response?.data?.fileId;
+          });
+        }
+        if (state.form.fileList) {
+          appendix = state.form.fileList.map((item) => {
+            return item.response?.data?.fileId;
+          });
+        }
+        const params = {
+          ...state.form,
+          image,
+          appendix,
+        };
+        // delete params.imageList;
+        // delete params.fileList;
 
         // 执行编辑或修改用户方法
         if (isUpdate.value) {
-          result = UserApi.editUser(state.form);
+          result = ProjectApi.editProject(params);
         } else {
-          result = UserApi.addUser(state.form);
+          result = ProjectApi.addProject(params);
+          if (state.form.teacherId && state.form.partters) {
+            const list = [state.form.teacherId, ...state.form.partters];
+            sendMsg(state.form.projectTitle, list);
+          }
         }
         result
           .then((result) => {

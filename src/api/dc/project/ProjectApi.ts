@@ -36,7 +36,7 @@ export class ProjectApi {
     return defHttp.post({ url: '/dc/project/join/member', params }, { isTransformResponse: false });
   }
   static listProjectMember(params) {
-    return defHttp.post({ url: '/dc/project/list/member', params }, { isTransformResponse: false });
+    return defHttp.get({ url: '/dc/project/list/member', params }, { isTransformResponse: false });
   }
   static addProjectDucument(params) {
     return defHttp.post(
@@ -45,7 +45,7 @@ export class ProjectApi {
     );
   }
   static listProjectDucument(params) {
-    return defHttp.post(
+    return defHttp.get(
       { url: '/dc/project/list/ducument', params },
       { isTransformResponse: false },
     );

@@ -50,12 +50,12 @@
         v-model:form="state.form"
         ref="form"
         :rules="rules"
-        :isUpdate="isUpdate"
+        :isView="isView"
       />
       <!-- 项目成员 -->
-      <Pattner v-if="activeKey == '2'" :data="data" ref="docs" />
+      <Pattner v-if="activeKey == '2'" :isView="isView" :data="data" ref="docs" />
       <!-- 过程文档 -->
-      <docs v-if="activeKey == '3'" :data="data" ref="docs" />
+      <docs v-if="activeKey == '3'" :isView="isView" :data="data" ref="docs" />
     </common-drawer>
 
     <!-- 新增 -->
@@ -148,30 +148,30 @@
   // 初始化
   const init = () => {
     if (props.visible) {
-      if (props.isView) {
-        isView.value = true;
-      } else {
-        if (props.data) {
-          state.form = Object.assign({}, props.data);
-          state.form.imageList = props.data.imageFile || [];
-          state.form.imageList.map((item) => {
-            item.name = item.fileOriginName;
-            item.thumbUrl =
-              window.location.origin +
-              `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
-          });
-          state.form.fileList = props.data.appendixFile || [];
-          state.form.fileList.map((item) => {
-            item.name = item.fileOriginName;
-            item.thumbUrl =
-              window.location.origin +
-              `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
-          });
-          isUpdate.value = true;
+      if (props.data) {
+        state.form = Object.assign({}, props.data);
+        state.form.imageList = props.data.imageFile || [];
+        state.form.imageList.map((item) => {
+          item.name = item.fileOriginName;
+          item.thumbUrl =
+            window.location.origin +
+            `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+        });
+        state.form.fileList = props.data.appendixFile || [];
+        state.form.fileList.map((item) => {
+          item.name = item.fileOriginName;
+          item.thumbUrl =
+            window.location.origin +
+            `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+        });
+        if (props.isView) {
+          isView.value = true;
         } else {
-          state.form = {};
-          isUpdate.value = false;
+          isUpdate.value = true;
         }
+      } else {
+        state.form = {};
+        isUpdate.value = false;
       }
       activeKey.value = props.defaultKey;
       // 清空校验

@@ -8,10 +8,10 @@
           <a-card :bordered="false">
             <a-form layout="inline" :model="where">
               <a-row>
-                <a-form-item label="项目名称:">
+                <a-form-item label="题目名称:">
                   <a-input
-                    v-model:value.trim="where.account"
-                    placeholder="请输入项目名称"
+                    v-model:value.trim="where.projectTitle"
+                    placeholder="请输入题目名称"
                     allow-clear
                   />
                 </a-form-item>
@@ -32,20 +32,35 @@
             <BasicTable
               :canResize="false"
               ref="tableRef"
-              :api="UserApi.getUserPages"
+              :api="ProjectApi.getProjectPages"
               :where="where"
               :columns="columns"
               rowKey="userId"
             >
+              <template #statusFlag="{ record }">{{ status[record.statusFlag] }} </template>
+              <template #toolbar>
+                <div class="table-toolbar">
+                  <a-space>
+                    <a-button type="primary" @click="openEdit()">
+                      <template #icon>
+                        <plus-outlined />
+                      </template>
+                      <span>新建项目</span>
+                    </a-button>
+                  </a-space>
+                </div>
+              </template>
               <template #bodyCell="{ column, record }">
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="viewPattner(record)">查看</a>
+                    <a @click="pattner(record)">成员</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)">设置</a>
+                    <a @click="openView(record)">查看</a>
                     <a-divider type="vertical" />
-                    <a @click="openViewDocs(record)">附件</a>
+                    <a @click="openEdit(record)">文档</a>
+                    <a-divider type="vertical" />
+                    <a @click="setting(record)">设置</a>
                   </a-space>
                 </template>
               </template>
@@ -63,48 +78,56 @@
       :isView="isView"
       :defaultKey="defaultKey"
       v-if="showEdit"
-      @update:visible="closeCompanyEdit"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table/index.ts';
-  import { onMounted, reactive, ref, createVNode } from 'vue';
+  import { reactive, ref } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
-  import { UserApi } from '/@/api/system/user/UserApi.ts';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { message, Modal } from 'ant-design-vue';
-
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { message } from 'ant-design-vue';
+  const status = {
+    1: '进行中',
+    2: '已结束',
+    3: '已结题',
+  };
   // 搜索数据
   const where = reactive({
-    orgId: '',
-    account: '',
-    realName: '',
+    projectTitle: '',
+    isAdmin: 1,
   });
   const isView = ref<boolean>(false);
   //ref
   const tableRef = ref<any>(null);
   //表格配置
-  const columns = ref<string[]>([
+  const columns = ref([
     {
       title: '项目名称',
-      dataIndex: 'account',
+      dataIndex: 'projectTitle',
     },
     {
-      title: '立项时间',
-      dataIndex: 'realName',
+      title: '项目负责人',
+      dataIndex: 'createName',
+    },
+    {
+      title: '创建日期',
+      dataIndex: 'createTime',
     },
     {
       title: '状态',
-      key: 'status',
-      dataIndex: 'status',
-      align: 'center',
+      dataIndex: 'statusFlag',
+      key: 'statusFlag',
+      slots: { customRender: 'statusFlag' },
     },
-
+    {
+      title: '立项时间',
+      dataIndex: 'publishTime',
+    },
     {
       title: '结题时间',
-      dataIndex: 'phone',
+      dataIndex: 'endTime',
     },
     {
       title: '操作',
@@ -124,8 +147,6 @@
   // 默认选中tab
   const defaultKey = ref<string>('1');
 
-  onMounted(async () => {});
-
   // 查询
   const reload = () => {
     tableRef.value.reload({ page: 1 });
@@ -138,57 +159,57 @@
     reload();
   };
 
-  // 打开公司部门抽屉时，关闭表格的抽屉
-  const closeCompanyEdit = () => {
-    showEdit.value = false;
-  };
-
   /**
-   * 修改用户状态
+   * 修改项目状态
    *
    * @author anzhongqi
    * @date 2021/4/2 17:04
    */
   const editState = async (checked: boolean, row: any) => {
     const userId = row.userId;
-    // 用户状态：1-启用，2-禁用
+    // 项目状态：1-启用，2-禁用
     const statusFlag = checked ? 1 : 2;
-    const result = await UserApi.changeStatus({ userId, statusFlag });
+    const result = await ProjectApi.changeStatus({ userId, statusFlag });
     message.success(result.message);
     row.statusFlag = statusFlag;
-  };
-
-  /**
-   * 解除冻结用户
-   *
-   * @author anzhongqi
-   * @date 2022/5/31 14:17
-   */
-  const unFreezeUser = async (record) => {
-    const result = await UserApi.unFreezeUser({ account: record.account });
-    message.success(result.message);
-    reload();
   };
 
   // 打开新增编辑弹框
   const openEdit = (row: any) => {
     defaultKey.value = '3';
     current.value = row;
+    isView.value = false;
     showEdit.value = true;
   };
-  // 查看过程文档
-  const openViewDocs = (row: any) => {
+  const pattner = (row: any) => {
     defaultKey.value = '2';
     current.value = row;
-    isView.value = true;
+    isView.value = false;
     showEdit.value = true;
   };
-  // 查看成员
-  const viewPattner = (row: any) => {
+
+  const openView = (row: any) => {
     defaultKey.value = '1';
     current.value = row;
     isView.value = true;
     showEdit.value = true;
+  };
+  const setting = (row: any) => {
+    defaultKey.value = '4';
+    current.value = row;
+    showEdit.value = true;
+  };
+
+  /**
+   * 删除单个
+   *
+   * @author anzhongqi
+   * @date 2021/4/2 17:03
+   */
+  const remove = async (row: any) => {
+    const result = await ProjectApi.deleteProject({ projectId: row.projectId });
+    message.success(result.message);
+    reload();
   };
 </script>
 

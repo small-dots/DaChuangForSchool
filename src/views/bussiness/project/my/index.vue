@@ -103,19 +103,13 @@
       title: '项目名称',
       dataIndex: 'projectTitle',
     },
+    // {
+    //   title: '指导教师',
+    //   dataIndex: 'teacherName',
+    // },
     {
-      title: '指导教师',
-      dataIndex: 'teacherName',
-    },
-    {
-      title: '教师电话',
-      dataIndex: 'teacherPhone',
-    },
-    {
-      title: '团队成员',
-      key: 'status',
-      dataIndex: 'status',
-      align: 'center',
+      title: '项目负责人',
+      dataIndex: 'createName',
     },
     {
       title: '创建日期',

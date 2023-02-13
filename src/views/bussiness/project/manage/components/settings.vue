@@ -3,33 +3,22 @@
     <a-form
       :model="formState"
       @finish="onFinish"
-      @finishFailed="onFinishFailed"
       :label-col="{ md: { span: 4 }, sm: { span: 24 } }"
       :wrapper-col="{ md: { span: 20 }, sm: { span: 24 } }"
     >
       <a-row :gutter="8">
         <a-col :md="24" :sm="24" :xs="24">
-          <a-form-item
-            label="立项时间:"
-            :rules="[{ required: true, message: 'Please input your username!' }]"
-          >
-            <a-date-picker v-model:value="formState.username" />
+          <a-form-item label="立项时间:" required>
+            <a-date-picker v-model:value="formState.publishTime" />
           </a-form-item>
-          <a-form-item
-            label="结题时间:"
-            :rules="[{ required: true, message: 'Please input your username!' }]"
-          >
-            <a-date-picker v-model:value="formState.remember" />
+          <a-form-item label="结题时间:" required>
+            <a-date-picker v-model:value="formState.endTime" />
           </a-form-item>
-          <a-form-item
-            label="项目状态:"
-            :rules="[{ required: true, message: 'Please input your username!' }]"
-          >
-            <a-radio-group v-model:value="formState.password" button-style="solid">
-              <a-radio-button value="a">未开始</a-radio-button>
-              <a-radio-button value="b">进行中</a-radio-button>
-              <a-radio-button value="c">已结束</a-radio-button>
-              <a-radio-button value="d">已结题</a-radio-button>
+          <a-form-item label="项目状态:" required>
+            <a-radio-group v-model:value="formState.statusFlag" button-style="solid">
+              <a-radio-button value="1">进行中</a-radio-button>
+              <a-radio-button value="2">已结束</a-radio-button>
+              <a-radio-button value="3">已结题</a-radio-button>
             </a-radio-group>
           </a-form-item>
           <a-divider />
@@ -43,35 +32,48 @@
   </div>
 </template>
 
-<script lang="ts">
-  import { defineComponent, reactive } from 'vue';
-  import { UserApi } from '/@/api/system/user/UserApi';
-  interface FormState {
-    username: string;
-    password: string;
-    remember: string;
-  }
-  export default defineComponent({
-    setup() {
-      const formState = reactive<FormState>({
-        username: '',
-        password: '进行中',
-        remember: '',
-      });
-      const onFinish = (values: any) => {
-        console.log('Success:', values);
-      };
-
-      const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
-      };
-      return {
-        formState,
-        onFinish,
-        onFinishFailed,
-      };
+<script lang="ts" setup>
+  import { reactive } from 'vue';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { message } from 'ant-design-vue';
+  const props = defineProps({
+    data: {
+      type: Object,
+      default: () => ({}),
+    },
+    isView: {
+      type: Boolean,
+      default: false,
     },
   });
+  const emits = defineEmits<{
+    (e: 'close'): void;
+  }>();
+  interface FormState {
+    statusFlag: string;
+    publishTime: string;
+    endTime: string;
+  }
+  const formState = reactive<FormState>({
+    publishTime: '',
+    statusFlag: '1',
+    endTime: '',
+  });
+  const onFinish = async () => {
+    const params = {
+      ...props.data,
+      projectId: props.data.projectId,
+      statusFlag: formState.statusFlag,
+      publishTime: formState.publishTime,
+      endTime: formState.endTime,
+    };
+    emits('close');
+    const { code } = await ProjectApi.editProject(params);
+    if (code === '00000') {
+      message.success('设置成功');
+      emits('close');
+    }
+  };
 </script>
 
 <style lang="less" scoped>

@@ -11,17 +11,22 @@
       </a-form-item>
 
       <a-form-item label="内容">
-        <tinymce v-model:value="state.form.messageContent" :options="{ readonly: true }" />
+        <div v-html="state.form.messageContent"></div>
+        <!-- <tinymce v-model:value="state.form.messageContent" :options="{ readonly: true }" /> -->
       </a-form-item>
     </a-form>
   </common-drawer>
 </template>
 
 <script lang="ts" setup>
-  import { reactive, watch } from 'vue';
+  import { reactive, watch, onMounted } from 'vue';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
-  import { Tinymce } from '/@/components/Tinymce/index';
   import { NoticeApi } from '/@/api/system/notice/NoticeApi';
+  import { useRouter } from 'vue-router';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { message } from 'ant-design-vue';
+
+  let router = useRouter();
 
   const props = defineProps<{
     // 弹窗是否打开
@@ -52,7 +57,42 @@
     emits('update:visible', value);
     emits('done');
   };
+  onMounted(() => {
+    window.addEventListener('click', (e) => {
+      let target = e.target as HTMLElement;
+      console.log(state.form.messageContent);
+      if (target.id == 'project_invert_confirm') {
+        finish(2);
+      } else if (target.id == 'project_invert_refuse') {
+        finish(3);
+      } else if (target.id == 'projectLink') {
+        router.push({
+          path: '/system/project/detail',
+          query: {
+            projectName: target.innerText,
+          },
+        });
+      }
+    });
+  });
 
+  const finish = (flag) => {
+    const role = JSON.parse(localStorage.getItem('UserInfo') as string).simpleRoleInfoList[0]
+      .roleCode;
+    const projectId = document.getElementById('ID').innerText;
+    const parmas = {
+      projectId: projectId,
+      memberId:
+        role === 'student' ? JSON.parse(localStorage.getItem('UserInfo') as string).userId : '',
+      teacherId:
+        role === 'teacher' ? JSON.parse(localStorage.getItem('UserInfo') as string).userId : '',
+      status: flag,
+    };
+    const { code } = ProjectApi.joinProjectMember(parmas);
+    if (code === '00000') {
+      message.success('已加入项目');
+    }
+  };
   watch(
     () => props.data,
     async (val) => {
@@ -66,3 +106,19 @@
     },
   );
 </script>
+<style lang="less" scoped>
+  .btn_custom {
+    color: #fff;
+    background: #1890ff;
+    border-color: #1890ff;
+    text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+    box-shadow: 0 2px #0000000b;
+    border-radius: 4px;
+    padding: 2px 10px;
+    margin-right: 10px;
+  }
+  .refuse {
+    background: #ff4d4f;
+    border-color: #ff4d4f;
+  }
+</style>
