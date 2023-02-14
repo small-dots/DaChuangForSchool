@@ -23,10 +23,10 @@ export class TitleApi {
   }
 
   /**
-   * 解除题目冻结
+   * 锁定、解锁题目
    */
-  static unFreezeTitle(params) {
-    return defHttp.post({ url: '/cancelFreeze', params }, { isTransformResponse: false });
+  static FreezeTitle(params) {
+    return defHttp.post({ url: '/title/selected', params }, { isTransformResponse: false });
   }
 
   /**

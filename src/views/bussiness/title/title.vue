@@ -47,13 +47,21 @@
               :where="where"
               :columns="columns"
               showTableSetting
-              rowKey="userId"
+              rowKey="titleId"
               :rowSelection="{
                 type: 'checkbox',
                 selectedRowKeys: checkedKeys,
                 onChange: onSelectChange,
               }"
             >
+              <template #statusFlag="{ record }">
+                <a-tag color="blue" v-if="record.statusFlag === 1">{{
+                  statusMap[record.statusFlag]
+                }}</a-tag>
+                <a-tag color="green" v-if="record.statusFlag === 2">{{
+                  statusMap[record.statusFlag]
+                }}</a-tag>
+              </template>
               <template #toolbar>
                 <div class="table-toolbar">
                   <a-space>
@@ -67,16 +75,6 @@
                       </template>
                       <span>发布</span>
                     </a-button>
-                    <a-button
-                      v-if="per('TITLE_CENTER_BATCH_DEL_BUTTON')"
-                      danger
-                      @click="removeBatch"
-                    >
-                      <template #icon>
-                        <delete-outlined />
-                      </template>
-                      <span>批量删除</span>
-                    </a-button>
                   </a-space>
                 </div>
               </template>
@@ -84,12 +82,24 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="openEdit(record)" v-if="per('TITLE_CENTER_UPDATE_BUTTON')">编辑</a>
+                    <a
+                      @click="openEdit(record)"
+                      v-if="per('TITLE_CENTER_UPDATE_BUTTON') && isAuther(record)"
+                      >编辑</a
+                    >
                     <a-divider type="vertical" />
-                    <a @click="lock(record)" v-if="per('TITLE_CENTER_LOCK_BUTTON')">锁定</a>
+                    <a
+                      @click="lock(record)"
+                      v-if="per('TITLE_CENTER_LOCK_BUTTON') && isAuther(record)"
+                      >{{ record.statusFlag === 1 ? '锁定' : '解锁' }}</a
+                    >
                     <a-divider type="vertical" />
                     <a-popconfirm title="确定要删除此用户吗？" @confirm="remove(record)">
-                      <a class="guns-text-danger" v-if="per('TITLE_CENTER_DEL_BUTTON')">删除</a>
+                      <a
+                        class="guns-text-danger"
+                        v-if="per('TITLE_CENTER_DEL_BUTTON') && isAuther(record)"
+                        >删除</a
+                      >
                     </a-popconfirm>
                     <a-divider type="vertical" />
                   </a-space>
@@ -128,7 +138,10 @@
     titleTitle: '',
     teacherName: '',
   });
-
+  const statusMap = {
+    1: '未选',
+    2: '已选',
+  };
   //ref
   const tableRef = ref<any>(null);
   //表格配置
@@ -146,6 +159,7 @@
       key: 'statusFlag',
       dataIndex: 'statusFlag',
       align: 'center',
+      slots: { customRender: 'statusFlag' },
     },
 
     {
@@ -180,6 +194,20 @@
     }
     return false;
   };
+  // 判断是否是指导教师
+  const isAuther = (row) => {
+    const roleList = JSON.parse(localStorage.getItem('UserInfo') as string).simpleRoleInfoList;
+    let isAdmin = false;
+    if (roleList[0].roleCode.startsWith('admin') || roleList[0].roleCode === 'superAdmin') {
+      isAdmin = true;
+    }
+    const realName = JSON.parse(localStorage.getItem('UserInfo') as string).simpleUserInfo
+      ?.realName;
+    if (row.createName == realName || isAdmin) {
+      return true;
+    }
+    return false;
+  };
   // 查询
   const reload = () => {
     checkedKeys.value = [];
@@ -198,33 +226,6 @@
   // 打开公司部门抽屉时，关闭表格的抽屉
   const closeCompanyEdit = () => {
     showEdit.value = false;
-  };
-
-  /**
-   * 修改用户状态
-   *
-   * @author anzhongqi
-   * @date 2021/4/2 17:04
-   */
-  const editState = async (checked: boolean, row: any) => {
-    const userId = row.userId;
-    // 用户状态：1-启用，2-禁用
-    const statusFlag = checked ? 1 : 2;
-    const result = await UserApi.changeStatus({ userId, statusFlag });
-    message.success(result.message);
-    row.statusFlag = statusFlag;
-  };
-
-  /**
-   * 解除冻结用户
-   *
-   * @author anzhongqi
-   * @date 2022/5/31 14:17
-   */
-  const unFreezeUser = async (record) => {
-    const result = await UserApi.unFreezeUser({ account: record.account });
-    message.success(result.message);
-    reload();
   };
 
   // 打开新增编辑弹框
@@ -289,9 +290,19 @@
     reload();
   };
 
-  // 锁定点击
-  const lock = (row: any) => {
-    console.log('题目锁定', row);
+  /**
+   * 修改题目状态
+   * @author anzhongqi
+   * @date 2021/4/2 17:04
+   */
+  const lock = async (row: any) => {
+    // 状态：1-未选，2-已选
+    const status = row.statusFlag === 1 ? 2 : 1;
+    const res = await TitleApi.FreezeTitle({ titleId: row.titleId, statusFlag: status });
+    if (res.code === '00000') {
+      message.success(row.statusFlag === 1 ? '已锁定' : '已解锁');
+      row.statusFlag = status;
+    }
   };
 </script>
 

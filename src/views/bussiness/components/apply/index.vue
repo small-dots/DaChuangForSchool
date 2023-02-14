@@ -43,7 +43,7 @@
             <BasicTable
               :canResize="false"
               ref="tableRef"
-              :api="UserApi.getUserPages"
+              :api="ComponentApi.getComponentPages"
               :where="where"
               :columns="columns"
               showTableSetting
@@ -68,6 +68,7 @@
                       <span>发起申请</span>
                     </a-button>
                     <a-upload
+                      v-if="per('COMPONENT_APPLY_UPLOAD')"
                       name="file"
                       :multiple="true"
                       :action="fileUploadUrl"
@@ -88,6 +89,11 @@
                 <template v-if="column.key === 'action'">
                   <a-space>
                     <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
+                      >审核</a
+                    >
+                    <a
+                      @click="openEdit(record, true, true)"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_ADMIN')"
                       >审核</a
                     >
                     <a @click="print(record)" v-if="per('COMPONENTS_APPLY_PRINT_BUTTON')"
@@ -121,6 +127,7 @@
       :data="current"
       @done="reload"
       :isReview="isReview"
+      :isAdmin="isAdmin"
       :defaultKey="defaultKey"
       v-if="showModal"
     />
@@ -140,7 +147,7 @@
   import { BasicTable } from '/@/components/Table';
   import { onMounted, reactive, ref, computed } from 'vue';
   import Diolag from './modal.vue';
-  import { UserApi } from '/@/api/system/user/UserApi';
+  import { ComponentApi } from '/@/api/dc/component/componentApi.ts';
   import { TitleAPi } from '/@/api/dc/title/TitleApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { message, Modal } from 'ant-design-vue';
@@ -211,7 +218,7 @@
 
   // 表格多选选中列表
   const checkedKeys = ref<Array<string | number>>([]);
-
+  const isAdmin = ref<boolean>(false);
   // 是否显示弹框
   const showModal = ref<boolean>(false);
   const showPrintModal = ref<boolean>(false);
@@ -274,39 +281,14 @@
       message.success('上传成功');
     }
   };
-  /**
-   * 修改用户状态
-   *
-   * @author anzhongqi
-   * @date 2021/4/2 17:04
-   */
-  const editState = async (checked: boolean, row: any) => {
-    const userId = row.userId;
-    // 用户状态：1-启用，2-禁用
-    const statusFlag = checked ? 1 : 2;
-    const result = await UserApi.changeStatus({ userId, statusFlag });
-    message.success(result.message);
-    row.statusFlag = statusFlag;
-  };
-
-  /**
-   * 解除冻结用户
-   *
-   * @author anzhongqi
-   * @date 2022/5/31 14:17
-   */
-  const unFreezeUser = async (record) => {
-    const result = await UserApi.unFreezeUser({ account: record.account });
-    message.success(result.message);
-    reload();
-  };
 
   // 打开新增编辑弹框
-  const openEdit = (row?: any, flag?) => {
+  const openEdit = (row?: any, flag?, isAdmin?) => {
     defaultKey.value = '1';
     current.value = row;
     showModal.value = true;
     isReview.value = flag;
+    isAdmin.value = isAdmin;
   };
   // 打印
   const print = (row?: any) => {
@@ -325,7 +307,7 @@
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
-    const result = await UserApi.deleteUser({ userId: row.userId });
+    const result = await ComponentApi.deleteUser({ userId: row.userId });
     message.success(result.message);
     reload();
   };
