@@ -10,47 +10,46 @@
       @update:visible="updateVisible"
       @ok="onSubmit"
     >
-      <a-form
-        ref="formRef"
-        :model="formState"
-        :rules="rules"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-      >
-        <a-form-item ref="name" label="申请人姓名" name="name">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="学(工)号" name="number">
-          <a-input v-model:value="formState.number" disabled="true" />
-        </a-form-item>
-        <a-form-item label="联系电话" required name="phone">
-          <a-input v-model:value="formState.phone" disabled="true" />
-        </a-form-item>
-        <a-form-item label="项目名称" name="delivery">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="项目编号" name="type">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item label="项目负责人" name="resource">
-          <a-input v-model:value="formState.name" disabled="true" />
-        </a-form-item>
-        <a-form-item v-if="!isReview" label="申请单模板" name="desc">
-          <a-button type="link">申请单模板下载</a-button>
-        </a-form-item>
-        <a-form-item label="附件" name="desc">
-          <a-upload
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            :multiple="true"
-            :file-list="fileList"
-            @change="handleChange"
+      <a-descriptions title="申请人信息" bordered :column="2">
+        <a-descriptions-item label="申请人姓名">{{ formState.name }}</a-descriptions-item>
+        <a-descriptions-item label="学(工)号">{{ formState.number }}</a-descriptions-item>
+        <a-descriptions-item label="联系电话">{{ formState.phone }}</a-descriptions-item>
+        <a-descriptions-item label="项目名称"
+          ><span class="pro_link" @click="linkToProject(formState.projectName)">{{
+            formState.projectName
+          }}</span>
+        </a-descriptions-item>
+        <a-descriptions-item label="项目编号">{{ formState.projectId }}</a-descriptions-item>
+        <a-descriptions-item label="项目负责人">
+          {{ formState.createUser }}
+        </a-descriptions-item>
+      </a-descriptions>
+      <p></p>
+      <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-row>
+          <a-col :span="12"
+            ><a-form-item v-if="!isReview" label="申请单模板" name="desc">
+              <a-button type="link">申请单模板下载</a-button>
+            </a-form-item></a-col
           >
-            <a-button v-if="!isReview">
-              <upload-outlined />
-              申请单上传
-            </a-button>
-          </a-upload>
-        </a-form-item>
+        </a-row>
+        <a-row>
+          <a-col :span="12"
+            ><a-form-item label="申请单" name="desc">
+              <a-upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                :multiple="true"
+                :file-list="fileList"
+                @change="handleChange"
+              >
+                <a-button v-if="!isReview">
+                  <upload-outlined />
+                  申请单上传
+                </a-button>
+              </a-upload>
+            </a-form-item></a-col
+          >
+        </a-row>
       </a-form>
       <a-divider v-if="isReview" />
       <a-descriptions v-if="isReview" title="审核信息" :column="1">
@@ -60,7 +59,7 @@
             <a-radio :value="2">拒绝</a-radio>
           </a-radio-group></a-descriptions-item
         >
-        <a-descriptions-item v-if="isSuper && isReview" label="是否需要复核"
+        <a-descriptions-item v-if="isAdmin && isReview" label="是否需要复核"
           ><a-radio-group v-model:value="reviewResult">
             <a-radio :value="1">是</a-radio>
             <a-radio :value="2">否</a-radio>
@@ -78,20 +77,21 @@
 </template>
 
 <script setup lang="ts">
-  import { ValidateErrorEntity } from 'ant-design-vue/es/form/interface';
-  import { reactive, ref, toRaw, UnwrapRef, onMounted } from 'vue';
+  import { reactive, ref, UnwrapRef, onMounted } from 'vue';
+  import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
+  import { useRouter } from 'vue-router';
+  import { message } from 'ant-design-vue';
   interface FormState {
     name: string | undefined;
     phone: string | number | undefined;
     number: string | undefined;
-    delivery: boolean;
-    type: string[];
-    resource: string;
-    desc: string;
+    projectName: string | undefined;
+    projectId: string | undefined;
+    createUser: string | undefined;
   }
   interface SimpleUserInfo {
     realName: string | undefined;
-    tel: string | number | undefined;
+    phone: string | number | undefined;
   }
   interface Userinfo {
     simpleUserInfo?: SimpleUserInfo;
@@ -105,6 +105,7 @@
     response?: Response;
     url: string;
   }
+  const router = useRouter();
   const reviewResult = ref(1);
   interface FileInfo {
     file: FileItem;
@@ -114,6 +115,7 @@
   const props = defineProps<{
     visible: Boolean;
     isReview: Boolean;
+    isAdmin: Boolean;
   }>();
   const labelCol = {
     span: 5,
@@ -123,11 +125,11 @@
   };
   const userinfo = ref<Userinfo>({});
   onMounted(() => {
+    getUserProject();
     userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
     const { simpleUserInfo, account } = userinfo.value;
-    isSuper.value = userinfo.value.superAdmin as boolean;
     formState.name = simpleUserInfo?.realName;
-    formState.phone = simpleUserInfo?.tel;
+    formState.phone = simpleUserInfo?.phone;
     formState.number = account;
   });
   const reviewDesc = ref('');
@@ -136,38 +138,43 @@
     name: '',
     phone: undefined,
     number: undefined,
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: '',
+    projectName: '',
+    projectId: '',
+    createUser: '',
   });
-  const rules = {
-    name: [
-      { required: true, message: 'Please input Activity name', trigger: 'blur' },
-      { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
-    ],
-    region: [{ required: true, message: 'Please select Activity zone', trigger: 'change' }],
-    date1: [{ required: true, message: 'Please pick a date', trigger: 'change', type: 'object' }],
-    type: [
-      {
-        type: 'array',
-        required: true,
-        message: 'Please select at least one activity type',
-        trigger: 'change',
-      },
-    ],
-    resource: [{ required: true, message: 'Please select activity resource', trigger: 'change' }],
-    desc: [{ required: true, message: 'Please input activity form', trigger: 'blur' }],
-  };
   const onSubmit = () => {
-    formRef.value
-      .validate()
-      .then(() => {
-        console.log('values', formState, toRaw(formState));
-      })
-      .catch((error: ValidateErrorEntity<FormState>) => {
-        console.log('error', error);
-      });
+    if (!fileList.value.length) {
+      message.error('请上传申请单');
+      return;
+    } else {
+      addApply();
+    }
+  };
+  // 发起元器件申请
+  const addApply = () => {
+    const parmas = {
+      projectId: formState.projectId,
+      projectName: formState.projectName,
+      createUser: formState.createUser,
+      applyFile: fileList.value[0].url,
+      applyDesc: reviewDesc.value,
+      applyResult: reviewResult.value,
+    };
+    const res = ProjectApi.addComponent({ ...parmas });
+    console.log(res);
+    if (res.code === '00000') {
+      message.success('提交成功,待老师审核');
+      updateVisible(false);
+      emits('done');
+    }
+  };
+  const linkToProject = (projectName) => {
+    router.push({
+      path: '/system/project/detail',
+      query: {
+        projectName: projectName,
+      },
+    });
   };
   const resetForm = () => {
     formRef.value.resetFields();
@@ -189,15 +196,10 @@
   ]);
   const handleChange = (info: FileInfo) => {
     let resFileList = [...info.fileList];
-
-    // 1. Limit the number of uploaded files
-    //    Only to show two recent uploaded files, and old ones will be replaced by the new
     resFileList = resFileList.slice(-2);
 
-    // 2. read from response and show file link
     resFileList = resFileList.map((file) => {
       if (file.response) {
-        // Component will show file.url as link
         file.url = file.response.url;
       }
       return file;
@@ -205,6 +207,35 @@
 
     fileList.value = resFileList;
   };
+
+  // 获取用户名下的项目，得是负责人
+  const getUserProject = async () => {
+    const res = await ProjectApi.getProjectPages({
+      pageSize: 10,
+      pageNo: 1,
+    });
+    if (res.rows.length) {
+      formState.projectName = res.rows[0].projectTitle;
+      formState.projectId = res.rows[0].projectId;
+      formState.createUser = res.rows[0].createName;
+    }
+    console.log('res', res);
+  };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="less" scoped>
+  .apply_form {
+    border: 1px solid #e8e8e8;
+    padding-top: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .font-weight-5 {
+    font-weight: 500;
+  }
+  .pro_link {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #1890ff;
+  }
+</style>

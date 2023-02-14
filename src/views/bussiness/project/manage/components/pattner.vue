@@ -3,7 +3,9 @@
     <a-table :columns="columns" bordered :pagination="false" :data-source="data">
       <template #memberName="{ record }">
         <span>{{
-          record.type === 2 ? record.memberName + '（指导教师）' : record.memberName
+          record.type === 2
+            ? record.memberName + '（指导教师）'
+            : record.memberName + '（项目成员）'
         }}</span>
       </template>
       <template #status="{ text }">

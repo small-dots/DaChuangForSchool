@@ -33,9 +33,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive } from 'vue';
+  import { onMounted, reactive, watch } from 'vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
+  import dayjs, { Dayjs } from 'dayjs';
   const props = defineProps({
     data: {
       type: Object,
@@ -50,14 +51,20 @@
     (e: 'close'): void;
   }>();
   interface FormState {
-    statusFlag: string;
-    publishTime: string;
-    endTime: string;
+    statusFlag: string | undefined;
+    publishTime: Dayjs | undefined;
+    endTime: Dayjs | undefined;
   }
   const formState = reactive<FormState>({
     publishTime: '',
     statusFlag: '1',
     endTime: '',
+  });
+  onMounted(() => {
+    formState.publishTime = dayjs(props.data.publishTime);
+    formState.statusFlag = props.data.statusFlag;
+    formState.endTime = dayjs(props.data.endTime);
+    console.log(formState.publishTime);
   });
   const onFinish = async () => {
     const params = {
@@ -72,6 +79,8 @@
     if (code === '00000') {
       message.success('设置成功');
       emits('close');
+    } else {
+      message.error('设置失败');
     }
   };
 </script>

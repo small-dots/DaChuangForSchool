@@ -34,8 +34,9 @@
               ref="tableRef"
               :api="ProjectApi.getProjectPages"
               :where="where"
+              :pagination="{ hideOnSinglePage: true }"
               :columns="columns"
-              rowKey="userId"
+              rowKey="projectId"
             >
               <template #toolbar>
                 <div class="table-toolbar">
@@ -85,7 +86,7 @@
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table/index.ts';
-  import { reactive, ref } from 'vue';
+  import { onMounted, reactive, ref } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
@@ -156,10 +157,11 @@
     where.realName = '';
     reload();
   };
-
+  onMounted(() => {
+    console.log('onMounted', tableRef.value.$refs.tableElRef);
+  });
   /**
    * 修改项目状态
-   *
    * @author anzhongqi
    * @date 2021/4/2 17:04
    */
