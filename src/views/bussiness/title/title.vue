@@ -164,7 +164,7 @@
 
     {
       title: '发布日期',
-      dataIndex: 'phone',
+      dataIndex: 'createTime',
     },
     {
       title: '操作',
@@ -201,9 +201,10 @@
     if (roleList[0].roleCode.startsWith('admin') || roleList[0].roleCode === 'superAdmin') {
       isAdmin = true;
     }
+    console.log(isAdmin);
     const realName = JSON.parse(localStorage.getItem('UserInfo') as string).simpleUserInfo
       ?.realName;
-    if (row.createName == realName || isAdmin) {
+    if (row.createName === realName || isAdmin) {
       return true;
     }
     return false;
