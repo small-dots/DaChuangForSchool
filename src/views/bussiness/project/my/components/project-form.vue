@@ -31,6 +31,7 @@
               :multiple="true"
               :action="fileUploadUrl"
               list-type="picture"
+              accept="image/*"
               v-model:file-list="form.imageList"
               :headers="headers"
               @change="afterUpload"

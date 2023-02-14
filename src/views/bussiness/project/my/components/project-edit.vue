@@ -117,8 +117,6 @@
     projectContent: [
       { required: true, message: '请输入项目内容', type: 'string', trigger: 'blur' },
     ],
-    partters: [{ required: true, message: '请选择团队成员', trigger: 'blur' }],
-    teacherId: [{ required: true, message: '请选择指导教师', type: 'string', trigger: 'blur' }],
   });
   // 提交状态
   const loading = ref<boolean>(false);
@@ -218,18 +216,18 @@
         let appendix = [];
         if (state.form.imageList) {
           image = state.form.imageList.map((item) => {
-            return item.response?.data?.fileId;
+            return item.fileId || item.response.data.fileId;
           });
         }
         if (state.form.fileList) {
           appendix = state.form.fileList.map((item) => {
-            return item.response?.data?.fileId;
+            return item.fileId || item.response.data.fileId;
           });
         }
         const params = {
           ...state.form,
-          image,
-          appendix,
+          image: image,
+          appendix: appendix,
         };
         // delete params.imageList;
         // delete params.fileList;
@@ -239,27 +237,24 @@
           result = ProjectApi.editProject(params);
         } else {
           result = ProjectApi.addProject(params);
-          if (state.form.teacherId && state.form.partters) {
-            const list = [state.form.teacherId, ...state.form.partters];
-            sendMsg(state.form.projectTitle, list);
-          }
         }
         result
           .then((result) => {
-            // 移除加载框
-            loading.value = true;
-
-            // 提示添加成功
-            message.success(result.message);
-
-            // 如果是新增用户，则form表单置空
-            if (!isUpdate.value) {
-              state.form = {};
+            if (result.code === '00000') {
+              // 移除加载框
+              loading.value = true;
+              // 提示添加成功
+              message.success(result.message);
+              if (!isUpdate.value) {
+                state.form = {};
+              }
+              // 关闭弹框，通过控制visible的值，传递给父组件
+              updateVisible(false);
+              emits('done');
+            } else {
+              message.error(result.message);
+              return;
             }
-            // 关闭弹框，通过控制visible的值，传递给父组件
-            updateVisible(false);
-
-            emits('done');
           })
           .catch(() => {
             loading.value = true;

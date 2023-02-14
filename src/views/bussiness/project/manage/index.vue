@@ -37,19 +37,7 @@
               :columns="columns"
               rowKey="userId"
             >
-              <template #statusFlag="{ record }">{{ status[record.statusFlag] }} </template>
-              <template #toolbar>
-                <div class="table-toolbar">
-                  <a-space>
-                    <a-button type="primary" @click="openEdit()">
-                      <template #icon>
-                        <plus-outlined />
-                      </template>
-                      <span>新建项目</span>
-                    </a-button>
-                  </a-space>
-                </div>
-              </template>
+              <template #statusFlag="{ text }">{{ status[text] }} </template>
               <template #bodyCell="{ column, record }">
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
@@ -90,8 +78,8 @@
   import { message } from 'ant-design-vue';
   const status = {
     1: '进行中',
-    2: '已结束',
-    3: '已结题',
+    2: '已结题',
+    3: '已终止',
   };
   // 搜索数据
   const where = reactive({

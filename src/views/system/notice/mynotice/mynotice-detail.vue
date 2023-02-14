@@ -76,21 +76,19 @@
     });
   });
 
-  const finish = (flag) => {
+  const finish = async (flag) => {
     const role = JSON.parse(localStorage.getItem('UserInfo') as string).simpleRoleInfoList[0]
       .roleCode;
     const projectId = document.getElementById('ID').innerText;
     const parmas = {
       projectId: projectId,
-      memberId:
-        role === 'student' ? JSON.parse(localStorage.getItem('UserInfo') as string).userId : '',
-      teacherId:
-        role === 'teacher' ? JSON.parse(localStorage.getItem('UserInfo') as string).userId : '',
+      memberId: JSON.parse(localStorage.getItem('UserInfo') as string).userId,
       status: flag,
     };
-    const { code } = ProjectApi.joinProjectMember(parmas);
-    if (code === '00000') {
+    const res = await ProjectApi.joinProjectMember(parmas);
+    if (res.code === '00000') {
       message.success('已加入项目');
+      updateVisible(false);
     }
   };
   watch(

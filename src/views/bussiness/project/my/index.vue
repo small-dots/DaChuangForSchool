@@ -37,10 +37,10 @@
               :columns="columns"
               rowKey="userId"
             >
-              <template #toolbar>
+              <template #toolbar v-if="computedShow">
                 <div class="table-toolbar">
                   <a-space>
-                    <a-button type="primary" @click="openEdit()">
+                    <a-button type="primary" @click="openEdit('')">
                       <template #icon>
                         <plus-outlined />
                       </template>
@@ -48,6 +48,9 @@
                     </a-button>
                   </a-space>
                 </div>
+              </template>
+              <template #statusFlag="{ text }">
+                <span>{{ statusMap[text] }}</span>
               </template>
               <template #bodyCell="{ column, record }">
                 <!-- table操作栏按钮 -->
@@ -85,7 +88,7 @@
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table/index.ts';
-  import { reactive, ref } from 'vue';
+  import { reactive, ref, onMounted, computed } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
@@ -96,6 +99,7 @@
   });
   const isView = ref<boolean>(false);
   //ref
+  const computedShows = ref(true);
   const tableRef = ref<any>(null);
   //表格配置
   const columns = ref([
@@ -118,6 +122,8 @@
     {
       title: '状态',
       dataIndex: 'statusFlag',
+      key: 'statusFlag',
+      slots: { customRender: 'statusFlag' },
     },
     {
       title: '立项时间',
@@ -144,7 +150,12 @@
 
   // 默认选中tab
   const defaultKey = ref<string>('1');
-
+  const statusMap = {
+    1: '进行中',
+    2: '已结题',
+    3: '已终止',
+    '': '',
+  };
   // 查询
   const reload = () => {
     tableRef.value.reload({ page: 1 });
@@ -156,7 +167,10 @@
     where.realName = '';
     reload();
   };
-
+  onMounted(() => {
+    computedShows.value = tableRef.value.getDataSource().length === 0;
+    console.log(tableRef.value, tableRef.value.getPaginationRef());
+  });
   /**
    * 修改项目状态
    *
