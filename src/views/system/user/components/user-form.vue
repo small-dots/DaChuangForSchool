@@ -61,7 +61,13 @@
             </a-select>
           </a-form-item>
           <a-form-item label="手机号:" name="phone">
-            <a-input v-model:value="form.phone" placeholder="请输入手机号" allow-clear />
+            <a-input
+              v-model:value="form.phone"
+              show-count
+              :maxlength="11"
+              placeholder="请输入手机号"
+              allow-clear
+            />
           </a-form-item>
           <a-form-item label="邮箱:" name="email" v-if="isUpdate">
             <a-input v-model:value="form.email" placeholder="请输入邮箱" allow-clear />

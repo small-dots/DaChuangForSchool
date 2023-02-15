@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, unref } from 'vue';
+  import { defineComponent, computed, unref, watch } from 'vue';
   import { Layout } from 'ant-design-vue';
   import { createAsyncComponent } from '/@/utils/factory/createAsyncComponent';
 
@@ -29,7 +29,6 @@
   import { useLockPage } from '/@/hooks/web/useLockPage';
 
   import { useAppInject } from '/@/hooks/web/useAppInject';
-
   export default defineComponent({
     name: 'DefaultLayout',
     components: {
@@ -46,10 +45,8 @@
       const { getIsMobile } = useAppInject();
       const { getShowFullHeaderRef } = useHeaderSetting();
       const { getShowSidebar, getIsMixSidebar, getShowMenu } = useMenuSetting();
-
       // Create a lock screen monitor
       const lockEvents = useLockPage();
-
       const layoutClass = computed(() => {
         let cls: string[] = ['ant-layout'];
         if (unref(getIsMixSidebar) || unref(getShowMenu)) {

@@ -60,7 +60,6 @@
   onMounted(() => {
     window.addEventListener('click', (e) => {
       let target = e.target as HTMLElement;
-      console.log(state.form.messageContent);
       if (target.id == 'project_invert_confirm') {
         finish(2);
       } else if (target.id == 'project_invert_refuse') {

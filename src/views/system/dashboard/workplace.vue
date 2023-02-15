@@ -154,7 +154,7 @@
 </template>
 
 <script lang="ts" setup name="WorkPlace">
-  import { computed, onMounted, reactive, ref } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import { HomeApi } from '/@/api/system/dashboard/HomeApi';
   import { useUserStore } from '/@/store/modules/user';
   import noticeList from '/@/views/system/notice/mynotice/mynotice.vue';
@@ -178,15 +178,14 @@
         );
     return fmt;
   };
-
   // 用户信息
   const userStore = useUserStore();
 
   // 登录人信息
   const loginUser = computed(() => {
+    console.log(userStore?.userInfo);
     return userStore?.userInfo;
   });
-
   // 当前登录时间
   const currentDate = ref(new Date().Format('yyyy年MM月dd日'));
 
@@ -213,7 +212,6 @@
 
   onMounted(() => {
     const roleCode = loginUser.value.roles[0].roleCode || '';
-    console.log(loginUser.value);
     // 获取常用功能;
     if (!roleCode) {
       recentMenus.value = [];

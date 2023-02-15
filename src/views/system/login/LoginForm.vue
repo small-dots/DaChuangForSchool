@@ -32,7 +32,9 @@
           <Checkbox v-model:checked="formData.rememberMe" size="small">
             {{ t('sys.login.rememberMe') }}
           </Checkbox>
-        </FormItem>
+        </FormItem> </ACol
+      ><ACol :span="12">
+        <div style="float: right"><a-button type="text">忘记密码</a-button></div>
       </ACol>
     </ARow>
 

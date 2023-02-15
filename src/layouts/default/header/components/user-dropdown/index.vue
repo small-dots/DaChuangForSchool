@@ -2,7 +2,7 @@
   <Dropdown placement="bottomLeft" :overlayClassName="`${prefixCls}-dropdown-overlay`">
     <span :class="[prefixCls, `${prefixCls}--${theme}`]" class="flex">
       <img :class="`${prefixCls}__header`" :src="getUserInfo.avatar" />
-      <span :class="`${prefixCls}__info hidden md:block`">
+      <span id="step_one" :class="`${prefixCls}__info hidden md:block step_one`">
         <span :class="`${prefixCls}__name  `" class="truncate">
           {{ getUserInfo.realName }}
         </span>
@@ -50,7 +50,7 @@
   import { Dropdown, Menu } from 'ant-design-vue';
   import type { MenuInfo } from 'ant-design-vue/lib/menu/src/interface';
 
-  import { defineComponent, computed, ref } from 'vue';
+  import { defineComponent, computed, ref, onMounted } from 'vue';
 
   import { DOC_URL } from '/@/settings/siteSetting';
 
@@ -70,7 +70,9 @@
   import { router } from '/@/router';
 
   type MenuEvent = 'logout' | 'doc' | 'lock';
-
+  import IntroJs from 'intro.js'; // introjs库
+  import 'intro.js/introjs.css'; // introjs默认css样式
+  // introjs还提供了多种主题，可以通过以下方式引入
   export default defineComponent({
     name: 'UserDropdown',
     components: {
@@ -90,12 +92,54 @@
       const { getShowDoc, getUseLockPage } = useHeaderSetting();
       const userStore = useUserStore();
       const systemStore = useSystemStore();
+      const openGuide = () => {
+        const allSteps = [
+          {
+            title: '账户安全提示',
+            element: '.step_one',
+            intro: '当前密码为初始密码，为了账户安全，请尽快修改密码',
+          },
+        ];
 
+        const curIntro = IntroJs();
+        curIntro.setOptions({
+          prevLabel: `上一步`,
+          nextLabel: `下一步`,
+          skipLabel: ``,
+          doneLabel: `忽略`,
+          tooltipPosition: 'bottom', // 引导说明框相对高亮说明区域的位置
+          hidePrev: true, // 隐藏第一步中的上一个按钮
+          tooltipClass: `` /* 引导说明文本框的样式 */,
+          highlightClass: `` /* 说明高亮区域的样式 */,
+          exitOnOverlayClick: false /* 是否允许点击空白处退出 */,
+          showStepNumbers: false /* 是否显示说明的数据步骤*/,
+          keyboardNavigation: false /* 是否允许键盘来操作 */,
+          showButtons: true /* 是否按键来操作 */,
+          showBullets: false /* 是否使用点点点显示进度 */,
+          showProgress: false /* 是否显示进度条 */,
+          scrollToElement: true /* 是否滑动到高亮的区域 */,
+          overlayOpacity: 0.6 /* 遮罩层的透明度 */,
+          positionPrecedence: [
+            `bottom`,
+            `top`,
+            `right`,
+            `left`,
+          ] /* 当位置选择自动的时候，位置排列的优先级 */,
+          disableInteraction: false /* 是否禁止与元素的相互关联 */,
+          hintPosition: 'top-middle',
+          steps: allSteps,
+        });
+        setTimeout(() => {
+          curIntro.start();
+        }, 1000);
+      };
       // 判断是前台还是后台
       const antdvFrontType = computed(() => {
         return systemStore.antdvFrontType;
       });
-
+      onMounted(() => {
+        openGuide();
+      });
       // 显示的前后台类型
       const menuType = computed(() => {
         return Number(localStorage.getItem('menuType'));
@@ -152,6 +196,7 @@
       return {
         prefixCls,
         t,
+        openGuide,
         menuType,
         passwordVisible,
         getUserInfo,
@@ -164,6 +209,9 @@
     },
   });
 </script>
+<style>
+  @import 'driver.js/dist/driver.min.css';
+</style>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-header-user-dropdown';
 

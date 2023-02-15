@@ -113,7 +113,10 @@
       },
     ],
     email: [{ pattern: emailReg, message: '邮箱格式不正确', type: 'string', trigger: 'blur' }],
-    phone: [{ pattern: phoneReg, message: '手机号格式不正确', type: 'string', trigger: 'blur' }],
+    phone: [
+      { required: true, message: '请输入手机号码', trigger: 'blur' },
+      { pattern: phoneReg, message: '手机号格式不正确', type: 'string', trigger: 'blur' },
+    ],
     orgId: [{ required: true, message: '请选择组织机构', type: 'string', trigger: 'blur' }],
   });
   // 提交状态
