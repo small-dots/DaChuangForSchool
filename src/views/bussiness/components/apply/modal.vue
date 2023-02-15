@@ -6,6 +6,7 @@
       :maskClosable="false"
       title="元器件申请"
       width="40%"
+      :okButtonProps="{ disabled: !canApply }"
       :body-style="{ paddingBottom: '8px' }"
       @update:visible="updateVisible"
       @ok="onSubmit"
@@ -77,10 +78,10 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, ref, UnwrapRef, onMounted } from 'vue';
+  import { reactive, ref, UnwrapRef, createVNode, onMounted } from 'vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { useRouter } from 'vue-router';
-  import { message } from 'ant-design-vue';
+  import { message, Modal } from 'ant-design-vue';
   interface FormState {
     name: string | undefined;
     phone: string | number | undefined;
@@ -111,11 +112,12 @@
     file: FileItem;
     fileList: FileItem[];
   }
+  const canApply = ref(false);
   const isSuper = ref<boolean>(false);
   const props = defineProps<{
     visible: Boolean;
     isReview: Boolean;
-    isAdmin: Boolean;
+    isAdmin: Boolean | undefined;
   }>();
   const labelCol = {
     span: 5,
@@ -125,12 +127,12 @@
   };
   const userinfo = ref<Userinfo>({});
   onMounted(() => {
-    getUserProject();
     userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
     const { simpleUserInfo, account } = userinfo.value;
     formState.name = simpleUserInfo?.realName;
     formState.phone = simpleUserInfo?.phone;
     formState.number = account;
+    getUserProject(formState.name);
   });
   const reviewDesc = ref('');
   const formRef = ref();
@@ -161,7 +163,6 @@
       applyResult: reviewResult.value,
     };
     const res = ProjectApi.addComponent({ ...parmas });
-    console.log(res);
     if (res.code === '00000') {
       message.success('提交成功,待老师审核');
       updateVisible(false);
@@ -187,12 +188,12 @@
     emits('update:visible', value);
   };
   const fileList = ref<FileItem[]>([
-    {
-      uid: '-1',
-      name: '元器件申请单-2021-01-01.docx',
-      status: 'done',
-      url: 'http://www.baidu.com/xxx.png',
-    },
+    // {
+    //   uid: '-1',
+    //   name: '元器件申请单-2021-01-01.docx',
+    //   status: 'done',
+    //   url: 'http://www.baidu.com/xxx.png',
+    // },
   ]);
   const handleChange = (info: FileInfo) => {
     let resFileList = [...info.fileList];
@@ -209,17 +210,23 @@
   };
 
   // 获取用户名下的项目，得是负责人
-  const getUserProject = async () => {
+  const getUserProject = async (name) => {
     const res = await ProjectApi.getProjectPages({
       pageSize: 10,
       pageNo: 1,
     });
-    if (res.rows.length) {
+    if (res.rows.length && name === res?.rows[0]?.createName) {
+      canApply.value = true;
       formState.projectName = res.rows[0].projectTitle;
       formState.projectId = res.rows[0].projectId;
       formState.createUser = res.rows[0].createName;
+    } else {
+      canApply.value = false;
+      Modal.error({
+        title: '错误提示',
+        content: '您还没有负责的项目，暂不能申请元器件',
+      });
     }
-    console.log('res', res);
   };
 </script>
 

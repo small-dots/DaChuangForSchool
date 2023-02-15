@@ -138,7 +138,11 @@
         return systemStore.antdvFrontType;
       });
       onMounted(() => {
-        openGuide();
+        const isPasswordUpdated = JSON.parse(
+          localStorage.getItem('UserInfo') as string,
+        ).isPasswordUpdated;
+        console.log(isPasswordUpdated);
+        isPasswordUpdated === 0 && openGuide();
       });
       // 显示的前后台类型
       const menuType = computed(() => {
@@ -209,9 +213,6 @@
     },
   });
 </script>
-<style>
-  @import 'driver.js/dist/driver.min.css';
-</style>
 <style lang="less">
   @prefix-cls: ~'@{namespace}-header-user-dropdown';
 

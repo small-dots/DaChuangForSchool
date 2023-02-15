@@ -16,16 +16,16 @@ export class ComponentApi {
   }
 
   /**
-   * 修改元器件
-   */
-  static editComponent(params) {
-    return defHttp.post({ url: '/dc/component/edit', params }, { isTransformResponse: false });
-  }
-
-  /**
    * 删除元器件
    */
   static deleteComponent(params) {
     return defHttp.post({ url: '/dc/component/delete', params }, { isTransformResponse: false });
+  }
+
+  /**
+   * 获取元器件申请单
+   */
+  static getComponentPass(params) {
+    return defHttp.get({ url: '/dc/component/get', params });
   }
 }

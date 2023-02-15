@@ -7,17 +7,17 @@
           <a-card :bordered="false">
             <a-form layout="inline" :model="where">
               <a-row>
-                <a-form-item label="学生名称:">
+                <a-form-item label="申请人姓名:">
                   <a-input
-                    v-model:value.trim="where.account"
-                    placeholder="请输入学生名称"
+                    v-model:value.trim="where.createName"
+                    placeholder="请输入申请人姓名"
                     allow-clear
                   />
                 </a-form-item>
-                <a-form-item label="指导教师:">
+                <a-form-item label="项目名称:">
                   <a-input
-                    v-model:value.trim="where.realName"
-                    placeholder="请输入指导教师"
+                    v-model:value.trim="where.projectTitle"
+                    placeholder="请输入项目名称"
                     allow-clear
                   />
                 </a-form-item>
@@ -148,17 +148,15 @@
   import { onMounted, reactive, ref, computed } from 'vue';
   import Diolag from './modal.vue';
   import { ComponentApi } from '/@/api/dc/component/componentApi.ts';
-  import { TitleAPi } from '/@/api/dc/title/TitleApi';
-  import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { message, Modal } from 'ant-design-vue';
+  import { message } from 'ant-design-vue';
   import Print from './print.vue';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
   // 搜索数据
   const where = reactive({
-    orgId: '',
-    account: '',
-    realName: '',
+    status: [1, 2, 3, 4, 5],
+    projectTitle: '',
+    createName: '',
   });
 
   type TableDataType = {
@@ -195,9 +193,11 @@
       dataIndex: 'status',
       align: 'center',
       filters: [
-        { text: '待审核', value: '1' },
-        { text: '已审核', value: '2' },
-        { text: '已拒绝', value: '3' },
+        { text: '老师审核', value: 1 },
+        { text: '管理员审核', value: 2 },
+        { text: '管理员复核', value: 3 },
+        { text: '已通过', value: 4 },
+        { text: '已拒绝', value: 5 },
       ],
     },
 
@@ -218,7 +218,7 @@
 
   // 表格多选选中列表
   const checkedKeys = ref<Array<string | number>>([]);
-  const isAdmin = ref<boolean>(false);
+  const isAdmin = ref<boolean | undefined>(false);
   // 是否显示弹框
   const showModal = ref<boolean>(false);
   const showPrintModal = ref<boolean>(false);
@@ -228,7 +228,38 @@
   // 默认选中tab
   const defaultKey = ref<string>('1');
 
-  onMounted(async () => {});
+  onMounted(async () => {
+    // 获取按钮权限
+    /* 
+       老师审核   --1 
+       管理员审核 --2 
+       管理员复核 --3 
+       已通过    --4 
+       已拒绝    --5  
+       */
+    // 学生
+    if (per('COMPONENT_APPLY_QUERY_STUDENT')) {
+      where.status = [1, 2, 3, 4, 5];
+    }
+    // 经销商
+    if (per('COMPONENT_APPLY_QUERY_DIS')) {
+      where.status = [4];
+    }
+    // 老师
+    if (per('COMPONENT_APPLY_QUERY_TEACHER')) {
+      where.status = [1, 2, 3, 4, 5];
+    }
+    //管理员1
+    if (per('COMPONENT_APPLY_QUERY_ADMIN1')) {
+      where.status = [2, 4, 5];
+      isAdmin.value = true;
+    }
+    //管理员1
+    if (per('COMPONENT_APPLY_QUERY_ADMIN2')) {
+      where.status = [3, 4, 5];
+      isAdmin.value = true;
+    }
+  });
 
   const per = (code) => {
     const buttons = JSON.parse(localStorage.getItem('buttonCodes') as string);
@@ -283,12 +314,12 @@
   };
 
   // 打开新增编辑弹框
-  const openEdit = (row?: any, flag?, isAdmin?) => {
+  const openEdit = (row?: any, flag?, admin?: boolean | undefined) => {
     defaultKey.value = '1';
     current.value = row;
     showModal.value = true;
     isReview.value = flag;
-    isAdmin.value = isAdmin;
+    isAdmin.value = admin;
   };
   // 打印
   const print = (row?: any) => {
