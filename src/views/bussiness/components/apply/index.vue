@@ -54,6 +54,7 @@
                 onChange: onSelectChange,
               }"
             >
+              <template #status="{ text }">{{ statusMap[text] }}</template>
               <template #toolbar>
                 <div class="table-toolbar">
                   <a-space>
@@ -70,9 +71,10 @@
                     <a-upload
                       v-if="per('COMPONENT_APPLY_UPLOAD')"
                       name="file"
-                      :multiple="true"
+                      :max-count="1"
+                      :multiple="false"
                       :action="fileUploadUrl"
-                      v-model:file-list="fileList"
+                      v-model:file-list="templateList"
                       :headers="headers"
                       @change="afterUploadFile"
                     >
@@ -126,6 +128,7 @@
       v-model:visible="showModal"
       :data="current"
       @done="reload"
+      @submit="submit"
       :isReview="isReview"
       :isAdmin="isAdmin"
       :defaultKey="defaultKey"
@@ -147,7 +150,7 @@
   import { BasicTable } from '/@/components/Table';
   import { onMounted, reactive, ref, computed } from 'vue';
   import Diolag from './modal.vue';
-  import { ComponentApi } from '/@/api/dc/component/componentApi.ts';
+  import { ComponentApi } from '/@/api/dc/component/componentApi';
   import { message } from 'ant-design-vue';
   import Print from './print.vue';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
@@ -165,27 +168,26 @@
     age: number;
     date: string;
   };
-  const fileList = ref([]);
+  const statusMap = {
+    1: '老师审核',
+    2: '管理员审核',
+    3: '管理员复核',
+    4: '已通过',
+    5: '已拒绝',
+  };
+  const templateList = ref([]);
   //ref
   const tableRef = ref<any>(null);
   const isReview = ref<boolean>(false);
   //表格配置
   const columns = ref([
     {
-      title: '申请人学(工)号',
-      dataIndex: 'account',
+      title: '项目名称',
+      dataIndex: 'projectTitle',
     },
     {
       title: '申请人',
-      dataIndex: 'realName',
-    },
-    {
-      title: '描述信息',
-      dataIndex: 'realName',
-    },
-    {
-      title: '申请单',
-      dataIndex: 'realName',
+      dataIndex: 'createName',
     },
     {
       title: '状态',
@@ -199,13 +201,14 @@
         { text: '已通过', value: 4 },
         { text: '已拒绝', value: 5 },
       ],
+      slots: { customRender: 'status' },
     },
 
     {
       title: '申请日期',
-      dataIndex: 'date',
+      dataIndex: 'createTime',
       defaultSortOrder: 'descend',
-      sorter: (a: TableDataType, b: TableDataType) => a.date - b.date,
+      sorter: (a: TableDataType, b: TableDataType) => a.createTime - b.createTime,
     },
     {
       title: '操作',
@@ -254,7 +257,7 @@
       where.status = [2, 4, 5];
       isAdmin.value = true;
     }
-    //管理员1
+    //管理员2
     if (per('COMPONENT_APPLY_QUERY_ADMIN2')) {
       where.status = [3, 4, 5];
       isAdmin.value = true;
@@ -276,11 +279,68 @@
 
   // 重置
   const reset = () => {
-    where.account = '';
-    where.realName = '';
+    where.status = [1, 2, 3, 4, 5];
+    where.projectTitle = '';
+    where.createName = '';
     reload();
   };
-
+  const submit = async (data) => {
+    console.log(data);
+    const params = {
+      projectId: data.projectId,
+      approvalFile: data.approvalFile,
+    };
+    ComponentApi.addComponent({ ...params }).then((res) => {
+      console.log('res', res);
+      addApprovalList({ componentId: res.data, ...data });
+    });
+  };
+  const addApprovalList = async (data) => {
+    const params = {
+      componentId: data.componentId,
+      appraovalStatus: data.applyResult,
+      componentstatus: getStatus(data),
+      approval: data.applyDesc,
+    };
+    const { code } = await ComponentApi.addComponentApproval({ ...params });
+    if (code === '00000') {
+      message.success('请求已完成');
+      //关闭弹框
+      showModal.value = false;
+      reload();
+    }
+  };
+  const getStatus = (data) => {
+    /* 
+       老师审核   --1 
+       管理员审核 --2 
+       管理员复核 --3 
+       已通过    --4 
+       已拒绝    --5  
+       */
+    // 学生
+    let code = 1;
+    if (per('COMPONENT_APPLY_QUERY_STUDENT')) {
+      code = 1;
+    }
+    // 老师
+    if (per('COMPONENT_APPLY_QUERY_TEACHER')) {
+      code = data?.reviewResult === '1' ? 2 : 5;
+    }
+    //管理员1
+    if (per('COMPONENT_APPLY_QUERY_ADMIN1')) {
+      if (data?.needReview) {
+        code = 3;
+      } else {
+        code = data?.reviewResult === '1' ? 4 : 5;
+      }
+    }
+    //管理员2
+    if (per('COMPONENT_APPLY_QUERY_ADMIN2')) {
+      code = data?.reviewResult === '1' ? 4 : 5;
+    }
+    return code;
+  };
   // 打开公司部门抽屉时，关闭表格的抽屉
   const closeCompanyEdit = () => {
     showModal.value = false;
@@ -297,19 +357,17 @@
     Authorization: token.value,
   });
   /**
-   * 图片上传成功的回调
-   */
-  const afterUploadImage = ({ file }) => {
-    if (file.response) {
-      message.success('上传成功');
-    }
-  };
-  /**
    * 文件上传成功的回调
    */
-  const afterUploadFile = ({ file }) => {
+  const afterUploadFile = async ({ file }) => {
     if (file.response) {
-      message.success('上传成功');
+      console.log(file);
+      const { code } = await ComponentApi.uploadComponentTemplate({
+        fildId: file.response.data.fileId,
+      });
+      if (code === '00000') {
+        message.success('上传成功');
+      }
     }
   };
 
@@ -344,4 +402,8 @@
   };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  /deep/ .ant-upload-list.ant-upload-list-text {
+    display: inline-block;
+  }
+</style>

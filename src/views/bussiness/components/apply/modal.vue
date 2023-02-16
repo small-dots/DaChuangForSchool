@@ -30,7 +30,7 @@
         <a-row>
           <a-col :span="12"
             ><a-form-item v-if="!isReview" label="申请单模板" name="desc">
-              <a-button type="link">申请单模板下载</a-button>
+              <a-button type="link" @click="downLoadTemplate">申请单模板下载</a-button>
             </a-form-item></a-col
           >
         </a-row>
@@ -38,10 +38,12 @@
           <a-col :span="12"
             ><a-form-item label="申请单" name="desc">
               <a-upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :multiple="true"
-                :file-list="fileList"
-                @change="handleChange"
+                :action="fileUploadUrl"
+                :multiple="false"
+                :headers="headers"
+                v-model:file-list="fileList"
+                :max-count="1"
+                @change="afterUpload"
               >
                 <a-button v-if="!isReview">
                   <upload-outlined />
@@ -61,7 +63,7 @@
           </a-radio-group></a-descriptions-item
         >
         <a-descriptions-item v-if="isAdmin && isReview" label="是否需要复核"
-          ><a-radio-group v-model:value="reviewResult">
+          ><a-radio-group v-model:value="needReview">
             <a-radio :value="1">是</a-radio>
             <a-radio :value="2">否</a-radio>
           </a-radio-group></a-descriptions-item
@@ -78,10 +80,14 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, ref, UnwrapRef, createVNode, onMounted } from 'vue';
+  import { reactive, ref, UnwrapRef, createVNode, computed, onMounted } from 'vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { useRouter } from 'vue-router';
   import { message, Modal } from 'ant-design-vue';
+  import { FileUploadUrl } from '/@/api/system/operation/FileApi';
+  import { useUserStore } from '/@/store/modules/user';
+  import { ComponentApi } from '/@/api/dc/component/componentApi';
+
   interface FormState {
     name: string | undefined;
     phone: string | number | undefined;
@@ -113,6 +119,7 @@
     fileList: FileItem[];
   }
   const canApply = ref(false);
+  const needReview = ref('2');
   const isSuper = ref<boolean>(false);
   const props = defineProps<{
     visible: Boolean;
@@ -125,6 +132,34 @@
   const wrapperCol = {
     span: 17,
   };
+  const userStore = useUserStore();
+
+  // token
+  const token = computed(() => {
+    return userStore.getToken;
+  });
+  // 上传文件的url
+  const fileUploadUrl = ref(`${import.meta.env.VITE_GLOB_API_URL}${FileUploadUrl}?secretFlag=N`);
+
+  const headers = reactive({
+    Authorization: token.value,
+  });
+  const fileHandleChange = ({ file, fileList }) => {
+    if (file.status !== 'uploading') {
+      console.log(file, fileList);
+    }
+  };
+  /**
+   * 上传成功的回调
+   *
+   * @author anzhongqi
+   * @date 2021/4/2 17:03
+   */
+  const afterUpload = ({ file }) => {
+    if (file.response) {
+      message.success('上传成功');
+    }
+  };
   const userinfo = ref<Userinfo>({});
   onMounted(() => {
     userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
@@ -134,6 +169,21 @@
     formState.number = account;
     getUserProject(formState.name);
   });
+  const downLoadTemplate = async () => {
+    const res = await ComponentApi.getComponentPass({});
+    if (!res) {
+      message.error('暂无申请单模板，请联系管理员');
+    } else {
+      let blob = new Blob([res.fileBytes], { type: 'application/msword' }); //我是下载zip压缩包
+      let url = window.URL.createObjectURL(blob); //生成下载链接
+      const link = document.createElement('a'); //创建超链接a用于文件下载
+      link.href = url; //赋值下载路径
+      link.target = '_blank'; //打开新窗口下载，不设置则为在本窗口下载
+      link.download = `${res.fileOriginName}`; //下载的文件名称（不设置就会随机生成）
+      link.click(); //点击超链接触发下载
+      URL.revokeObjectURL(url); //释放URL
+    }
+  };
   const reviewDesc = ref('');
   const formRef = ref();
   const formState: UnwrapRef<FormState> = reactive({
@@ -158,16 +208,12 @@
       projectId: formState.projectId,
       projectName: formState.projectName,
       createUser: formState.createUser,
-      applyFile: fileList.value[0].url,
+      approvalFile: fileList.value[0]?.fileId || fileList.value[0]?.response?.data?.fileId,
       applyDesc: reviewDesc.value,
       applyResult: reviewResult.value,
+      needReview: needReview.value,
     };
-    const res = ProjectApi.addComponent({ ...parmas });
-    if (res.code === '00000') {
-      message.success('提交成功,待老师审核');
-      updateVisible(false);
-      emits('done');
-    }
+    emits('submit', parmas);
   };
   const linkToProject = (projectName) => {
     router.push({
@@ -183,18 +229,12 @@
   const emits = defineEmits<{
     (e: 'update:visible', visible: boolean): void;
     (e: 'done'): void;
+    (e: 'submit', row: any): void;
   }>();
   const updateVisible = (value) => {
     emits('update:visible', value);
   };
-  const fileList = ref<FileItem[]>([
-    // {
-    //   uid: '-1',
-    //   name: '元器件申请单-2021-01-01.docx',
-    //   status: 'done',
-    //   url: 'http://www.baidu.com/xxx.png',
-    // },
-  ]);
+  const fileList = ref<FileItem[]>([]);
   const handleChange = (info: FileInfo) => {
     let resFileList = [...info.fileList];
     resFileList = resFileList.slice(-2);

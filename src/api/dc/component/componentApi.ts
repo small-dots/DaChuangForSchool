@@ -5,7 +5,7 @@ export class ComponentApi {
    * 获取元器件申请列表
    */
   static getComponentPages(params) {
-    return defHttp.get({ url: '/dc/component/page', params });
+    return defHttp.post({ url: '/dc/component/page', params });
   }
 
   /**
@@ -26,6 +26,20 @@ export class ComponentApi {
    * 获取元器件申请单
    */
   static getComponentPass(params) {
-    return defHttp.get({ url: '/dc/component/get', params });
+    return defHttp.get({ url: '/dc/component/model', params });
+  }
+
+  /**
+   * 审批历史添加
+   */
+  static addComponentApproval(params) {
+    return defHttp.post({ url: '/dc/component/approval', params }, { isTransformResponse: false });
+  }
+
+  /**
+   * 上传申请单模板
+   */
+  static uploadComponentTemplate(params) {
+    return defHttp.post({ url: '/dc/component/model', params }, { isTransformResponse: false });
   }
 }
