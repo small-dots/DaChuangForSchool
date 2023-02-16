@@ -47,14 +47,11 @@
               :where="where"
               :columns="columns"
               showTableSetting
-              rowKey="userId"
-              :rowSelection="{
-                type: 'checkbox',
-                selectedRowKeys: checkedKeys,
-                onChange: onSelectChange,
-              }"
+              rowKey="componentId"
             >
-              <template #status="{ text }">{{ statusMap[text] }}</template>
+              <template #status="{ text }"
+                ><a-tag color="blue">{{ statusMap[text] }}</a-tag></template
+              >
               <template #toolbar>
                 <div class="table-toolbar">
                   <a-space>
@@ -90,23 +87,30 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="openEdit(record, true)" v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON')"
+                    <a
+                      @click="openEdit(record, true)"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON') && record.status === '1'"
                       >审核</a
                     >
                     <a
                       @click="openEdit(record, true, true)"
-                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_ADMIN')"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_ADMIN') && record.status === '2'"
+                      >审核</a
+                    >
+                    <a
+                      @click="openEdit(record, true)"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_ADMIN2') && record.status === '3'"
                       >审核</a
                     >
                     <a @click="print(record)" v-if="per('COMPONENTS_APPLY_PRINT_BUTTON')"
                       >流程打印</a
                     >
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)" v-if="per('COMPONENT_APPLY_SEARCH_BUTTON')"
-                      >查看</a
-                    >
+                    <a @click="view(record)" v-if="per('COMPONENT_APPLY_SEARCH_BUTTON')">查看</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)" v-if="per('COMPONENT_APPLY_UPDATE_BUTTON')"
+                    <a
+                      @click="openEdit(record)"
+                      v-if="per('COMPONENT_APPLY_UPDATE_BUTTON') && record.status === '5'"
                       >编辑</a
                     >
                     <a-divider type="vertical" />
@@ -128,7 +132,9 @@
       v-model:visible="showModal"
       :data="current"
       @done="reload"
+      :isViews="isViews"
       @submit="submit"
+      @apply="apply"
       :isReview="isReview"
       :isAdmin="isAdmin"
       :defaultKey="defaultKey"
@@ -176,6 +182,7 @@
     5: '已拒绝',
   };
   const templateList = ref([]);
+  const isViews = ref(false);
   //ref
   const tableRef = ref<any>(null);
   const isReview = ref<boolean>(false);
@@ -284,6 +291,9 @@
     where.createName = '';
     reload();
   };
+  const apply = (data) => {
+    addApprovalList(data);
+  };
   const submit = async (data) => {
     console.log(data);
     const params = {
@@ -291,15 +301,15 @@
       approvalFile: data.approvalFile,
     };
     ComponentApi.addComponent({ ...params }).then((res) => {
-      console.log('res', res);
       addApprovalList({ componentId: res.data, ...data });
     });
   };
   const addApprovalList = async (data) => {
+    console.log('09090-344908347598347503849', data);
     const params = {
       componentId: data.componentId,
-      appraovalStatus: data.applyResult,
-      componentstatus: getStatus(data),
+      approvalStatus: data.applyResult,
+      componentStatus: getStatus(data),
       approval: data.applyDesc,
     };
     const { code } = await ComponentApi.addComponentApproval({ ...params });
@@ -325,25 +335,21 @@
     }
     // 老师
     if (per('COMPONENT_APPLY_QUERY_TEACHER')) {
-      code = data?.reviewResult === '1' ? 2 : 5;
+      code = data?.applyResult === 1 ? 2 : 5;
     }
     //管理员1
     if (per('COMPONENT_APPLY_QUERY_ADMIN1')) {
       if (data?.needReview) {
         code = 3;
       } else {
-        code = data?.reviewResult === '1' ? 4 : 5;
+        code = data?.applyResult === 1 ? 4 : 5;
       }
     }
     //管理员2
     if (per('COMPONENT_APPLY_QUERY_ADMIN2')) {
-      code = data?.reviewResult === '1' ? 4 : 5;
+      code = data?.applyResult === 1 ? 4 : 5;
     }
     return code;
-  };
-  // 打开公司部门抽屉时，关闭表格的抽屉
-  const closeCompanyEdit = () => {
-    showModal.value = false;
   };
   const userStore = useUserStore();
   // token
@@ -379,24 +385,27 @@
     isReview.value = flag;
     isAdmin.value = admin;
   };
+  const view = (row) => {
+    defaultKey.value = '1';
+    current.value = row;
+    showModal.value = true;
+    isViews.value = true;
+    // isReview.value = flag;
+    // isAdmin.value = admin;
+  };
   // 打印
   const print = (row?: any) => {
     current.value = row;
     showPrintModal.value = true;
   };
 
-  // 表格选中改变
-  const onSelectChange = (selectedRowKeys: (string | number)[]) => {
-    checkedKeys.value = selectedRowKeys;
-  };
   /**
    * 删除单个
-   *
    * @author anzhongqi
    * @date 2021/4/2 17:03
    */
   const remove = async (row: any) => {
-    const result = await ComponentApi.deleteUser({ userId: row.userId });
+    const result = await ComponentApi.deleteComponent({ componentId: row.componentId });
     message.success(result.message);
     reload();
   };

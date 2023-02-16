@@ -123,6 +123,20 @@
     if (props.visible) {
       if (props.data) {
         state.form = Object.assign({}, props.data);
+        state.form.imageList = props.data?.imageFile || [];
+        state.form.imageList.map((item) => {
+          item.name = item.fileOriginName;
+          item.thumbUrl =
+            window.location.origin +
+            `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+        });
+        state.form.fileList = props.data?.appendixFile || [];
+        state.form.fileList.map((item) => {
+          item.name = item.fileOriginName;
+          item.thumbUrl =
+            window.location.origin +
+            `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+        });
         isUpdate.value = true;
       } else {
         state.form = {};

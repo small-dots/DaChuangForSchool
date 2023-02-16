@@ -6,7 +6,7 @@
       :maskClosable="false"
       title="元器件申请"
       width="40%"
-      :okButtonProps="{ disabled: !canApply }"
+      :okButtonProps="{ disabled: !canApply || isViews }"
       :body-style="{ paddingBottom: '8px' }"
       @update:visible="updateVisible"
       @ok="onSubmit"
@@ -27,7 +27,7 @@
       </a-descriptions>
       <p></p>
       <a-form ref="formRef" :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-row>
+        <a-row v-if="!isViews">
           <a-col :span="12"
             ><a-form-item v-if="!isReview" label="申请单模板" name="desc">
               <a-button type="link" @click="downLoadTemplate">申请单模板下载</a-button>
@@ -45,7 +45,7 @@
                 :max-count="1"
                 @change="afterUpload"
               >
-                <a-button v-if="!isReview">
+                <a-button v-if="!isReview && !isViews">
                   <upload-outlined />
                   申请单上传
                 </a-button>
@@ -54,7 +54,7 @@
           >
         </a-row>
       </a-form>
-      <a-divider v-if="isReview" />
+      <a-divider v-if="isReview && !isViews" />
       <a-descriptions v-if="isReview" title="审核信息" :column="1">
         <a-descriptions-item label="审核结果"
           ><a-radio-group v-model:value="reviewResult">
@@ -75,6 +75,15 @@
             :auto-size="{ minRows: 2, maxRows: 5 }"
         /></a-descriptions-item>
       </a-descriptions>
+      <div class="review_container">
+        <div class="title">审核信息</div>
+        <a-table :pagination="false" bordered :dataSource="dataSource" :columns="columns">
+          <template #status="{ text }">
+            <a-tag v-if="text === '1'" color="green">同意</a-tag>
+            <a-tag v-if="text === '2'" color="red">拒绝</a-tag></template
+          >
+        </a-table>
+      </div>
     </a-modal>
   </div>
 </template>
@@ -124,6 +133,8 @@
   const props = defineProps<{
     visible: Boolean;
     isReview: Boolean;
+    isViews: Boolean;
+    data;
     isAdmin: Boolean | undefined;
   }>();
   const labelCol = {
@@ -132,6 +143,30 @@
   const wrapperCol = {
     span: 17,
   };
+  const columns = [
+    {
+      title: '审批人',
+      dataIndex: 'createName',
+      key: 'createName',
+    },
+    {
+      title: '审批时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+    },
+    {
+      title: '审核状态',
+      dataIndex: 'status',
+      key: 'status',
+      slots: { customRender: 'status' },
+    },
+    {
+      title: '审核意见',
+      dataIndex: 'approval',
+      key: 'approval',
+    },
+  ];
+  const dataSource = ref([]);
   const userStore = useUserStore();
 
   // token
@@ -162,11 +197,26 @@
   };
   const userinfo = ref<Userinfo>({});
   onMounted(() => {
-    userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
-    const { simpleUserInfo, account } = userinfo.value;
-    formState.name = simpleUserInfo?.realName;
-    formState.phone = simpleUserInfo?.phone;
-    formState.number = account;
+    dataSource.value = props.data?.history || [];
+    if (props.isReview || props.isViews) {
+      formState.name = props.data.createName;
+      formState.phone = props.data?.phone;
+      formState.number = props.data.account;
+      fileList.value = props.data?.approvalFile ? [props.data?.approvalFile] : [];
+      console.log(fileList.value);
+      fileList.value.map((item) => {
+        item.name = item.fileOriginName;
+        item.thumbUrl =
+          window.location.origin +
+          `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+      });
+    } else {
+      userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
+      const { simpleUserInfo, account } = userinfo.value;
+      formState.name = simpleUserInfo?.realName;
+      formState.phone = simpleUserInfo?.phone;
+      formState.number = account;
+    }
     getUserProject(formState.name);
   });
   const downLoadTemplate = async () => {
@@ -195,7 +245,7 @@
     createUser: '',
   });
   const onSubmit = () => {
-    if (!fileList.value.length) {
+    if (!fileList.value.length && !props.isReview) {
       message.error('请上传申请单');
       return;
     } else {
@@ -213,7 +263,11 @@
       applyResult: reviewResult.value,
       needReview: needReview.value,
     };
-    emits('submit', parmas);
+    if (props.isReview) {
+      emits('apply', { componentId: props.data.componentId, ...parmas });
+    } else {
+      emits('submit', parmas);
+    }
   };
   const linkToProject = (projectName) => {
     router.push({
@@ -230,6 +284,7 @@
     (e: 'update:visible', visible: boolean): void;
     (e: 'done'): void;
     (e: 'submit', row: any): void;
+    (e: 'apply', row: any): void;
   }>();
   const updateVisible = (value) => {
     emits('update:visible', value);
@@ -251,21 +306,28 @@
 
   // 获取用户名下的项目，得是负责人
   const getUserProject = async (name) => {
-    const res = await ProjectApi.getProjectPages({
-      pageSize: 10,
-      pageNo: 1,
-    });
-    if (res.rows.length && name === res?.rows[0]?.createName) {
+    if (props.isReview || props.isViews) {
+      formState.projectName = props.data.projectTitle;
+      formState.projectId = props.data.projectId;
+      formState.createUser = props.data.createName;
       canApply.value = true;
-      formState.projectName = res.rows[0].projectTitle;
-      formState.projectId = res.rows[0].projectId;
-      formState.createUser = res.rows[0].createName;
     } else {
-      canApply.value = false;
-      Modal.error({
-        title: '错误提示',
-        content: '您还没有负责的项目，暂不能申请元器件',
+      const res = await ProjectApi.getProjectPages({
+        pageSize: 10,
+        pageNo: 1,
       });
+      if (res.rows.length && name === res?.rows[0]?.createName) {
+        canApply.value = true;
+        formState.projectName = res.rows[0].projectTitle;
+        formState.projectId = res.rows[0].projectId;
+        formState.createUser = res.rows[0].createName;
+      } else {
+        canApply.value = false;
+        Modal.error({
+          title: '错误提示',
+          content: '您还没有负责的项目，暂不能申请元器件',
+        });
+      }
     }
   };
 </script>
@@ -284,5 +346,19 @@
     text-decoration: underline;
     cursor: pointer;
     color: #1890ff;
+  }
+  .review_container {
+    margin-bottom: 20px;
+  }
+
+  .review_container .title {
+    flex: auto;
+    overflow: hidden;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1.5715;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>

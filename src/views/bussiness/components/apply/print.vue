@@ -22,22 +22,18 @@
             {{ formState.name }}</a-descriptions-item
           >
           <a-descriptions-item label="附件">
-            元器件申请单-2021-01-01.docx
-            <br />
-            元器件申请单-2021-01-01.docx
-            <br />
-            元器件申请单-2021-01-01.docx
-            <br />
-            元器件申请单-2021-01-01.docx
-            <br />
-            元器件申请单-2021-01-01.docx
-            <br />
+            {{ data.approvalFile.fileOriginName }}
           </a-descriptions-item>
         </a-descriptions>
         <a-divider />
         <div class="review_container">
           <div class="title">审核信息</div>
-          <a-table :pagination="false" :dataSource="dataSource" :columns="columns" />
+          <a-table :pagination="false" :dataSource="dataSource" :columns="columns">
+            <template #status="{ text }">
+              <a-tag v-if="text === '1'" color="green">同意</a-tag>
+              <a-tag v-if="text === '2'" color="red">拒绝</a-tag></template
+            ></a-table
+          >
         </div>
       </div>
       <template #footer>
@@ -83,53 +79,33 @@
   const columns = [
     {
       title: '审批人',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'createName',
+      key: 'createName',
     },
     {
       title: '审批时间',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'createTime',
+      key: 'createTime',
     },
     {
       title: '审核状态',
       dataIndex: 'status',
       key: 'status',
+      slots: { customRender: 'status' },
     },
     {
       title: '审核意见',
-      dataIndex: 'desc',
-      key: 'desc',
+      dataIndex: 'approval',
+      key: 'approval',
     },
   ];
-  const dataSource = ref([
-    {
-      key: '1',
-      name: '胡彦斌',
-      status: '同意',
-      desc: '条件满足',
-      time: '2023-01-06 12:02:19',
-    },
-    {
-      key: '2',
-      name: '张全',
-      status: '拒绝',
-      desc: '条件不满足',
-      time: '2023-01-06 18:20:46',
-    },
-  ]);
-  const fileList = ref<FileItem[]>([
-    {
-      uid: '-1',
-      name: '元器件申请单-2021-01-01.docx',
-      status: 'done',
-      url: 'http://www.baidu.com/xxx.png',
-    },
-  ]);
+  const dataSource = ref([]);
+  const fileList = ref<FileItem[]>([]);
   const isSuper = ref<boolean>(false);
   const props = defineProps<{
     visible: Boolean;
     isReview: Boolean;
+    data;
   }>();
   const labelCol = {
     span: 5,
@@ -152,9 +128,10 @@
     userinfo.value = JSON.parse(localStorage.getItem('UserInfo') as string);
     const { simpleUserInfo, account } = userinfo.value;
     isSuper.value = userinfo.value.superAdmin as boolean;
-    formState.name = simpleUserInfo?.realName;
-    formState.phone = simpleUserInfo?.tel;
-    formState.number = account;
+    formState.name = props.data.createName;
+    formState.phone = props.data?.phone;
+    formState.number = props.data.account;
+    dataSource.value = props.data?.history || [];
   });
   const emits = defineEmits<{
     (e: 'update:visible', visible: boolean): void;

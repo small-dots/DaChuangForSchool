@@ -38,7 +38,7 @@
               :columns="columns"
               rowKey="projectId"
             >
-              <template #toolbar v-if="computedShow">
+              <template #toolbar v-if="computedShows">
                 <div class="table-toolbar">
                   <a-space>
                     <a-button type="primary" @click="openEdit('')">
@@ -169,7 +169,11 @@
     reload();
   };
   onMounted(() => {
-    console.log('onMounted', tableRef.value.$refs.tableElRef);
+    const res = ProjectApi.getProjectPages({ pageSize: 10, projectTitle: '', pageNo: 1 });
+    console.log(res);
+    if (res.totalRows > 0) {
+      computedShows.value = false;
+    }
   });
   /**
    * 修改项目状态
