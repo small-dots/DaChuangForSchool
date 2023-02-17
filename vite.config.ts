@@ -81,7 +81,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // },
       // 设置为false可禁用报告压缩块大小 可以稍微提高构建速度
       reportCompressedSize: false,
-      chunkSizeWarningLimit: 2000,
+      chunkSizeWarningLimit: 3000,
     },
     define: {
       // setting vue-i18-next

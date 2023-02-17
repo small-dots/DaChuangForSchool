@@ -6,17 +6,14 @@
     :trigger="trigger"
     :disabled="disabled"
   >
-    <div :class="['ele-icon-picker', { disabled: this.disabled }]">
+    <div :class="['ele-icon-picker', { disabled: disabled }]">
       <a-input :value="value" :placeholder="placeholder" :disabled="disabled" :size="size" readonly>
         <template #prefix>
           <component v-if="value" :is="value" />
         </template>
         <template #suffix>
           <div class="ele-text-placeholder ele-icon-picker-arrow">
-            <close-circle-filled
-              v-if="this.allowClear && this.value && !this.disabled"
-              @click.stop="onClear"
-            />
+            <close-circle-filled v-if="allowClear && value && !disabled" @click.stop="onClear" />
             <down-outlined />
           </div>
         </template>
@@ -65,7 +62,6 @@
   export default {
     name: 'EleIconPicker',
     components: { ...antIcons },
-    emits: ['update:value'],
     props: {
       // dropdown属性
       trigger: {
@@ -109,6 +105,7 @@
         },
       },
     },
+    emits: ['update:value'],
     data() {
       return {
         // popper是否显示
