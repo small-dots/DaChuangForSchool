@@ -74,7 +74,13 @@
     </div>
 
     <!-- 编辑弹窗 -->
-    <publish-edit ref="publishRef" v-model:visible="showEdit" :data="current" @done="reload" />
+    <publish-edit
+      ref="publishRef"
+      v-model:visible="showEdit"
+      @update:visible="updateVis"
+      :data="current"
+      @done="reload"
+    />
   </div>
 </template>
 
@@ -96,17 +102,14 @@
     {
       title: '标题',
       dataIndex: 'noticeTitle',
-      sorter: true,
     },
     {
       title: '创建人',
       dataIndex: 'createUserWrapper',
-      sorter: true,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
-      sorter: true,
     },
     {
       title: '操作',
@@ -159,7 +162,9 @@
     showEdit.value = true;
     publishRef.value.getUserList();
   };
-
+  const updateVis = (val: boolean) => {
+    showEdit.value = val;
+  };
   /**
    * 删除通知
    *

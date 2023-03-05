@@ -102,6 +102,7 @@
                       >
                     </a-popconfirm>
                     <a-divider type="vertical" />
+                    <a @click="openView(record)" v-if="per('TITLE_CENTER_VIEW_BUTTON')">查看</a>
                   </a-space>
                 </template>
               </template>
@@ -121,6 +122,15 @@
       ref="userEdit"
       :userList="userList"
     />
+    <title-view
+      v-model:visible="showView"
+      :data="current"
+      @done="reload"
+      :defaultKey="defaultKey"
+      v-if="showView"
+      ref="userView"
+      :userList="userList"
+    />
   </div>
 </template>
 
@@ -128,6 +138,8 @@
   import { BasicTable } from '/@/components/Table';
   import { onMounted, reactive, ref, createVNode } from 'vue';
   import TitleEdit from './components/title-edit.vue';
+  import TitleView from './components/title-view.vue';
+
   import { UserApi } from '/@/api/system/user/UserApi';
   import { TitleApi } from '/@/api/dc/title/TitleApi';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -180,7 +192,7 @@
   const userList = ref([]);
   // 是否显示弹框
   const showEdit = ref<boolean>(false);
-
+  const showView = ref<boolean>(false);
   // 当前行的数据
   const current = ref<any>(null);
 
@@ -234,6 +246,11 @@
     defaultKey.value = '1';
     current.value = row;
     showEdit.value = true;
+  };
+  const openView = (row) => {
+    defaultKey.value = '1';
+    current.value = row;
+    showView.value = true;
   };
   /**
    * 获取通知的用户列表

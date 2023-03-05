@@ -1,20 +1,12 @@
 <template>
   <div>
-    <!-- 编辑 -->
     <common-drawer
       :width="1200"
       :visible="visible"
-      title="编辑题目"
+      title="题目详情"
       @close="updateVisible(false)"
       v-if="isUpdate"
     >
-      <template #extra>
-        <div style="height: 32px">
-          <a-button type="primary" @click="save" :loading="loading" v-show="activeKey == '1'"
-            >确定</a-button
-          >
-        </div>
-      </template>
       <!-- 基本信息 -->
       <title-form
         v-model:form="state.form"
@@ -27,30 +19,6 @@
         v-show="activeKey == '1'"
       />
     </common-drawer>
-
-    <!-- 新增 -->
-    <common-drawer
-      :width="1200"
-      v-if="!isUpdate"
-      :visible="visible"
-      title="发布题目"
-      @close="updateVisible(false)"
-    >
-      <template #extra>
-        <div style="height: 32px">
-          <a-button type="primary" @click="save" :loading="loading" v-show="activeKey == '1'"
-            >确定</a-button
-          >
-        </div>
-      </template>
-      <title-form
-        v-model:form="state.form"
-        v-model:targetKeys="targetKeys"
-        :userList="userList"
-        ref="form"
-        @handleChange="handleChange"
-        :rules="rules"
-    /></common-drawer>
   </div>
 </template>
 
@@ -61,7 +29,7 @@
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
   import { phoneReg } from '/@/utils/common/util';
   import FieldExpandForm from '/@/components/FieldExpand/FieldExpandForm.vue';
-  import TitleForm from './title-form.vue';
+  import TitleForm from './title-form-view.vue';
   import { onMounted, reactive, ref, watch } from 'vue';
 
   const props = defineProps<{
@@ -84,24 +52,7 @@
   });
 
   // 表单验证规则
-  const rules = reactive({
-    titleTitle: [{ required: true, message: '请输入题目名称', type: 'string', trigger: 'blur' }],
-    teacherName: [
-      { required: true, message: '请输入指导老师姓名', type: 'string', trigger: 'blur' },
-    ],
-    teacherPhone: [
-      { required: true, message: '请输入指导老师电话', type: 'string', trigger: 'blur' },
-    ],
-    titleBackground: [
-      { required: true, message: '请输入题目背景', type: 'string', trigger: 'blur' },
-    ],
-    titleContent: [
-      { required: true, message: '请输入题目具体内容', type: 'string', trigger: 'blur' },
-    ],
-    titleRequire: [
-      { required: true, message: '请输入题目基本要求', type: 'string', trigger: 'blur' },
-    ],
-  });
+  const rules = reactive({});
   // 提交状态
   const loading = ref<boolean>(false);
   // 是否是修改
@@ -146,11 +97,6 @@
           state.form.teacherName = userinfo.simpleUserInfo.realName;
           state.form.teacherPhone = userinfo.simpleUserInfo.phone;
         }
-      }
-
-      // 清空校验
-      if (props.defaultKey == '1' && form.value.$refs.formRef) {
-        form.value.$refs.formRef.clearValidate();
       }
     }
   };

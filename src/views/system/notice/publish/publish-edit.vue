@@ -95,35 +95,36 @@
 
   // ref
   const formDataRef = ref(null);
-
   watch(
-    () => props.data,
+    () => props.visible,
     (val) => {
       if (val) {
-        state.form = Object.assign({}, props.data);
-        isUpdate.value = true;
-      } else {
-        state.form = {};
-        isUpdate.value = false;
-      }
+        if (props.data) {
+          state.form = Object.assign({}, props.data);
+          isUpdate.value = true;
+        } else {
+          state.form = {};
+          isUpdate.value = false;
+        }
 
-      // 如果是新增，则置空输入项
-      if (!isUpdate.value) {
-        state.form.noticeContent = '';
-        state.form.noticeScopeType = 'all';
-        targetKeys.value = [];
-      }
-
-      // 初始化选项和通知的人范围
-      if (isUpdate.value) {
-        if (props.data.noticeScope === 'all') {
+        // 如果是新增，则置空输入项
+        if (!isUpdate.value) {
+          state.form.noticeContent = '';
           state.form.noticeScopeType = 'all';
-        } else if (!props.data.noticeScope.includes(',')) {
-          state.form.noticeScopeType = 'part';
-          targetKeys.value = [props.data.noticeScope];
-        } else if (props.data.noticeScope.includes(',')) {
-          state.form.noticeScopeType = 'part';
-          targetKeys.value = props.data.noticeScope.split(',');
+          targetKeys.value = [];
+        }
+
+        // 初始化选项和通知的人范围
+        if (isUpdate.value) {
+          if (props.data.noticeScope === 'all') {
+            state.form.noticeScopeType = 'all';
+          } else if (!props.data.noticeScope.includes(',')) {
+            state.form.noticeScopeType = 'part';
+            targetKeys.value = [props.data.noticeScope];
+          } else if (props.data.noticeScope.includes(',')) {
+            state.form.noticeScopeType = 'part';
+            targetKeys.value = props.data.noticeScope.split(',');
+          }
         }
       }
     },

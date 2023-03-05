@@ -69,7 +69,12 @@
               <a-space>
                 <a @click="openEdit(record)">查看</a>
                 <a-divider type="vertical" />
-                <a class="guns-text-danger" @click="deleteMessage(record)">删除</a>
+                <a
+                  class="guns-text-danger"
+                  v-if="per('NOTICE_FIND_DEL_BUTTON')"
+                  @click="deleteMessage(record)"
+                  >删除</a
+                >
               </a-space>
             </template>
           </template>
@@ -159,9 +164,16 @@
    * @date 2021/6/15 23:08
    */
   const setAlready = async () => {
-    let result = await NoticeApi.setAlreadyReadState();
-    message.success(result.message);
+    await NoticeApi.setAlreadyReadState();
+    message.success('请求成功');
     reload();
+  };
+  const per = (code) => {
+    const buttons = JSON.parse(localStorage.getItem('buttonCodes') as string);
+    if (buttons?.includes(code)) {
+      return true;
+    }
+    return false;
   };
 
   /**
@@ -182,8 +194,8 @@
    * @date 2021/6/14 22:31
    */
   const deleteMessage = async (record) => {
-    let result = await NoticeApi.deleteMessage(record);
-    message.success(result.message);
+    await NoticeApi.deleteMessage(record);
+    message.success('已删除');
     reload();
   };
 </script>

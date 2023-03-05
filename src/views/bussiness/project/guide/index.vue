@@ -8,10 +8,10 @@
           <a-card :bordered="false">
             <a-form layout="inline" :model="where">
               <a-row>
-                <a-form-item label="题目名称:">
+                <a-form-item label="项目名称:">
                   <a-input
                     v-model:value.trim="where.projectTitle"
-                    placeholder="请输入题目名称"
+                    placeholder="请输入项目名称"
                     allow-clear
                   />
                 </a-form-item>

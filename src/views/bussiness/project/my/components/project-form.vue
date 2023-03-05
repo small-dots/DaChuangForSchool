@@ -63,6 +63,11 @@
                 <upload-outlined />
                 上传附件
               </a-button>
+              <template #itemRender="{ file }">
+                <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                <span style="width: 10px; display: inline-block"></span>
+                <a @click="downloadF(form.fileList)"><cloud-download-outlined /></a>
+              </template>
             </a-upload>
           </a-form-item>
         </a-col>
@@ -77,6 +82,8 @@
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
   import { message } from 'ant-design-vue';
+  import { downloadByUrl } from '/@/utils/file/download';
+
   const props = defineProps({
     form: {
       type: Object,
@@ -117,6 +124,15 @@
     if (file.response) {
       message.success('上传成功');
     }
+  };
+  const downloadF = (row) => {
+    console.log(row);
+    // FileApi.download({
+    //   fileId: row.fileId,
+    //   secretFlag: row.secretFlag,
+    //   token: token.value,
+    // });
+    downloadByUrl({ url: row[0].thumbUrl, fileName: row[0].fileOriginName });
   };
 </script>
 

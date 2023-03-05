@@ -15,26 +15,14 @@
               placeholder="请输入题目名称"
               allow-clear
               autocomplete="off"
-            />
-          </a-form-item>
-          <a-form-item v-if="isSuper" label="指导教师:" name="teacherName">
-            <a-transfer
-              :data-source="userList"
-              show-search
-              :list-style="{
-                width: '40%',
-                height: '300px',
-              }"
-              :targetKeys="targetKeys"
-              :render="(item) => item.title"
-              @change="handleChange"
+              disabled
             />
           </a-form-item>
           <a-form-item label="指导教师:" name="teacherName">
-            <a-input v-model:value="form.teacherName" placeholder="请输入指导教师" />
+            <a-input disabled v-model:value="form.teacherName" placeholder="请输入指导教师" />
           </a-form-item>
           <a-form-item label="联系方式:" name="teacherPhone">
-            <a-input v-model:value="form.teacherPhone" placeholder="请输入联系方式" />
+            <a-input disabled v-model:value="form.teacherPhone" placeholder="请输入联系方式" />
           </a-form-item>
           <a-form-item label="课题背景:" name="titleBackground">
             <tinymce v-model:value="form.titleBackground" />
@@ -54,14 +42,7 @@
               v-model:file-list="form.imageList"
               :headers="headers"
               @change="afterUploadImage"
-            >
-              <a-button type="primary">
-                <template #icon>
-                  <CloudUploadOutlined />
-                </template>
-                <span>上传图片</span>
-              </a-button>
-            </a-upload>
+            />
           </a-form-item>
           <a-form-item label="相关附件:" name="positionId">
             <a-upload
@@ -71,12 +52,7 @@
               v-model:file-list="form.fileList"
               :headers="headers"
               @change="afterUploadFile"
-            >
-              <a-button>
-                <upload-outlined />
-                上传附件
-              </a-button>
-            </a-upload>
+            />
           </a-form-item>
         </a-col>
       </a-row>

@@ -42,18 +42,10 @@
             </a-upload>
           </a-form-item>
           <a-form-item label="相关附件:">
-            <a-upload
-              class="upload-list-inline"
-              name="file"
-              :show-upload-list="{ showRemoveIcon: false }"
-              :multiple="true"
-              v-model:file-list="form.fileList"
-            >
-              <template #itemRender="{ file }">
-                <a-space>
-                  <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
-                  <a href="javascript:;" @click="download(file)"><CloudDownloadOutlined /></a>
-                </a-space>
+            <a-upload class="upload-list-inline" name="file" v-model:file-list="form.fileList">
+              <template #itemRender="{ file, actions }">
+                <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                <a href="javascript:;" @click="actions.download">下载</a>
               </template>
             </a-upload>
           </a-form-item>
@@ -151,6 +143,7 @@
     background: #ffffff;
     margin: 20px;
     border-radius: 4px;
+
     .font-600 {
       font-weight: 600;
     }
