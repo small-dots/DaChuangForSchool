@@ -1,8 +1,13 @@
 <template>
   <div class="anticon" :class="getAppLogoClass" @click="goHome">
-    <img :src="logo" />
-    <div class="ml-2 truncate md:opacity-100" :class="getTitleClass" v-show="showTitle">
-      {{ projectName }}
+    <img style="border-radius: 50%" src="../../../assets/images/xiaohui.jpg" />
+    <div
+      class="ml-2 truncate md:opacity-100"
+      :class="getTitleClass"
+      :style="{ color: inner ? '#ffffff' : '#000000' }"
+      v-show="showTitle"
+    >
+      {{ title || t('sys.login.signInTitle') }}
     </div>
   </div>
 </template>
@@ -14,7 +19,7 @@
   import { PageEnum } from '/@/enums/pageEnum';
   import { useUserStore } from '/@/store/modules/user';
   import { useSystemStore } from '/@/store/modules/system';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
   const props = defineProps({
     /**
      * 主题
@@ -28,7 +33,16 @@
      * 总是显示标题
      */
     alwaysShowTitle: { type: Boolean },
+    title: {
+      type: String,
+      default: '',
+    },
+    inner: {
+      type: Boolean,
+      default: false,
+    },
   });
+  const { t } = useI18n();
 
   const { prefixCls } = useDesign('app-logo');
   const { getCollapsedShowTitle } = useMenuSetting();

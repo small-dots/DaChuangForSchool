@@ -18,8 +18,7 @@ import './styles/index.less';
 import { isDevMode } from './utils/env';
 import * as antIcons from '@ant-design/icons-vue';
 import Antd from 'ant-design-vue'; //引入组件库
-// import 'ant-design-vue/dist/antd.less';
-import 'ant-design-vue/es/style/index.less';
+import 'ant-design-vue/dist/antd.less';
 import permission from '/@/utils/permission';
 import print from 'vue3-print-nb';
 import { Card } from 'ant-design-vue';
