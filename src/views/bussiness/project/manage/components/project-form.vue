@@ -117,6 +117,15 @@
       message.success('上传成功');
     }
   };
+  const downloadF = (row) => {
+    console.log(row);
+    // FileApi.download({
+    //   fileId: row.fileId,
+    //   secretFlag: row.secretFlag,
+    //   token: token.value,
+    // });
+    downloadByUrl({ url: row[0].thumbUrl, fileName: row[0].fileOriginName });
+  };
 </script>
 
 <style lang="less" scoped>

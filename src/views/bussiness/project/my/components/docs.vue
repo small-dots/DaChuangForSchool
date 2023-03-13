@@ -26,11 +26,11 @@
     <div class="doc_list">
       <a-table :columns="columns" :data-source="docList">
         <template #operation="{ record }">
-          <a-popconfirm title="Sure to delete?" @confirm="onDelete(record.key)">
-            <a-button type="text" danger>删除</a-button>
+          <a-popconfirm title="确定删除吗?" @confirm="onDelete(record.key)">
+            <a-button v-if="!isView" type="text" danger>删除</a-button>
           </a-popconfirm>
           <a-divider type="vertical" />
-          <a>下载</a>
+          <a @click="download(record)">下载</a>
         </template>
       </a-table>
     </div>
@@ -44,7 +44,7 @@
   import PublishApi from '/@/api/system/notice/PublishApi';
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
-
+  import { downloadByUrl } from '/@/utils/file/download';
   const props = defineProps({
     data: {
       type: Object,
@@ -77,16 +77,6 @@
       dataIndex: 'fileSizeInfo',
       key: 'fileSizeInfo',
     },
-    // {
-    //   title: '上传者',
-    //   dataIndex: 'createUser;',
-    //   key: 'createUser;',
-    // },
-    // {
-    //   title: '上传时间',
-    //   dataIndex: 'createTime',
-    //   key: 'createTime',
-    // },
     {
       title: '操作',
       key: 'operation',
@@ -149,13 +139,20 @@
       }
     });
   };
-  // const onDelete = (key: string) => {
-  //   docList.value.splice(
-  //     docList.value.findIndex((item) => item.key === key),
-  //     1,
-  //   );
-  // };
-
+  const onDelete = (data) => {
+    ProjectApi.deleteProjectDucument(data).then((res) => {
+      if (res.code === '00000') {
+        message.success(` 已删除`);
+        getDocList();
+      }
+    });
+  };
+  const download = (data) => {
+    const url =
+      window.location.origin +
+      `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${data.fileObjectName}`;
+    downloadByUrl({ url: url, fileName: data.fileOriginName });
+  };
   const handleChange = (info: FileInfo) => {
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);

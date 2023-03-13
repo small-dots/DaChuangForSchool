@@ -50,4 +50,19 @@ export class ProjectApi {
       { isTransformResponse: false },
     );
   }
+
+  // shanchu wendang
+  static deleteProjectDucument(params) {
+    return defHttp.post(
+      { url: '/dc/project//delete/ducument', params },
+      { isTransformResponse: false },
+    );
+  }
+  // 删除成员
+  static deleteProjectMember(params) {
+    return defHttp.post(
+      { url: '/dc/project/delete/member', params },
+      { isTransformResponse: false },
+    );
+  }
 }

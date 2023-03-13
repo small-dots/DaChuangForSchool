@@ -12,7 +12,7 @@
         <a-tag :color="colorMap[text]">{{ statusMap[text] }}</a-tag>
       </template>
       <template #operation="{ record }">
-        <a-popconfirm title="Sure to delete?" @confirm="onDelete(record.key)">
+        <a-popconfirm title="确认删除?" @confirm="onDelete(record)">
           <a-button type="text" danger>删除</a-button>
         </a-popconfirm>
       </template>
@@ -226,6 +226,12 @@
       });
     }
     timeout = setTimeout(getStudentList, 300);
+  };
+  const onDelete = (data) => {
+    ProjectApi.deleteProjectMember({ id: data.id }).then((res) => {
+      message.success('删除成功');
+      getMemberList();
+    });
   };
 </script>
 

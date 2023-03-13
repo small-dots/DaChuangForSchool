@@ -11,11 +11,6 @@
       <template #status="{ text }">
         <a-tag :color="colorMap[text]">{{ statusMap[text] }}</a-tag>
       </template>
-      <template #operation="{ record }">
-        <a-popconfirm title="Sure to delete?" @confirm="onDelete(record.key)">
-          <a-button type="text" danger>删除</a-button>
-        </a-popconfirm>
-      </template>
     </a-table>
   </div>
 </template>
@@ -70,11 +65,6 @@
       dataIndex: 'status',
       key: 'status',
       slots: { customRender: 'status' },
-    },
-    {
-      title: '操作',
-      key: 'operation',
-      slots: { customRender: 'operation' },
     },
   ];
   const data = ref([]);
