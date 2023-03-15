@@ -163,13 +163,13 @@
   const openEdit = (row: any) => {
     defaultKey.value = '3';
     current.value = row;
-    isView.value = false;
+    isView.value = true;
     showEdit.value = true;
   };
   const pattner = (row: any) => {
     defaultKey.value = '2';
     current.value = row;
-    isView.value = false;
+    isView.value = true;
     showEdit.value = true;
   };
 
@@ -177,11 +177,6 @@
     defaultKey.value = '1';
     current.value = row;
     isView.value = true;
-    showEdit.value = true;
-  };
-  const setting = (row: any) => {
-    defaultKey.value = '4';
-    current.value = row;
     showEdit.value = true;
   };
 

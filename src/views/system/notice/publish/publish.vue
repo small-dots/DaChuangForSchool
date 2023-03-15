@@ -32,12 +32,7 @@
           :api="PublishApi.findPage"
           :where="where"
           :columns="columns"
-          showTableSetting
           rowKey="noticeId"
-          :rowSelection="{
-            type: 'checkbox',
-            selectedRowKeys: checkedKeys,
-          }"
         >
           <!-- table上边工具栏 -->
           <template #toolbar>

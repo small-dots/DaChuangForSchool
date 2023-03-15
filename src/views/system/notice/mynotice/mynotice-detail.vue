@@ -7,7 +7,7 @@
       :wrapper-col="{ md: { span: 20 }, sm: { span: 24 } }"
     >
       <a-form-item label="通知标题">
-        <a-input placeholder="请输入通知标题" v-model:value="state.form.messageTitle" />
+        <a-input placeholder="请输入通知标题" disabled v-model:value="state.form.messageTitle" />
       </a-form-item>
 
       <a-form-item label="内容">

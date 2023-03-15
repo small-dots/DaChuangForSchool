@@ -369,7 +369,7 @@
     if (file.response) {
       console.log(file);
       const { code } = await ComponentApi.uploadComponentTemplate({
-        fildId: file.response.data.fileId,
+        fileId: file.response.data.fileId,
       });
       if (code === '00000') {
         message.success('上传成功');

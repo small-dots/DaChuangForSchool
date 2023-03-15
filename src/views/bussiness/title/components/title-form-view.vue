@@ -25,13 +25,13 @@
             <a-input disabled v-model:value="form.teacherPhone" placeholder="请输入联系方式" />
           </a-form-item>
           <a-form-item label="课题背景:" name="titleBackground">
-            <tinymce v-model:value="form.titleBackground" />
+            <a-textarea :rows="4" disabled v-model:value="form.titleBackground" />
           </a-form-item>
           <a-form-item label="具体内容:" name="titleContent">
-            <tinymce v-model:value="form.titleContent" />
+            <a-textarea :rows="4" disabled v-model:value="form.titleContent" />
           </a-form-item>
           <a-form-item label="基本要求:" name="titleRequire">
-            <tinymce v-model:value="form.titleRequire" />
+            <a-textarea :rows="4" disabled v-model:value="form.titleRequire" />
           </a-form-item>
           <a-form-item label="图片:" name="positionId">
             <a-upload

@@ -32,12 +32,7 @@
           :api="NoticeApi.findPage"
           :where="where"
           :columns="columns"
-          showTableSetting
           rowKey="noticeId"
-          :rowSelection="{
-            type: 'checkbox',
-            selectedRowKeys: checkedKeys,
-          }"
         >
           <!-- table上边工具栏 -->
           <template #toolbar>
@@ -62,20 +57,6 @@
             <template v-if="column.key === 'state'">
               <a-tag color="green" v-if="record.readFlag === 0">未读</a-tag>
               <a-tag v-else> 已读</a-tag>
-            </template>
-
-            <!-- table操作栏按钮 -->
-            <template v-else-if="column.key === 'action'">
-              <a-space>
-                <a @click="openEdit(record)">查看</a>
-                <a-divider type="vertical" />
-                <a
-                  class="guns-text-danger"
-                  v-if="per('NOTICE_FIND_DEL_BUTTON')"
-                  @click="deleteMessage(record)"
-                  >删除</a
-                >
-              </a-space>
             </template>
           </template>
         </BasicTable>
@@ -117,11 +98,6 @@
       title: '已读状态',
       key: 'state',
       dataIndex: 'readFLag',
-    },
-    {
-      title: '操作',
-      key: 'action',
-      align: 'center',
     },
   ]);
 

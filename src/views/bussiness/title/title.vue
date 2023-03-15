@@ -46,13 +46,7 @@
               :api="TitleApi.getTitlePages"
               :where="where"
               :columns="columns"
-              showTableSetting
               rowKey="titleId"
-              :rowSelection="{
-                type: 'checkbox',
-                selectedRowKeys: checkedKeys,
-                onChange: onSelectChange,
-              }"
             >
               <template #statusFlag="{ record }">
                 <a-tag color="blue" v-if="record.statusFlag === 1">{{
@@ -79,6 +73,9 @@
                 </div>
               </template>
               <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'titleTitle'">
+                  <a @click="openView(record)">{{ record.titleTitle }}</a></template
+                >
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
@@ -101,8 +98,6 @@
                         >删除</a
                       >
                     </a-popconfirm>
-                    <a-divider type="vertical" />
-                    <a @click="openView(record)" v-if="per('TITLE_CENTER_VIEW_BUTTON')">查看</a>
                   </a-space>
                 </template>
               </template>
@@ -161,6 +156,7 @@
     {
       title: '题目名称',
       dataIndex: 'titleTitle',
+      key: 'titleTitle',
     },
     {
       title: '指导教师',
@@ -221,12 +217,22 @@
     }
     return false;
   };
+  const isStudent = () => {
+    const roleList = JSON.parse(localStorage.getItem('UserInfo') as string).simpleRoleInfoList;
+    if (roleList[0].roleCode === 'student') {
+      return true;
+    }
+    return false;
+  };
   // 查询
   const reload = () => {
     checkedKeys.value = [];
     tableRef.value.reload({ page: 1 });
   };
   onMounted(() => {
+    if (isStudent()) {
+      columns.value = columns.value.filter((item) => item.key !== 'action');
+    }
     getUserList();
   });
   // 重置
