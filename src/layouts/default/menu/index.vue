@@ -134,7 +134,8 @@
             showTitle={!unref(getCollapsed)}
             class={unref(getLogoClass)}
             theme={unref(getComputedMenuTheme)}
-            title="大学生创新创业系统"
+            title="大创管理系统"
+            noleft={true}
             inner={true}
           />
         );

@@ -25,10 +25,9 @@
       />
     </FormItem>
 
-    <ARow class="enter-x">
+    <!-- <ARow class="enter-x">
       <ACol :span="12">
         <FormItem>
-          <!-- 七天免登陆 -->
           <Checkbox v-model:checked="formData.rememberMe" size="small">
             {{ t('sys.login.rememberMe') }}
           </Checkbox>
@@ -36,7 +35,7 @@
       ><ACol :span="12">
         <div style="float: right"><a-button type="text">忘记密码</a-button></div>
       </ACol>
-    </ARow>
+    </ARow> -->
 
     <FormItem class="enter-x">
       <!-- 登录 -->

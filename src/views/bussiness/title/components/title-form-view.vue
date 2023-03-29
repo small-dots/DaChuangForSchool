@@ -10,31 +10,25 @@
       <a-row :gutter="8">
         <a-col :md="24" :sm="24" :xs="24">
           <a-form-item label="题目名称:" name="titleTitle">
-            <a-input
-              v-model:value="form.titleTitle"
-              placeholder="请输入题目名称"
-              allow-clear
-              autocomplete="off"
-              disabled
-            />
+            <p v-html="form.titleTitle" style="line-height: 28px"></p>
           </a-form-item>
           <a-form-item label="指导教师:" name="teacherName">
-            <a-input disabled v-model:value="form.teacherName" placeholder="请输入指导教师" />
+            <p v-html="form.teacherName" style="line-height: 28px"></p>
           </a-form-item>
           <a-form-item label="联系方式:" name="teacherPhone">
-            <a-input disabled v-model:value="form.teacherPhone" placeholder="请输入联系方式" />
+            <p v-html="form.teacherPhone" style="line-height: 28px"></p>
           </a-form-item>
           <a-form-item label="课题背景:" name="titleBackground">
-            <a-textarea :rows="4" disabled v-model:value="form.titleBackground" />
+            <div v-html="form.titleBackground" style="line-height: 28px"></div>
           </a-form-item>
           <a-form-item label="具体内容:" name="titleContent">
-            <a-textarea :rows="4" disabled v-model:value="form.titleContent" />
+            <div v-html="form.titleContent" style="line-height: 28px"></div>
           </a-form-item>
           <a-form-item label="基本要求:" name="titleRequire">
-            <a-textarea :rows="4" disabled v-model:value="form.titleRequire" />
+            <div v-html="form.titleRequire" style="line-height: 28px"></div>
           </a-form-item>
           <a-form-item label="图片:" name="positionId">
-            <a-upload
+            <!-- <a-upload
               name="file"
               :multiple="true"
               :action="fileUploadUrl"
@@ -42,17 +36,33 @@
               v-model:file-list="form.imageList"
               :headers="headers"
               @change="afterUploadImage"
-            />
-          </a-form-item>
-          <a-form-item label="相关附件:" name="positionId">
+            /> -->
+
             <a-upload
               name="file"
               :multiple="true"
-              :action="fileUploadUrl"
-              v-model:file-list="form.fileList"
-              :headers="headers"
-              @change="afterUploadFile"
-            />
+              class="upload-list-inline"
+              list-type="picture"
+              :show-upload-list="{
+                showDownloadIcon: true,
+                showPreviewIcon: true,
+                showRemoveIcon: false,
+              }"
+              v-model:file-list="form.imageList"
+            >
+              <template #downloadIcon>
+                <CloudDownloadOutlined @click="download(e)" />
+              </template>
+            </a-upload>
+          </a-form-item>
+          <a-form-item label="相关附件:" name="positionId">
+            <a-upload class="upload-list-inline" name="file" v-model:file-list="form.fileList">
+              <template #itemRender="{ file }">
+                <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                <span style="width: 10px; display: inline-block"></span>
+                <a @click="download(file)"><cloud-download-outlined /></a>
+              </template>
+            </a-upload>
           </a-form-item>
         </a-col>
       </a-row>
@@ -67,6 +77,8 @@
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
   import { message } from 'ant-design-vue';
+  import { downloadByUrl } from '/@/utils/file/download';
+
   const props = defineProps({
     form: {
       type: Object,
@@ -120,6 +132,15 @@
   const handleChange = (targetKeys) => {
     emits('handleChange', targetKeys);
   };
+  const download = (row) => {
+    console.log(row);
+    // FileApi.download({
+    //   fileId: row.fileId,
+    //   secretFlag: row.secretFlag,
+    //   token: token.value,
+    // });
+    downloadByUrl({ url: row.thumbUrl, fileName: row.fileOriginName });
+  };
   onMounted(() => {
     const userinfo = JSON.parse(localStorage.getItem('UserInfo'));
     isSuper.value = userinfo.superAdmin;
@@ -142,7 +163,7 @@
 
   .upload-list-inline :deep(.ant-upload-list-item) {
     float: left;
-    width: 200px;
+    width: 300px;
     margin-right: 8px;
   }
 

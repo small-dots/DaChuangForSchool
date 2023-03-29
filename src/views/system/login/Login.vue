@@ -17,20 +17,22 @@
       <div class="flex h-full">
         <div class="hidden min-h-full pl-4 mr-4 xl:flex xl:flex-col xl:w-6/12">
           <!-- <AppLogo class="-enter-x" style="justify-content: left" /> -->
-          <div class="my-auto">
+          <div class="my-auto text_ss">
             <!-- <img
               :alt="title"
               src="../../../assets/svg/login-box-bg.svg"
               class="w-1/2 -mt-16 -enter-x"
             /> -->
-            <img
-              :alt="title"
-              src="../../../assets/images/xiaohui.jpg"
-              class="w-1/3 -mt-16 -enter-x rounded-full"
-            />
-            <div class="mt-10 font-medium text-white -enter-x login-title">
-              <!-- <img class="h-50" src="../../../assets/images/xiaohui.jpg" alt="校徽" /> -->
-              <span class="inline-block mt-4 text-3xl"> {{ t('sys.login.signInTitle') }}</span>
+            <div class="text_sub">
+              <img
+                :alt="title"
+                src="../../../assets/images/xiaohui.jpg"
+                class="w-1/3 -mt-16 -enter-x rounded-full"
+              />
+              <div class="mt-10 font-medium text-white -enter-x login-title">
+                <!-- <img class="h-50" src="../../../assets/images/xiaohui.jpg" alt="校徽" /> -->
+                <span class="inline-block mt-4 text-3xl"> {{ t('sys.login.signInTitle') }}</span>
+              </div>
             </div>
             <!-- <div class="mt-5 font-normal text-white dark:text-gray-500 -enter-x">
               {{ t('sys.login.signInDesc') }}
@@ -223,5 +225,11 @@
       font-size: 12px;
       color: @text-color-secondary;
     }
+  }
+  .text_sub {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>

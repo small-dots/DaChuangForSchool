@@ -202,12 +202,12 @@
         let appendix = [];
         if (state.form.imageList) {
           image = state.form.imageList.map((item) => {
-            return item.response?.data?.fileId;
+            return item.fileId ? item.fileId : item.response?.data?.fileId;
           });
         }
         if (state.form.fileList) {
           appendix = state.form.fileList.map((item) => {
-            return item.response?.data?.fileId;
+            return item.fileId ? item.fileId : item.response?.data?.fileId;
           });
         }
         const params = {

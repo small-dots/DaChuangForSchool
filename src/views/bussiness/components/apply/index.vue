@@ -384,6 +384,7 @@
     showModal.value = true;
     isReview.value = flag;
     isAdmin.value = admin;
+    isViews.value = false;
   };
   const view = (row) => {
     defaultKey.value = '1';

@@ -55,7 +55,7 @@
         </a-row>
       </a-form>
       <a-divider v-if="isReview && !isViews" />
-      <a-descriptions v-if="isReview" title="审核信息" :column="1">
+      <a-descriptions v-if="isReview && !isViews" title="审核信息" :column="1">
         <a-descriptions-item label="审核结果"
           ><a-radio-group v-model:value="reviewResult">
             <a-radio :value="1">同意</a-radio>

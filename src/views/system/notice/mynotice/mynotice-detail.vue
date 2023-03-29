@@ -7,11 +7,11 @@
       :wrapper-col="{ md: { span: 20 }, sm: { span: 24 } }"
     >
       <a-form-item label="通知标题">
-        <a-input placeholder="请输入通知标题" disabled v-model:value="state.form.messageTitle" />
+        <div v-html="state.form.messageTitle" style="line-height: 28px"></div>
       </a-form-item>
 
       <a-form-item label="内容">
-        <div v-html="state.form.messageContent"></div>
+        <div v-html="state.form.messageContent" style="line-height: 28px"></div>
         <!-- <tinymce v-model:value="state.form.messageContent" :options="{ readonly: true }" /> -->
       </a-form-item>
     </a-form>
@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { reactive, watch, onMounted } from 'vue';
+  import { reactive, watch, onBeforeMount, onMounted } from 'vue';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
   import { NoticeApi } from '/@/api/system/notice/NoticeApi';
   import { useRouter } from 'vue-router';
@@ -59,6 +59,26 @@
   };
   onMounted(() => {
     window.addEventListener('click', (e) => {
+      console.log(e.target.id);
+      let target = e.target as HTMLElement;
+      if (target.id == 'project_invert_confirm') {
+        finish(2);
+      } else if (target.id == 'project_invert_refuse') {
+        finish(3);
+      } else if (target.id == 'projectLink') {
+        router.push({
+          path: '/system/project/detail',
+          query: {
+            projectName: target.innerText,
+          },
+        });
+      }
+    });
+  });
+  onBeforeMount(() => {
+    // 清空click监听
+    window.removeEventListener('click', (e) => {
+      console.log(e.target.id);
       let target = e.target as HTMLElement;
       if (target.id == 'project_invert_confirm') {
         finish(2);
@@ -78,6 +98,7 @@
   const finish = async (flag) => {
     const role = JSON.parse(localStorage.getItem('UserInfo') as string).simpleRoleInfoList[0]
       .roleCode;
+    console.log(document.getElementById('ID'));
     const projectId = document.getElementById('ID').innerText;
     const parmas = {
       projectId: projectId,
@@ -114,6 +135,7 @@
     padding: 2px 10px;
     margin-right: 10px;
   }
+
   .refuse {
     background: #ff4d4f;
     border-color: #ff4d4f;

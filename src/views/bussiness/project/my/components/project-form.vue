@@ -66,7 +66,9 @@
               <template #itemRender="{ file, actions }">
                 <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                 <span style="width: 10px; display: inline-block"></span>
-                <a href="javascript:;" @click="actions.remove"><delete-outlined /></a>
+                <a href="javascript:;" v-if="!isView" @click="actions.remove"
+                  ><delete-outlined
+                /></a>
                 <span style="width: 10px; display: inline-block"></span>
                 <a @click="downloadF(form.fileList)"><cloud-download-outlined /></a>
               </template>

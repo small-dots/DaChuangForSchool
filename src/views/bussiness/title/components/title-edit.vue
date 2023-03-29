@@ -201,17 +201,20 @@
         let image = [];
         let appendix = [];
         if (state.form.imageList) {
+          image = [];
           image = state.form.imageList.map((item) => {
-            return item.response?.data?.fileId;
+            return item.fileId ? item.fileId : item.response?.data?.fileId;
           });
         }
         if (state.form.fileList) {
           appendix = state.form.fileList.map((item) => {
-            return item.response?.data?.fileId;
+            console.log('item', item);
+            return item.fileId ? item.fileId : item.response?.data?.fileId;
           });
+          console.log(appendix);
         }
         if (isUpdate.value) {
-          result = TitleApi.editTitle({ image, appendix, ...state.form });
+          result = TitleApi.editTitle({ ...state.form, image, appendix });
         } else {
           result = TitleApi.addTitle({ image, appendix, ...state.form });
         }

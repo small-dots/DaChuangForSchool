@@ -83,19 +83,19 @@
   // 表格配置
   const columns = ref<string[]>([
     {
-      title: '标题',
+      title: '通知标题',
       dataIndex: 'messageTitle',
     },
     {
-      title: '发消息人',
+      title: '发布人',
       dataIndex: 'sendUserIdWrapper',
     },
     {
-      title: '消息发送时间',
+      title: '发布时间',
       dataIndex: 'messageSendTime',
     },
     {
-      title: '已读状态',
+      title: '状态',
       key: 'state',
       dataIndex: 'readFLag',
     },

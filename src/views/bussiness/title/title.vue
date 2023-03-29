@@ -209,7 +209,6 @@
     if (roleList[0].roleCode.startsWith('admin') || roleList[0].roleCode === 'superAdmin') {
       isAdmin = true;
     }
-    console.log(isAdmin);
     const realName = JSON.parse(localStorage.getItem('UserInfo') as string).simpleUserInfo
       ?.realName;
     if (row.createName === realName || isAdmin) {

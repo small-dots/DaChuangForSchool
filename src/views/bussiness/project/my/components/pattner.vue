@@ -99,7 +99,7 @@
     2: 'green',
     3: 'red',
   };
-  const columns = [
+  let columns = [
     {
       title: '姓名',
       dataIndex: 'memberName',
@@ -123,6 +123,22 @@
     getUserList();
     // 获取团队成员列表
     getMemberList();
+    if (props.isView) {
+      columns = [
+        {
+          title: '姓名',
+          dataIndex: 'memberName',
+          key: 'memberName',
+          slots: { customRender: 'memberName' },
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          key: 'status',
+          slots: { customRender: 'status' },
+        },
+      ];
+    }
   });
   const getMemberList = () => {
     ProjectApi.listProjectMember({ projectId: props.data.projectId }).then((res) => {

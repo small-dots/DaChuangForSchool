@@ -71,6 +71,7 @@
               v-model:file-list="form.fileList"
               :headers="headers"
               @change="afterUploadFile"
+              @remove="afterRemoveFile"
             >
               <a-button>
                 <upload-outlined />
@@ -135,6 +136,12 @@
     if (file.response) {
       message.success('上传成功');
     }
+  };
+  const afterRemoveFile = (e) => {
+    console.log(e);
+    // if (file.response) {
+    //   message.success('删除成功');
+    // }
   };
   const emits = defineEmits(['handleChange']);
 

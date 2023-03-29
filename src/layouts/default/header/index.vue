@@ -38,9 +38,9 @@
         <span class="guns-title">Guns-DevOps</span>
       </div> -->
 
-      <AppChange :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
+      <!-- <AppChange :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
 
-      <AppSearch :class="`${prefixCls}-action__item `" v-if="getShowSearch" />
+      <AppSearch :class="`${prefixCls}-action__item `" v-if="getShowSearch" /> -->
 
       <ErrorAction v-if="getUseErrorHandle" :class="`${prefixCls}-action__item error-action`" />
 

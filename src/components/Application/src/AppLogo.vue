@@ -41,6 +41,10 @@
       type: Boolean,
       default: false,
     },
+    noleft: {
+      type: Boolean,
+      default: false,
+    },
   });
   const { t } = useI18n();
 
@@ -58,6 +62,7 @@
     prefixCls,
     props.theme,
     { 'collapsed-show-title': unref(getCollapsedShowTitle) },
+    { noleft_s: props.noleft },
   ]);
 
   const getTitleClass = computed(() => [
@@ -110,5 +115,9 @@
       transition: all 0.5s;
       line-height: normal;
     }
+  }
+  .noleft_s {
+    left: 0;
+    transform: translateX(0);
   }
 </style>

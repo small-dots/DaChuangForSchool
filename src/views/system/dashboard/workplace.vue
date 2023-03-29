@@ -137,7 +137,7 @@
 
       <!-- 最新消息通知 -->
       <a-col :lg="24" :md="24" :sm="24" :xs="24">
-        <a-card title="最新消息通知" :bordered="false" :body-style="{ padding: 0 }">
+        <a-card title="通知公告" :bordered="false" :body-style="{ padding: 0 }">
           <div class="ele-scrollbar-hover">
             <!-- <a-timeline>
               <a-timeline-item v-for="(item, index) in activities" :key="index" :color="item.color">
