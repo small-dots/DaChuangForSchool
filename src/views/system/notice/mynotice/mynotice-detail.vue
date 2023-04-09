@@ -14,18 +14,41 @@
         <div v-html="state.form.messageContent" style="line-height: 28px"></div>
         <!-- <tinymce v-model:value="state.form.messageContent" :options="{ readonly: true }" /> -->
       </a-form-item>
+      <a-form-item label="相关附件:">
+        <a-upload
+          name="file"
+          :multiple="true"
+          :action="fileUploadUrl"
+          v-model:file-list="state.form.fileList"
+          :headers="headers"
+          @change="afterUpload"
+        >
+          <!-- <a-button>
+            <upload-outlined />
+            上传附件
+          </a-button> -->
+          <!-- <span v-if="!state.form.fileList.length">暂无附件</span> -->
+          <template #itemRender="{ file }">
+            <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+            <span style="width: 10px; display: inline-block"></span>
+            <a @click="downloadF(state.form.fileList)"><cloud-download-outlined /></a>
+          </template>
+        </a-upload>
+      </a-form-item>
     </a-form>
   </common-drawer>
 </template>
 
 <script lang="ts" setup>
-  import { reactive, watch, onBeforeMount, onMounted } from 'vue';
+  import { reactive, watch, onBeforeMount, ref, computed, onMounted } from 'vue';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
   import { NoticeApi } from '/@/api/system/notice/NoticeApi';
   import { useRouter } from 'vue-router';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
-
+  import { FileUploadUrl } from '/@/api/system/operation/FileApi';
+  import { useUserStore } from '/@/store/modules/user';
+  import { downloadByUrl } from '/@/utils/file/download';
   let router = useRouter();
 
   const props = defineProps<{
@@ -46,7 +69,29 @@
       noticeContent: '',
     },
   });
+  const userStore = useUserStore();
 
+  // token
+  const token = computed(() => {
+    return userStore.getToken;
+  });
+  // 上传文件的url
+  const fileUploadUrl = ref(`${import.meta.env.VITE_GLOB_API_URL}${FileUploadUrl}?secretFlag=N`);
+
+  const headers = reactive({
+    Authorization: token.value,
+  });
+  /**
+   * 上传成功的回调
+   *
+   * @author anzhongqi
+   * @date 2021/4/2 17:03
+   */
+  const afterUpload = ({ file }) => {
+    if (file.response) {
+      message.success('上传成功');
+    }
+  };
   /**
    * 更新编辑界面弹框是否显示
    *
@@ -111,12 +156,34 @@
       updateVisible(false);
     }
   };
+  const downloadF = (row) => {
+    console.log(row);
+    // FileApi.download({
+    //   fileId: row.fileId,
+    //   secretFlag: row.secretFlag,
+    //   token: token.value,
+    // });
+    downloadByUrl({ url: row[0].thumbUrl, fileName: row[0].fileOriginName });
+  };
   watch(
     () => props.data,
     async (val) => {
       if (val) {
         let messageId = props.data.messageId;
         let result = await NoticeApi.messageDetail({ messageId });
+        if (result.businessType === 'sys_notice') {
+          NoticeApi.NoticeDetail({
+            noticeId: result.businessId,
+          }).then((res) => {
+            state.form.fileList = res.appendixFile || [];
+            state.form.fileList.map((item) => {
+              item.name = item.fileOriginName;
+              item.thumbUrl =
+                window.location.origin +
+                `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+            });
+          });
+        }
         state.form = Object.assign({}, result);
       } else {
         state.form = {};

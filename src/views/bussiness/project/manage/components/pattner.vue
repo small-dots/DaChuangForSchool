@@ -2,18 +2,16 @@
   <div class="pannter_container">
     <a-table :columns="columns" bordered :pagination="false" :data-source="data">
       <template #memberName="{ record }">
-        <span>{{
-          record.type === 2
-            ? record.memberName + '（指导教师）'
-            : record.memberName + '（项目成员）'
-        }}</span>
+        <span v-if="record.type === 2">{{ record.memberName + '（指导教师）' }}</span>
+        <span v-if="record.type === 1">{{ record.memberName + '（项目成员）' }}</span>
+        <span v-if="record.type === 3">{{ record.memberName + '（项目负责人）' }}</span>
       </template>
       <template #status="{ text }">
         <a-tag :color="colorMap[text]">{{ statusMap[text] }}</a-tag>
       </template>
       <template #operation="{ record }">
         <a-popconfirm title="Sure to delete?" @confirm="onDelete(record.key)">
-          <a-button type="text" danger>删除</a-button>
+          <a-button v-if="record.type !== 3" type="text" danger>删除</a-button>
         </a-popconfirm>
       </template>
     </a-table>
@@ -38,7 +36,7 @@
           @change="handleChange"
         />
       </a-form-item>
-      <a-form-item label="指教教师:" name="teacherId">
+      <a-form-item label="指导教师:" name="teacherId">
         <a-select
           v-model:value="form.teacherId"
           show-search
@@ -54,9 +52,9 @@
       </a-form-item>
     </a-form>
     <a-button type="primary" v-show="showAdd && !isView" @click="addMember">添加成员</a-button>
-    <a-divider type="vertical" />
+    <span style="width: 10px; display: inline-block"></span>
     <a-button type="primary" v-show="showCancel && !isView" @click="cancleAdd">取消</a-button>
-    <a-divider type="vertical" />
+    <span style="width: 10px; display: inline-block"></span>
     <a-button type="primary" v-show="showCancel && !isView" @click="add">确定</a-button>
   </div>
 </template>
@@ -127,6 +125,11 @@
   const getMemberList = () => {
     ProjectApi.listProjectMember({ projectId: props.data.projectId }).then((res) => {
       data.value = res.data || [];
+      data.value.unshift({
+        memberName: props.data.createName,
+        type: 3,
+        status: 2,
+      });
     });
   };
   const addMember = () => {

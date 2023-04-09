@@ -2,11 +2,9 @@
   <div class="pannter_container">
     <a-table :columns="columns" bordered :pagination="false" :data-source="data">
       <template #memberName="{ record }">
-        <span>{{
-          record.type === 2
-            ? record.memberName + '（指导教师）'
-            : record.memberName + '（项目成员）'
-        }}</span>
+        <span v-if="record.type === 2">{{ record.memberName + '（指导教师）' }}</span>
+        <span v-if="record.type === 1">{{ record.memberName + '（项目成员）' }}</span>
+        <span v-if="record.type === 3">{{ record.memberName + '（项目负责人）' }}</span>
       </template>
       <template #status="{ text }">
         <a-tag :color="colorMap[text]">{{ statusMap[text] }}</a-tag>
@@ -76,6 +74,11 @@
   const getMemberList = () => {
     ProjectApi.listProjectMember({ projectId: props.data.projectId }).then((res) => {
       data.value = res.data || [];
+      data.value.unshift({
+        memberName: props.data.createName,
+        type: 3,
+        status: 2,
+      });
     });
   };
   const addMember = () => {

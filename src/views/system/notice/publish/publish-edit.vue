@@ -102,6 +102,13 @@
         if (props.data) {
           state.form = Object.assign({}, props.data);
           isUpdate.value = true;
+          state.form.fileList = props.data.appendixFile || [];
+          state.form.fileList.map((item) => {
+            item.name = item.fileOriginName;
+            item.thumbUrl =
+              window.location.origin +
+              `/api/sysFileInfo/previewByObjectName?fileBucket=defaultBucket&fileObjectName=${item.fileObjectName}`;
+          });
         } else {
           state.form = {};
           isUpdate.value = false;
@@ -160,7 +167,7 @@
    */
   const save = async () => {
     loading.value = true;
-
+    let appendix = [];
     // 如果noticeScopeType是all，则noticeScope参数填写all
     if (state.form.noticeScopeType === 'all') {
       state.form.noticeScope = 'all';
@@ -168,13 +175,17 @@
       // 如果noticeScopeType是part，则用逗号分割每个人的id
       state.form.noticeScope = targetKeys.value.join(',');
     }
-
+    if (state.form.fileList) {
+      appendix = state.form.fileList.map((item) => {
+        return item.fileId ? item.fileId : item.response.data.fileId;
+      });
+    }
     try {
       let res;
       if (isUpdate.value) {
-        res = await PublishApi.editPublish(state.form);
+        res = await PublishApi.editPublish({ appendix: appendix, ...state.form });
       } else {
-        res = await PublishApi.addPublish(state.form);
+        res = await PublishApi.addPublish({ appendix: appendix, ...state.form });
       }
 
       loading.value = false;

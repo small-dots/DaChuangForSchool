@@ -2,7 +2,7 @@
   <div>
     <a-alert
       message="文件命名规范"
-      description="请将过程文档名称命名为:XXX_项目名称。例:大学生创新训 练项目申请书_能级强关联上转换纳米探针构筑及谷胱甘肽的高灵敏 检测应用研究"
+      description="请将过程文档命名为:XXX_项目名称。例:大学生创新创业训练项目申请书_地空时频电磁同步激励控制系统设计"
       type="info"
       show-icon
     />
@@ -26,7 +26,6 @@
     <div class="doc_list">
       <a-table :columns="columns" :data-source="docList">
         <template #operation="{ record }">
-          <a-divider type="vertical" />
           <a @click="download(record)">下载</a>
         </template>
       </a-table>

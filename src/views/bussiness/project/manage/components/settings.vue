@@ -16,8 +16,8 @@
           </a-form-item>
           <a-form-item label="项目状态:" required>
             <a-radio-group v-model:value="formState.statusFlag" button-style="solid">
-              <a-radio-button value="1">进行中</a-radio-button>
-              <a-radio-button value="2">已结束</a-radio-button>
+              <a-radio-button value="1">运行中</a-radio-button>
+              <a-radio-button value="2">已终止</a-radio-button>
               <a-radio-button value="3">已结题</a-radio-button>
             </a-radio-group>
           </a-form-item>

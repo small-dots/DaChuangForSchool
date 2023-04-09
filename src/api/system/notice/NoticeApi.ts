@@ -60,7 +60,9 @@ export class NoticeApi {
   static deleteNotice(params) {
     return defHttp.post({ url: '/sysNotice/delete', params }, { isTransformResponse: false });
   }
-
+  static NoticeDetail(params) {
+    return defHttp.get({ url: '/sysNotice/detail', params });
+  }
   /**
    * 全部标记未已读状态
    *

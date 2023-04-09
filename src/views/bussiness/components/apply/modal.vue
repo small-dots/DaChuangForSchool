@@ -49,9 +49,17 @@
                   <upload-outlined />
                   申请单上传
                 </a-button>
-              </a-upload>
-            </a-form-item></a-col
-          >
+                <template #itemRender="{ file, actions }">
+                  <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
+                  <span style="width: 10px; display: inline-block"></span>
+                  <a href="javascript:;" v-if="!isViews && isOnwer" @click="actions.remove"
+                    ><delete-outlined
+                  /></a>
+                  <span style="width: 10px; display: inline-block"></span>
+                  <a @click="downloadF(fileList)"><cloud-download-outlined /></a>
+                </template>
+              </a-upload> </a-form-item
+          ></a-col>
         </a-row>
       </a-form>
       <a-divider v-if="isReview && !isViews" />
@@ -96,6 +104,7 @@
   import { FileUploadUrl } from '/@/api/system/operation/FileApi';
   import { useUserStore } from '/@/store/modules/user';
   import { ComponentApi } from '/@/api/dc/component/componentApi';
+  import { downloadByUrl } from '/@/utils/file/download';
 
   interface FormState {
     name: string | undefined;
@@ -127,6 +136,7 @@
     file: FileItem;
     fileList: FileItem[];
   }
+
   const canApply = ref(false);
   const needReview = ref('2');
   const isSuper = ref<boolean>(false);
@@ -175,7 +185,12 @@
   });
   // 上传文件的url
   const fileUploadUrl = ref(`${import.meta.env.VITE_GLOB_API_URL}${FileUploadUrl}?secretFlag=N`);
-
+  const isOnwer = computed(() => {
+    return (
+      props.data.createName ===
+      JSON.parse(localStorage.getItem('UserInfo') as string).simpleUserInfo.realName
+    );
+  });
   const headers = reactive({
     Authorization: token.value,
   });
@@ -276,6 +291,15 @@
         projectName: projectName,
       },
     });
+  };
+  const downloadF = (row) => {
+    console.log(row);
+    // FileApi.download({
+    //   fileId: row.fileId,
+    //   secretFlag: row.secretFlag,
+    //   token: token.value,
+    // });
+    downloadByUrl({ url: row[0].thumbUrl, fileName: row[0].fileOriginName });
   };
   const resetForm = () => {
     formRef.value.resetFields();

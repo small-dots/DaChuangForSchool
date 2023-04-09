@@ -19,43 +19,17 @@
       </template>
       <!-- 基本信息 -->
       <project-form
-        v-if="activeKey == '1'"
+        v-if="activeKey === '1'"
         v-model:form="state.form"
         ref="form"
         :rules="rules"
         :isUpdate="isUpdate"
       />
-      <Setting v-if="activeKey == '4'" :data="data" ref="setting" @close="closeSetting" />
+
       <!-- 项目成员 -->
-      <Pattner v-if="activeKey == '2'" :data="data" ref="pattner" />
+      <Pattner v-if="activeKey == '2'" :data="data" ref="docs" />
       <!-- 过程文档 -->
       <docs v-if="activeKey == '3'" :data="data" ref="docs" />
-    </common-drawer>
-
-    <!-- 查看 -->
-    <common-drawer
-      :width="1200"
-      :visible="visible"
-      title="项目信息查看"
-      :isShowTab="true"
-      :activeKey="activeKey"
-      :tabList="tabList"
-      @tabChange="tabChange"
-      @close="updateVisible(false)"
-      v-if="isView"
-    >
-      <!-- 基本信息 -->
-      <project-form
-        v-if="activeKey == '1'"
-        v-model:form="state.form"
-        ref="form"
-        :rules="rules"
-        :isView="isView"
-      />
-      <!-- 项目成员 -->
-      <Pattner v-if="activeKey == '2'" :isView="isView" :data="data" ref="docs" />
-      <!-- 过程文档 -->
-      <docs v-if="activeKey == '3'" :isView="isView" :data="data" ref="docs" />
     </common-drawer>
   </div>
 </template>
@@ -65,9 +39,8 @@
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { FileApi } from '/@/api/system/operation/FileApi';
   import CommonDrawer from '/@/components/CommonDrawer/index.vue';
-  import ProjectForm from './project-form.vue';
+  import ProjectForm from './project-form-1.vue';
   import Docs from './docs.vue';
-  import Setting from './settings.vue';
   import Pattner from './pattner.vue';
   import { onMounted, reactive, ref, watch } from 'vue';
 
@@ -100,8 +73,6 @@
     projectContent: [
       { required: true, message: '请输入项目内容', type: 'string', trigger: 'blur' },
     ],
-    partters: [{ required: true, message: '请选择团队成员', trigger: 'blur' }],
-    teacherId: [{ required: true, message: '请选择指导教师', type: 'string', trigger: 'blur' }],
   });
   // 提交状态
   const loading = ref<boolean>(false);
@@ -110,6 +81,7 @@
   const isView = ref<boolean>(false);
   // ref
   const form = ref(null);
+
   const tabList = ref([
     {
       key: '1',
@@ -123,12 +95,9 @@
       key: '3',
       name: '过程文档',
     },
-    {
-      key: '4',
-      name: '项目设置',
-    },
   ]);
   onMounted(() => {
+    console.log('1', props.defaultKey, form.value);
     init();
   });
 
@@ -162,8 +131,8 @@
       }
       activeKey.value = props.defaultKey;
       // 清空校验
-      // if (props.defaultKey == '1' && form.value.$refs.ProjectFormRef) {
-      //   form.value.$refs.ProjectFormRef.clearValidate();
+      // if (props.defaultKey == '1' && form.value.$refs.ProjectFormRef1) {
+      //   form.value.$refs.ProjectFormRef1.clearValidate();
       // }
     }
   };
@@ -174,9 +143,7 @@
       state.form = Object.assign({}, props.data);
     }
   };
-  const closeSetting = () => {
-    emits('done');
-  };
+
   watch(
     () => props.data,
     (val) => {
@@ -198,7 +165,7 @@
   const save = () => {
     console.log(form.value);
     // 校验表单
-    form.value.$refs.ProjectFormRef.validate().then(async (valid) => {
+    form.value.$refs.ProjectFormRef1.validate().then(async (valid) => {
       if (valid) {
         // 修改加载框为正在加载
         loading.value = true;
@@ -207,18 +174,18 @@
         let appendix = [];
         if (state.form.imageList) {
           image = state.form.imageList.map((item) => {
-            return item.fileId ? item.fileId : item.response?.data?.fileId;
+            return item.fileId ? item.fileId : item.response.data.fileId;
           });
         }
         if (state.form.fileList) {
           appendix = state.form.fileList.map((item) => {
-            return item.fileId ? item.fileId : item.response?.data?.fileId;
+            return item.fileId ? item.fileId : item.response.data.fileId;
           });
         }
         const params = {
           ...state.form,
-          image,
-          appendix,
+          image: image,
+          appendix: appendix,
         };
         // delete params.imageList;
         // delete params.fileList;
@@ -228,27 +195,24 @@
           result = ProjectApi.editProject(params);
         } else {
           result = ProjectApi.addProject(params);
-          if (state.form.teacherId && state.form.partters) {
-            const list = [state.form.teacherId, ...state.form.partters];
-            sendMsg(state.form.projectTitle, list);
-          }
         }
         result
           .then((result) => {
-            // 移除加载框
-            loading.value = true;
-
-            // 提示添加成功
-            message.success(result.message);
-
-            // 如果是新增用户，则form表单置空
-            if (!isUpdate.value) {
-              state.form = {};
+            if (result.code === '00000') {
+              // 移除加载框
+              loading.value = true;
+              // 提示添加成功
+              message.success(result.message);
+              if (!isUpdate.value) {
+                state.form = {};
+              }
+              // 关闭弹框，通过控制visible的值，传递给父组件
+              updateVisible(false);
+              emits('done');
+            } else {
+              message.error(result.message);
+              return;
             }
-            // 关闭弹框，通过控制visible的值，传递给父组件
-            updateVisible(false);
-
-            emits('done');
           })
           .catch(() => {
             loading.value = true;

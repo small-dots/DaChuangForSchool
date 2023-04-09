@@ -105,19 +105,15 @@
                     <a @click="print(record)" v-if="per('COMPONENTS_APPLY_PRINT_BUTTON')"
                       >流程打印</a
                     >
-                    <a-divider type="vertical" />
                     <a @click="view(record)" v-if="per('COMPONENT_APPLY_SEARCH_BUTTON')">查看</a>
-                    <a-divider type="vertical" />
                     <a
                       @click="openEdit(record)"
                       v-if="per('COMPONENT_APPLY_UPDATE_BUTTON') && record.status === '5'"
                       >编辑</a
                     >
-                    <a-divider type="vertical" />
                     <a-popconfirm title="确定要删除此用户吗？" @confirm="remove(record)">
                       <a class="guns-text-danger" v-if="per('COMPONENT_APPLY_DEL_BUTTON')">删除</a>
                     </a-popconfirm>
-                    <a-divider type="vertical" />
                   </a-space>
                 </template>
               </template>
@@ -339,7 +335,7 @@
     }
     //管理员1
     if (per('COMPONENT_APPLY_QUERY_ADMIN1')) {
-      if (data?.needReview) {
+      if (data?.needReview === '1') {
         code = 3;
       } else {
         code = data?.applyResult === 1 ? 4 : 5;

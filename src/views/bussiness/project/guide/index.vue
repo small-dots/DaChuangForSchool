@@ -42,11 +42,9 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="pattner(record)">成员</a>
-                    <a-divider type="vertical" />
                     <a @click="openView(record)">查看</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)">文档</a>
+                    <a @click="openEdit(record)">编辑</a>
                   </a-space>
                 </template>
               </template>
@@ -65,6 +63,13 @@
       :defaultKey="defaultKey"
       v-if="showEdit"
     />
+    <ProjectEdit1
+      v-model:visible="showModal"
+      :data="current"
+      @done="reload"
+      :defaultKey="defaultKey"
+      v-if="showModal"
+    />
   </div>
 </template>
 
@@ -72,6 +77,7 @@
   import { BasicTable } from '/@/components/Table/index.ts';
   import { reactive, ref } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
+  import ProjectEdit1 from './components/project-edit-1.vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
   const status = {
@@ -85,6 +91,7 @@
   });
   const isView = ref<boolean>(false);
   //ref
+  const showModal = ref<boolean>(false);
   const tableRef = ref<any>(null);
   //表格配置
   const columns = ref([
@@ -161,10 +168,9 @@
 
   // 打开新增编辑弹框
   const openEdit = (row: any) => {
-    defaultKey.value = '3';
+    defaultKey.value = '1';
     current.value = row;
-    isView.value = true;
-    showEdit.value = true;
+    showModal.value = true;
   };
   const pattner = (row: any) => {
     defaultKey.value = '2';

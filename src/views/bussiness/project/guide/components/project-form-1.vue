@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-form
-      ref="ProjectFormRef"
+      ref="ProjectFormRef1"
       :model="form"
       :rules="rules"
       :label-col="{ md: { span: 4 }, sm: { span: 24 } }"

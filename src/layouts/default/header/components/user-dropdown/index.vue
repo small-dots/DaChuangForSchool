@@ -24,7 +24,7 @@
           icon="ant-design:appstore-add-outlined"
         />
         <MenuDivider />
-        <MenuItem key="profile" :text="t('个人中心')" icon="ant-design:user-outlined" />
+        <!-- <MenuItem key="profile" :text="t('个人中心')" icon="ant-design:user-outlined" /> -->
         <MenuItem key="password" :text="t('修改密码')" icon="ant-design:key-outlined" />
         <MenuItem
           v-if="getUseLockPage"

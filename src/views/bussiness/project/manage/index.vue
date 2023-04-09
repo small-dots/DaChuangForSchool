@@ -42,13 +42,15 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="pattner(record)">成员</a>
-                    <a-divider type="vertical" />
                     <a @click="openView(record)">查看</a>
                     <a-divider type="vertical" />
-                    <a @click="openEdit(record)">文档</a>
+                    <a @click="setting(record, '1')">编辑</a>
                     <a-divider type="vertical" />
-                    <a @click="setting(record)">设置</a>
+                    <a @click="setting(record, '4')">设置</a>
+                    <a-divider type="vertical" />
+                    <a-popconfirm title="确定要删除此项目吗？" @confirm="remove(record)">
+                      <a class="guns-text-danger">删除</a>
+                    </a-popconfirm>
                   </a-space>
                 </template>
               </template>
@@ -167,6 +169,15 @@
     defaultKey.value = '3';
     current.value = row;
     isView.value = false;
+    if (!current.value.publishTime) {
+      current.value.publishTime = new Date();
+    }
+    if (!current.value.endTime) {
+      current.value.endTime = new Date();
+    }
+    if (!current.value.statusFlag) {
+      current.value.statusFlag = '1';
+    }
     showEdit.value = true;
   };
   const pattner = (row: any) => {
@@ -182,9 +193,19 @@
     isView.value = true;
     showEdit.value = true;
   };
-  const setting = (row: any) => {
-    defaultKey.value = '4';
+  const setting = (row: any, key) => {
+    defaultKey.value = key;
     current.value = row;
+    if (!current.value.publishTime) {
+      current.value.publishTime = new Date();
+    }
+    if (!current.value.endTime) {
+      current.value.endTime = new Date();
+    }
+    if (!current.value.statusFlag) {
+      current.value.statusFlag = '1';
+    }
+
     showEdit.value = true;
   };
 
