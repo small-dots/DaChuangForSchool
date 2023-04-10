@@ -95,15 +95,15 @@
   // 表格配置
   const columns = ref<string[]>([
     {
-      title: '标题',
+      title: '通知标题',
       dataIndex: 'noticeTitle',
     },
     {
-      title: '创建人',
+      title: '发布人',
       dataIndex: 'createUserWrapper',
     },
     {
-      title: '创建时间',
+      title: '发布时间',
       dataIndex: 'createTime',
     },
     {

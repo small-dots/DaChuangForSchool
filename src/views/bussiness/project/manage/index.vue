@@ -79,9 +79,9 @@
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
   const status = {
-    1: '进行中',
-    2: '已结题',
-    3: '已终止',
+    1: '运行中',
+    2: '已终止',
+    3: '已结题',
   };
   // 搜索数据
   const where = reactive({

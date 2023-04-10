@@ -89,23 +89,23 @@
                   <a-space>
                     <a
                       @click="openEdit(record, true)"
-                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON') && record.status === '1'"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_T') && record.status === '1'"
                       >审核</a
                     >
                     <a
                       @click="openEdit(record, true, true)"
-                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_ADMIN') && record.status === '2'"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_A') && record.status === '2'"
                       >审核</a
                     >
                     <a
                       @click="openEdit(record, true)"
-                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_ADMIN2') && record.status === '3'"
+                      v-if="per('COMPONENTS_APPLY_REVIEW_BUTTON_A2') && record.status === '3'"
                       >审核</a
                     >
-                    <a @click="print(record)" v-if="per('COMPONENTS_APPLY_PRINT_BUTTON')"
+                    <a @click="print(record)" v-if="per('COMPONENTS_APPLY_PRINT_BUTTON_M')"
                       >流程打印</a
                     >
-                    <a @click="view(record)" v-if="per('COMPONENT_APPLY_SEARCH_BUTTON')">查看</a>
+                    <a @click="view(record)">查看</a>
                     <a
                       @click="openEdit(record)"
                       v-if="per('COMPONENT_APPLY_UPDATE_BUTTON') && record.status === '5'"
@@ -317,6 +317,7 @@
     }
   };
   const getStatus = (data) => {
+    console.log(data);
     /* 
        老师审核   --1 
        管理员审核 --2 
@@ -335,7 +336,7 @@
     }
     //管理员1
     if (per('COMPONENT_APPLY_QUERY_ADMIN1')) {
-      if (data?.needReview === '1') {
+      if (data?.needReview === 1) {
         code = 3;
       } else {
         code = data?.applyResult === 1 ? 4 : 5;

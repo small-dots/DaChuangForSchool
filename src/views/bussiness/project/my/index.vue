@@ -57,14 +57,12 @@
                 <!-- table操作栏按钮 -->
                 <template v-if="column.key === 'action'">
                   <a-space>
-                    <a @click="pattner(record)">成员</a>
-                    <a-divider type="vertical" />
                     <a @click="openView(record)">查看</a>
                     <a-divider type="vertical" />
                     <a @click="openEdit(record)">编辑</a>
                     <a-divider type="vertical" />
                     <a-popconfirm title="确定要删除此项目吗？" @confirm="remove(record)">
-                      <a class="guns-text-danger">删除</a>
+                      <a class="guns-text-danger" v-if="isOnwer(record)">删除</a>
                     </a-popconfirm>
                   </a-space>
                 </template>
@@ -89,7 +87,7 @@
 
 <script lang="ts" setup>
   import { BasicTable } from '/@/components/Table/index.ts';
-  import { onMounted, reactive, ref } from 'vue';
+  import { onMounted, reactive, computed, ref } from 'vue';
   import ProjectEdit from './components/project-edit.vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { message } from 'ant-design-vue';
@@ -175,6 +173,16 @@
       computedShows.value = false;
     }
   });
+  const isOnwer = (data) => {
+    if (
+      data.createName ===
+      JSON.parse(localStorage.getItem('UserInfo') as string).simpleUserInfo.realName
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   /**
    * 修改项目状态
    * @author anzhongqi

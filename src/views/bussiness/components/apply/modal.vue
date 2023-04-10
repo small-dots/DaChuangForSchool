@@ -52,7 +52,7 @@
                 <template #itemRender="{ file, actions }">
                   <span :style="file.status === 'error' ? 'color: red' : ''">{{ file.name }}</span>
                   <span style="width: 10px; display: inline-block"></span>
-                  <a href="javascript:;" v-if="!isViews && isOnwer" @click="actions.remove"
+                  <a href="javascript:;" v-show="!isViews && isOnwer" @click="actions.remove"
                     ><delete-outlined
                   /></a>
                   <span style="width: 10px; display: inline-block"></span>
@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, ref, UnwrapRef, createVNode, computed, onMounted } from 'vue';
+  import { reactive, ref, UnwrapRef, computed, onMounted } from 'vue';
   import { ProjectApi } from '/@/api/dc/project/ProjectApi.ts';
   import { useRouter } from 'vue-router';
   import { message, Modal } from 'ant-design-vue';
@@ -187,7 +187,7 @@
   const fileUploadUrl = ref(`${import.meta.env.VITE_GLOB_API_URL}${FileUploadUrl}?secretFlag=N`);
   const isOnwer = computed(() => {
     return (
-      props.data.createName ===
+      props?.data?.createName ===
       JSON.parse(localStorage.getItem('UserInfo') as string).simpleUserInfo.realName
     );
   });
@@ -207,6 +207,7 @@
    */
   const afterUpload = ({ file }) => {
     if (file.response) {
+      console.log(file);
       message.success('上传成功');
     }
   };
