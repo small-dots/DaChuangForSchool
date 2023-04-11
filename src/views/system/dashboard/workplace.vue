@@ -244,13 +244,13 @@
           },
           {
             antdvIcon: 'AppstoreAddOutlined',
-            antdvRouter: '/system/title/guide',
+            antdvRouter: '/system/project/guide',
             menuName: '我指导的项目',
           },
           {
             antdvIcon: 'NodeIndexOutlined',
-            antdvRouter: '/system/componentApply',
-            menuName: '元器件申请',
+            antdvRouter: '/system/componentApply/manage',
+            menuName: '元器件申请管理',
           },
         ];
       }
@@ -268,8 +268,8 @@
           },
           {
             antdvIcon: 'NodeIndexOutlined',
-            antdvRouter: '/system/componentApply',
-            menuName: '元器件申请',
+            antdvRouter: '/system/componentApply/manage',
+            menuName: '元器件申请管理',
           },
         ];
       }
